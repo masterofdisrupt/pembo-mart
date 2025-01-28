@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Backend\V1;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use Auth;
+use Hash;
+use Str;
 
 class AdminController
 {
@@ -10,6 +14,68 @@ class AdminController
     {
         return view('admin.index');
     }
+
+    public function admin_profile(Request $request)
+    {
+        $data['getRecord'] = User::find(Auth::user()->id);
+        return view('admin.admin_profile', $data);
+    }
+
+    public function update(Request $request)
+    {
+        // Validate input
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
+            'middle_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
+            'surname' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
+            'username' => 'required|string|min:3|max:20|alpha_dash|unique:users,username,' . Auth::id(), // Alphanumeric, dashes, underscores
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(), // Valid email format
+            'phone' => 'nullable|string|regex:/^\+?[0-9]{7,15}$/', // Optional, international phone number format
+            'password' => 'nullable|string|min:8|max:255|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).+$/', // At least one uppercase, lowercase, number, and special character
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Only specific image formats allowed, size <= 2MB
+            'address' => 'nullable|string|max:255', // Address string with max length
+            'about' => 'nullable|string|max:255', // About section with max 255 characters
+            'website' => 'nullable|url|max:255', // Valid URL format
+        ]);
+
+
+        // Find user
+        $user = User::findOrFail(Auth::id());
+
+        // Update basic fields
+        $user->fill([
+            'name' => $validatedData['name'],
+            'middle_name' => $validatedData['middle_name'],
+            'surname' => $validatedData['surname'],
+            'username' => $validatedData['username'],
+            'email' => $validatedData['email'],
+            'phone' => $validatedData['phone'] ?? null,
+            'address' => $validatedData['address'] ?? null,
+            'about' => $validatedData['about'] ?? null,
+            'website' => $validatedData['website'] ?? null,
+        ]);
+
+        // Update password if provided
+        if (!empty($validatedData['password'])) {
+            $user->password = Hash::make($validatedData['password']);
+        }
+
+        // Handle file upload
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = Str::random(30) . '.' . $file->getClientOriginalExtension();
+
+            // Store file securely
+            $file->move(public_path('upload'), $filename);
+            $user->photo = $filename;
+        }
+
+        // Save user
+        $user->save();
+
+        return redirect()->route('admin.profile')->with('success', 'Profile Updated Successfully!');
+    }
+
 
     public function admin_users(Request $request)
     {
