@@ -18,8 +18,10 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $guarded = [
-
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
     ];
 
     /**
@@ -43,5 +45,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    static public function getEmailSingle($email)
+    {
+        return User::where('email', '=', $email)->first();
+    }
+
+    static public function getTokenSingle($remember_token)
+    {
+        return User::where('remember_token', '=', $remember_token)->first();
     }
 }
