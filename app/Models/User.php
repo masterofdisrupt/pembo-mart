@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Request;
+
 
 class User extends Authenticatable
 {
@@ -63,4 +65,64 @@ class User extends Authenticatable
     {
         return User::where('remember_token', '=', $remember_token)->first();
     }
+
+    static public function getRecord($request)
+    {
+
+        $return = self::select('users.*')
+            ->where('is_delete', '=', 0)
+            ->orderBy('id', 'asc');
+
+        // Search start
+        if (!empty($request->id)) {
+            $return = $return->where('users.id', '=', $request->id);
+        }
+
+        if (!empty($request->name)) {
+            $return = $return->where('users.name', 'like', '%' . $request->name . '%');
+        }
+
+        if (!empty($request->username)) {
+            $return = $return->where('users.username', 'like', '%' . $request->username . '%');
+        }
+
+        if (!empty($request->phone)) {
+            $return = $return->where('users.phone', 'like', '%' . $request->phone . '%');
+        }
+
+        if (!empty($request->address)) {
+            $return = $return->where('users.address', 'like', '%' . $request->address . '%');
+        }
+
+        if (!empty($request->role)) {
+            $return = $return->where('users.role', 'like', '%' . $request->role . '%');
+        }
+
+        if (!empty($request->status)) {
+            $return = $return->where('users.status', '=', $request->status);
+        }
+
+        if (!empty($request->start_date)) {
+            $return = $return->where('users.created_at', '>=', $request->start_date);
+        }
+
+        if (!empty($request->end_date)) {
+            $return = $return->where('users.created_at', '<=', $request->end_date);
+        }
+
+        //search end
+
+        $perPage = $request->get('per_page', 100); // Default pagination limit
+        return $return->paginate($perPage);
+    }
+
+    public function getProfile()
+    {
+        if (!empty($this->photo) && file_exists('public/backend/upload/profile/' . $this->photo)) {
+            return url('public/backend/upload/profile/' . $this->photo);
+        } else {
+            return url('public/backend/upload/profile/user.png');
+        }
+    }
+
 }
