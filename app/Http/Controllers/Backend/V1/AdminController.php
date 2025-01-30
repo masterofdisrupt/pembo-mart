@@ -12,16 +12,16 @@ class AdminController
 {
     public function AdminDashboard(Request $request)
     {
-        return view('admin.index');
+        return view('backend.admin.index');
     }
 
-    public function admin_profile(Request $request)
+    public function profile(Request $request)
     {
         $data['getRecord'] = User::find(Auth::user()->id);
-        return view('admin.admin_profile', $data);
+        return view('backend.admin.admin_profile', $data);
     }
 
-    public function update(Request $request)
+    public function profile_update(Request $request)
     {
         // Validate input
         $validatedData = $request->validate([
@@ -62,11 +62,15 @@ class AdminController
 
         // Handle file upload
         if ($request->hasFile('photo')) {
+            if (!empty($user->getProfile())) {
+                unlink(public_path('backend/upload/profile/') . $user->photo);
+            }
+
             $file = $request->file('photo');
             $filename = Str::random(30) . '.' . $file->getClientOriginalExtension();
 
             // Store file securely
-            $file->move(public_path('upload'), $filename);
+            $file->move(public_path('backend/upload/profile/'), $filename);
             $user->photo = $filename;
         }
 
@@ -77,15 +81,21 @@ class AdminController
     }
 
 
-    public function admin_users(Request $request)
+    public function users(Request $request)
     {
-        // $data['getRecord'] = User::getRecord($request);
+        $data['getRecord'] = User::getRecord($request);
         // $data['TotalAdmin'] = User::where('role', '=', 'admin')->where('is_delete', '=', 0)->count();
         // $data['TotalAgent'] = User::where('role', '=', 'agent')->where('is_delete', '=', 0)->count();
         // $data['TotalUser'] = User::where('role', '=', 'user')->where('is_delete', '=', 0)->count();
         // $data['TotalActive'] = User::where('status', '=', 'active')->where('is_delete', '=', 0)->count();
         // $data['TotalInActive'] = User::where('status', '=', 'inactive')->where('is_delete', '=', 0)->count();
         // $data['Total'] = User::where('is_delete', '=', 0)->count();
-        return view('admin.users.list');
+        return view('backend.admin.users.list', $data);
+    }
+
+    public function view_users($id)
+    {
+        $data['getRecord'] = User::find($id);
+        return view('backend.admin.users.view', $data);
     }
 }
