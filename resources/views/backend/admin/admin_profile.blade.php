@@ -1,4 +1,4 @@
-@extends('admin.admin_dashboard')
+@extends('backend.admin.admin_dashboard')
 @section('admin')
     <div class="page-content">
 
@@ -163,7 +163,7 @@
                                         <label class="form-label">Profile Image</label>
                                         <input type="file" class="form-control" name="photo">
                                         @if (!empty($getRecord->photo))
-                                            <img src="{{ asset('public/upload/' . $getRecord->photo) }}"
+                                            <img src="{{ asset('public/backend/upload/profile/' . $getRecord->photo) }}"
                                                 style="width: 10%; height: 10%;">
                                         @endif
                                         @error('photo')

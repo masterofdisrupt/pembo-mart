@@ -1,4 +1,4 @@
-@extends('admin.admin_dashboard')
+@extends('backend.admin.admin_dashboard')
 @section('admin')
     <div class="page-content">
         @include('_message')
@@ -54,9 +54,9 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Name</label>
+                                        <label for="" class="form-label">First Name</label>
                                         <input type="text" name="name" class="form-control"
-                                            value="{{ Request()->name }}" placeholder="Enter name">
+                                            value="{{ Request()->name }}" placeholder="Enter First Name">
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
@@ -164,14 +164,15 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Name</th>
+                                        <th>First Name</th>
+                                        <th>Middle Name</th>
+                                        <th>Surname</th>
                                         <th>Username</th>
                                         <th>Email</th>
                                         <th>Photo</th>
                                         <th>Phone</th>
                                         <th>Website</th>
                                         <th>Address</th>
-                                        {{-- <th>About</th> --}}
                                         <th>Role</th>
                                         <th>Status</th>
                                         <th>Created At</th>
@@ -179,7 +180,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{--
+
                                     @forelse ($getRecord as $value)
                                         <form class="a_form{{ $value->id }}" method="POST">
 
@@ -195,13 +196,14 @@
                                                     <button type="button" class="btn btn-success submitform"
                                                         id="{{ $value->id }}">Save</button>
                                                 </td>
+                                                <td>{{ $value->middle_name }}</td>
+                                                <td>{{ $value->surname }}</td>
                                                 <td>{{ $value->username }}</td>
                                                 <td>{{ $value->email }}</td>
                                                 <td>
-                                                    @if (!empty($value->photo))
-                                                        <a href="{{ asset('upload/' . $value->photo) }}"
-                                                            data-lightbox="example-set">
-                                                            <img src="{{ asset('upload/' . $value->photo) }}"
+                                                    @if (!empty($value->getProfile()))
+                                                        <a href="{{ $value->getProfile() }}" data-lightbox="example-set">
+                                                            <img src="{{ $value->getProfile() }}"
                                                                 style="width: 100%; height: 100%;">
                                                         </a>
                                                     @endif
@@ -209,7 +211,6 @@
                                                 <td>{{ $value->phone }}</td>
                                                 <td>{{ $value->website }}</td>
                                                 <td>{{ $value->address }}</td>
-                                                 <td>{{ $value->about }}</td> leave--
                                                 <td>
                                                     @if ($value->role === 'admin')
                                                         <span class="badge bg-info">Admin</span>
@@ -220,11 +221,6 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    {{-- leave @if ($value->status === 'active')
-                                                        <span class="badge bg-primary">Active</span>
-                                                    @else
-                                                        <span class="badge bg-danger">Inactive</span>
-                                                    @endif
                                                     <select name="" class="form-control changeStatus"
                                                         id="{{ $value->id }}" style="width: 170px;">
                                                         <option {{ $value->status === 'active' ? 'selected' : '' }}
@@ -280,12 +276,12 @@
                                             <td colspan="100%">No Record Found.</td>
                                         </tr>
                                     @endforelse
-                                    --}}
+
                                 </tbody>
                             </table>
                         </div>
                         <div style="padding: 20px; float: right;">
-                            {{-- {!! $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() !!} --}}
+                            {!! $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() !!}
 
                         </div>
 

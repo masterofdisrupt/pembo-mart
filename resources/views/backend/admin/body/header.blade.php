@@ -215,7 +215,10 @@
                     <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         @if (!empty(Auth::user()->photo))
-                            <img src="{{ asset('public/upload/' . Auth::user()->photo) }}" alt="profile"
+                            <img src="{{ asset('public/backend/upload/profile/' . Auth::user()->photo) }}"
+                                alt="profile" class="wd-30 ht-30 rounded-circle">
+                        @else
+                            <img src="{{ asset('public/backend/upload/profile/user.png') }}" alt="default profile"
                                 class="wd-30 ht-30 rounded-circle">
                         @endif
 
@@ -224,9 +227,14 @@
                         <div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
                             <div class="mb-3">
                                 @if (!empty(Auth::user()->photo))
-                                    <img src="{{ asset('public/upload/' . Auth::user()->photo) }}"
-                                        class="wd-80 ht-80 rounded-circle">
+                                    <img src="{{ asset('public/backend/upload/profile/' . Auth::user()->photo) }}"
+                                        alt="profile" class="wd-100 ht-100 rounded-circle">
+                                @else
+                                    <img src="{{ asset('public/backend/upload/profile/user.png') }}"
+                                        alt="default profile" class="wd-100 ht-100 rounded-circle">
                                 @endif
+
+
 
                             </div>
                             <div class="text-center">

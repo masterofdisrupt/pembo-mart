@@ -43,20 +43,20 @@
     <div class="main-wrapper">
 
         <!-- partial:partials/_sidebar.html -->
-        @include('agent.layouts.sidebar')
+        @include('backend.agent.layouts.sidebar')
 
         <!-- partial -->
 
         <div class="page-wrapper">
 
             <!-- partial:partials/_navbar.html -->
-            @include('agent.layouts.header')
+            @include('backend.agent.layouts.header')
             <!-- partial -->
 
             @yield('agent')
 
             <!-- partial:partials/_footer.html -->
-            @include('agent.layouts.footer')
+            @include('backend.agent.layouts.footer')
             <!-- partial -->
 
         </div>

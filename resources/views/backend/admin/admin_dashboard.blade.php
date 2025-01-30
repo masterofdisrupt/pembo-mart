@@ -51,20 +51,20 @@
     <div class="main-wrapper">
 
         <!-- partial:partials/_sidebar.html -->
-        @include('admin.body.sidebar')
+        @include('backend.admin.body.sidebar')
 
         <!-- partial -->
 
         <div class="page-wrapper">
 
             <!-- partial:partials/_navbar.html -->
-            @include('admin.body.header')
+            @include('backend.admin.body.header')
             <!-- partial -->
 
             @yield('admin')
 
             <!-- partial:partials/_footer.html -->
-            @include('admin.body.footer')
+            @include('backend.admin.body.footer')
             <!-- partial -->
 
         </div>

@@ -1,4 +1,4 @@
-@extends('admin.admin_dashboard')
+@extends('backend.admin.admin_dashboard')
 @section('admin')
     <div class="page-content">
 
@@ -437,7 +437,7 @@
     </div>
 @endsection
 
-{{-- @section('script')
+@section('script')
     <script type="text/javascript">
         $(function() {
             'use strict'
@@ -511,7 +511,7 @@
                     },
                     yaxis: {
                         title: {
-                            text: 'Number of Sales',
+                            text: 'Number of Users',
                             style: {
                                 size: 9,
                                 color: colors.muted
@@ -557,4 +557,4 @@
         });
         // Monthly Users Chart - END
     </script>
-@endsection --}}
+@endsection

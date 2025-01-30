@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+   |--------------------------------------------------------------------------
+   | Default Avatar
+   |--------------------------------------------------------------------------
+   |
+   | This value specifies the default avatar path for users. You can update
+   | this path as needed. Use it wherever a default user image is required.
+   |
+   */
+
+    'default_avatar' => 'public/backend/upload/profile/profilePic.jpg',
+
 ];
