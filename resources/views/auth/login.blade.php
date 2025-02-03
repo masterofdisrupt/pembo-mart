@@ -48,7 +48,7 @@
                         <div class="card">
                             <div class="row">
                                 <div class="col-md-4 pe-md-0">
-                                    <img src="{{ asset('public/upload/login.png') }}" alt=""
+                                    <img src="{{ asset('public/backend/upload/login.png') }}" alt="login image"
                                         style="height: 100%; width: 100%;">
                                 </div>
                                 <div class="col-md-8 ps-md-0">
