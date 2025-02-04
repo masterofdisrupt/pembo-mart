@@ -41,6 +41,7 @@ class EmailController
 
         // Fetch all sent email records (optional, if you need to display them as well)
         $data['getRecord'] = ComposeEmailModel::where('is_sent', 0)
+            ->where('is_delete', 0)
             ->orderBy('created_at', 'desc')
             ->paginate(40);
 
@@ -52,7 +53,7 @@ class EmailController
 
 
 
-    public function email_sent_delete(Request $request)
+    public function sent_delete(Request $request)
     {
         // dd($request->all());
         $emailIds = explode(',', $request->input('email_ids'));
@@ -67,6 +68,21 @@ class EmailController
 
     }
 
+    public function email_read($id, Request $request)
+    {
+        $data['getRecord'] = ComposeEmailModel::find($id);
+        return view('backend.admin.email.read', $data);
+    }
 
+    public function read_delete($id, Request $request)
+    {
+        $deleteRecord = ComposeEmailModel::getSingleEmail($id);
+        if ($deleteRecord) {
+            $deleteRecord->is_delete = 1; // Soft delete by setting is_delete to 1
+            $deleteRecord->save();
+        }
+
+        return redirect(route('email.send'))->with('success', "Sent Email Successfully Moved to Trash!");
+    }
 
 }
