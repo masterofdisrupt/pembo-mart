@@ -32,7 +32,10 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/email/compose', [EmailController::class, 'email_compose']);
     Route::post('admin/email/post', [EmailController::class, 'email_store']);
     Route::get('admin/email/sent', [EmailController::class, 'email_sent'])->name('email.send');
-    Route::delete('admin/email_sent', [EmailController::class, 'email_sent_delete'])->name('email.delete');
+    Route::delete('admin/email_sent', [EmailController::class, 'sent_delete'])->name('sent.delete');
+    Route::get('admin/email/read/{id}', [EmailController::class, 'email_read'])->name('email.read');
+    Route::get('admin/email/read_delete/{id}', [EmailController::class, 'read_delete'])->name('read.delete');
+
 
 
 
