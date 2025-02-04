@@ -50,7 +50,7 @@
                                         <div class="btn-group me-2">
                                             <button class="btn btn-outline-primary" type="button">Archive</button>
                                             <button class="btn btn-outline-primary" type="button">Spam</button>
-                                            <form id="deleteForm" action="{{ route('email.delete') }}" method="POST"
+                                            <form id="deleteForm" action="{{ route('sent.delete') }}" method="POST"
                                                 style="display: none;">
                                                 @csrf
                                                 @method('DELETE')
@@ -97,7 +97,7 @@
                                                 <a class="favorite" href="javascript:;"><span><i
                                                             data-feather="star"></i></span></a>
                                             </div>
-                                            <a href="" class="email-list-detail">
+                                            <a href="{{ route('email.read', $value->id) }}" class="email-list-detail">
                                                 <div class="content">
                                                     <span class="from">{{ $value->subject }}</span>
                                                     <p class="msg">{{ $value->description }}</p>
