@@ -29,6 +29,10 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('admin/users/view/{id}', [AdminController::class, 'view_users']);
 
+    Route::get('admin/users/add', [AdminController::class, 'admin_add_users'])->name('admin.add.users');
+    Route::post('admin/users/add', [AdminController::class, 'add_users_store'])->name('add.users.store');
+
+
     Route::get('admin/email/compose', [EmailController::class, 'email_compose']);
     Route::post('admin/email/post', [EmailController::class, 'email_store']);
     Route::get('admin/email/sent', [EmailController::class, 'email_sent'])->name('email.send');
