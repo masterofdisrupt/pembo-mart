@@ -1,4 +1,4 @@
-@extends('agent.agent_dashboard')
+@extends('backend.agent.agent_dashboard')
 @section('agent')
     <div class="page-content">
 

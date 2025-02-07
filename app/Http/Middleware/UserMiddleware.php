@@ -17,7 +17,7 @@ class UserMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-            return redirect('login')->with('error', 'Please login first.');
+            return redirect(route('show.login'))->with('error', 'Please login first.');
         }
 
         if (Auth::user()->role === 'user') { // User
@@ -25,7 +25,7 @@ class UserMiddleware
         }
 
         Auth::logout();
-        return redirect('/')->with('error', 'Access denied.');
+        return redirect(route('show.login'))->with('error', 'Access denied.');
     }
 
 }

@@ -82,8 +82,20 @@ class User extends Authenticatable
             $return = $return->where('users.name', 'like', '%' . $request->name . '%');
         }
 
+        if (!empty($request->middle_name)) {
+            $return = $return->where('users.middle_name', 'like', '%' . $request->middle_name . '%');
+        }
+
+        if (!empty($request->surname)) {
+            $return = $return->where('users.surname', 'like', '%' . $request->surname . '%');
+        }
+
         if (!empty($request->username)) {
             $return = $return->where('users.username', 'like', '%' . $request->username . '%');
+        }
+
+        if (!empty($request->email)) {
+            $return = $return->where('users.email', 'like', '%' . $request->email . '%');
         }
 
         if (!empty($request->phone)) {

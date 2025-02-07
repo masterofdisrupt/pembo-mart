@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Mail\ForgotPasswordMail;
+use App\Http\Requests\ResetPassword;
+use Session;
 use Mail;
 use Auth;
 use Hash;
@@ -158,6 +160,32 @@ class AuthController
         request()->session()->regenerateToken();
         return redirect()->route('login')->with('success', 'You have been logged out successfully.');
     }
+
+    public function set_new_password($token)
+    {
+        $data['token'] = $token;
+        return view('auth.reset_password', $data);
+    }
+
+    public function new_password_store($token, ResetPassword $request)
+    {
+        // Find the user by token or return 404
+        $user = User::where('remember_token', $token)->firstOrFail();
+
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->remember_token = Str::random(50); // Regenerate token
+        $user->status = 'active'; // Ensure account is active
+        $user->save();
+
+        // Ensure user is logged out before redirecting to login
+        Auth::logout();
+        Session::flush();
+
+        // Redirect user to login page with success message
+        return redirect(route('show.login'))->with('success', 'New Password Successfully Set. Please login.');
+    }
+
 
 
 }

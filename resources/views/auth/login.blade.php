@@ -90,7 +90,7 @@
                                                     Login
                                                 </button>
                                             </div>
-                                            <a href="{{ url('forgot') }}" class="d-block mt-3 text-muted">Forgot
+                                            <a href="{{ route('forgot') }}" class="d-block mt-3 text-muted">Forgot
                                                 Password</a>
 
                                         </form>

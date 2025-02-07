@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Backend\V1;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Mail\RegisteredEmailMail;
 use Auth;
 use Hash;
 use Str;
+use Mail;
 
 class AdminController
 {
@@ -98,4 +100,45 @@ class AdminController
         $data['getRecord'] = User::find($id);
         return view('backend.admin.users.view', $data);
     }
+
+    public function admin_add_users(Request $request)
+    {
+        return view('backend.admin.users.add');
+    }
+
+    public function add_users_store(Request $request)
+    {
+        $user = request()->validate([
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
+            'username' => 'required|string|min:3|max:20|alpha_dash|unique:users,username', // Alphanumeric, dashes, underscores
+            'email' => 'required|email|max:255|unique:users,email', // Valid email format
+            'role' => 'required',
+            'status' => 'required',
+        ]);
+
+        $user = new User;
+        $user->name = trim($request->name);
+        $user->middle_name = trim($request->middle_name);
+        $user->surname = trim($request->surname);
+        $user->username = trim($request->username);
+        $user->email = trim($request->email);
+        $user->phone = trim($request->phone);
+        $user->role = trim($request->role);
+        $user->status = trim($request->status);
+        $user->remember_token = Str::random(50);
+
+        if (!empty($request->file('photo'))) {
+            $file = $request->file('photo');
+            $randomStr = Str::random(30);
+            $filename = $randomStr . '.' . $file->getClientOriginalExtension();
+            $file->move('upload/', $filename);
+            $user->photo = $filename;
+        }
+        $user->save();
+
+        Mail::to($user->email)->send(new RegisteredEmailMail($user));
+
+        return redirect(route('admin.users'))->with('success', "New account successfully created.");
+    }
+
 }

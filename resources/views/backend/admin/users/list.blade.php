@@ -45,7 +45,7 @@
                         <h6 class="card-title">Search Users</h6>
                         <form action="" method="GET">
                             <div class="row">
-                                <div class="col-sm-2">
+                                <div class="col-sm-3">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Id</label>
                                         <input type="text" name="id" class="form-control"
@@ -59,6 +59,23 @@
                                             value="{{ Request()->name }}" placeholder="Enter First Name">
                                     </div>
                                 </div>
+
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Middle Name</label>
+                                        <input type="text" name="middle_name" class="form-control"
+                                            value="{{ Request()->middle_name }}" placeholder="Enter Middle Name">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Surname</label>
+                                        <input type="text" name="surname" class="form-control"
+                                            value="{{ Request()->surname }}" placeholder="Enter Surname">
+                                    </div>
+                                </div>
+
                                 <div class="col-sm-3">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Username</label>
@@ -66,21 +83,21 @@
                                             class="form-control" placeholder="Enter username">
                                     </div>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Email Id</label>
                                         <input type="text" name="email" value="{{ Request()->email }}"
                                             class="form-control" placeholder="Enter email id">
                                     </div>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Phone Number</label>
                                         <input type="text" name="phone" value="{{ Request()->phone }}"
                                             class="form-control" placeholder="Enter phone number">
                                     </div>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Address</label>
                                         <input type="text" name="address" value="{{ Request()->address }}"
@@ -130,8 +147,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Search</button>
-                            <a href="{{ url('admin/users') }}" class="btn btn-danger">Reset</a>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a href="{{ url('admin/users') }}" class="btn btn-danger ms-2">Reset</a>
+                            </div>
+
                         </form>
                     </div>
                 </div>
@@ -153,7 +173,7 @@
                         <div class="d-flex justify-content-between align-items-center flex-wrap">
                             <h4 class="card-title">Users List</h4>
                             <div class="d-flex align-items-center">
-                                <a href="{{ url('admin/users/add') }}" class="btn btn-primary">
+                                <a href="{{ route('admin.add.users') }}" class="btn btn-primary">
                                     Add User
                                 </a>
                             </div>

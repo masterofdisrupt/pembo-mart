@@ -10,14 +10,18 @@ use App\Http\Controllers\Backend\V1\EmailController;
 
 
 
-Route::get('login', [AuthController::class, 'showLogin']);
-Route::post('login', [AuthController::class, 'authLogin'])->name('login');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
+Route::post('/login', [AuthController::class, 'authLogin'])->name('login');
 
-Route::get('forgot', [AuthController::class, 'forgot']);
+Route::get('forgot', [AuthController::class, 'forgot'])->name('forgot');
 Route::post('forgot', [AuthController::class, 'forgotPassword']);
 Route::get('reset/{token}', [AuthController::class, 'reset']);
 Route::post('reset/{token}', [AuthController::class, 'postReset']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('set_new_password/{token}', [AuthController::class, 'set_new_password'])->name('show.set.new.password');
+Route::post('set_new_password/{token}', [AuthController::class, 'new_password_store'])->name('set.new.password');
+
 
 
 
@@ -28,6 +32,10 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin_profile/update', [AdminController::class, 'profile_update']);
     Route::get('admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('admin/users/view/{id}', [AdminController::class, 'view_users']);
+
+    Route::get('admin/users/add', [AdminController::class, 'admin_add_users'])->name('admin.add.users');
+    Route::post('admin/users/add', [AdminController::class, 'add_users_store'])->name('add.users.store');
+
 
     Route::get('admin/email/compose', [EmailController::class, 'email_compose']);
     Route::post('admin/email/post', [EmailController::class, 'email_store']);
