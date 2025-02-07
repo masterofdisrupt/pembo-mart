@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Backend\V1;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Mail\RegisteredEmailMail;
 use Auth;
 use Hash;
 use Str;
+use Mail;
 
 class AdminController
 {
@@ -134,9 +136,9 @@ class AdminController
         }
         $user->save();
 
-        // Mail::to($user->email)->send(new RegisteredMail($user));
+        Mail::to($user->email)->send(new RegisteredEmailMail($user));
 
-        return redirect(route('admin.users'))->with('success', "Record successfully added.");
+        return redirect(route('admin.users'))->with('success', "New account successfully created.");
     }
 
 }
