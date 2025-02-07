@@ -74,8 +74,8 @@
                                             name="name" value="{{ old('name', $getRecord->name) }}" required>
                                         @error('name')
                                             <div class="text-danger">
-                                                {{ $message }}<br>
-                                                Name can only contain letters and spaces.
+                                                {{ __('Name can only contain letters and spaces.') }}
+
                                             </div>
                                         @enderror
                                     </div>
@@ -86,8 +86,7 @@
                                             name="middle_name" value="{{ old('name', $getRecord->middle_name) }}">
                                         @error('middle_name')
                                             <div class="text-danger">
-                                                {{ $message }}<br>
-                                                Middle Name can only contain letters and spaces.
+                                                {{ __('Middle Name can only contain letters and spaces.') }}
                                             </div>
                                         @enderror
                                     </div>
@@ -98,8 +97,8 @@
                                             name="surname" value="{{ old('surname', $getRecord->surname) }}">
                                         @error('surname')
                                             <div class="text-danger">
-                                                {{ $message }}<br>
-                                                Surname can only contain letters and spaces.
+                                                {{ __('Surname can only contain letters and spaces.') }}
+
                                             </div>
                                         @enderror
                                     </div>
@@ -168,46 +167,46 @@
                                         @endif
                                         @error('photo')
                                             <div class="text-danger">
+                                                {{ __('Only specific image formats allowed, jpeg,png,jpg,gif size <= 2MB.') }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Address</label>
+                                        <input type="text" class="form-control" placeholder="Address" name="address"
+                                            value="{{ old('address', $getRecord->address) }}">
+                                        @error('address')
+                                            <div class="text-danger">
                                                 {{ $message }}<br>
-                                                Only specific image formats allowed, jpeg,png,jpg,gif size <= 2MB </div>
-                                                @enderror
-                                        </div>
+                                            </div>
+                                        @enderror
+                                    </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Address</label>
-                                            <input type="text" class="form-control" placeholder="Address"
-                                                name="address" value="{{ old('address', $getRecord->address) }}">
-                                            @error('address')
-                                                <div class="text-danger">
-                                                    {{ $message }}<br>
-                                                </div>
-                                            @enderror
-                                        </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">About</label>
+                                        <textarea name="about" class="form-control" placeholder="About">{{ old('about', $getRecord->about) }}</textarea>
+                                        @error('about')
+                                            <div class="text-danger">
+                                                {{ $message }}<br>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">About</label>
-                                            <textarea name="about" class="form-control" placeholder="About">{{ old('about', $getRecord->about) }}</textarea>
-                                            @error('about')
-                                                <div class="text-danger">
-                                                    {{ $message }}<br>
+                                            </div>
+                                        @enderror
+                                    </div>
 
-                                                </div>
-                                            @enderror
-                                        </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Website</label>
+                                        <input type="text" class="form-control" placeholder="Website" name="website"
+                                            value="{{ old('website', $getRecord->website) }}">
+                                        @error('website')
+                                            <div class="text-danger">
+                                                {{ $message }}<br>
+                                            </div>
+                                        @enderror
+                                    </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Website</label>
-                                            <input type="text" class="form-control" placeholder="Website"
-                                                name="website" value="{{ old('website', $getRecord->website) }}">
-                                            @error('website')
-                                                <div class="text-danger">
-                                                    {{ $message }}<br>
-                                                </div>
-                                            @enderror
-                                        </div>
-
-                                        <button type="submit" class="btn btn-primary me-2">Submit</button>
-                                        <button class="btn btn-secondary">Cancel</button>
+                                    <button type="submit" class="btn btn-primary me-2">Submit</button>
+                                    <button class="btn btn-secondary">Cancel</button>
                                 </form>
 
                             </div>
