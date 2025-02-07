@@ -10,14 +10,18 @@ use App\Http\Controllers\Backend\V1\EmailController;
 
 
 
-Route::get('login', [AuthController::class, 'showLogin']);
-Route::post('login', [AuthController::class, 'authLogin'])->name('login');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
+Route::post('/login', [AuthController::class, 'authLogin'])->name('login');
 
-Route::get('forgot', [AuthController::class, 'forgot']);
+Route::get('forgot', [AuthController::class, 'forgot'])->name('forgot');
 Route::post('forgot', [AuthController::class, 'forgotPassword']);
 Route::get('reset/{token}', [AuthController::class, 'reset']);
 Route::post('reset/{token}', [AuthController::class, 'postReset']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('set_new_password/{token}', [AuthController::class, 'set_new_password'])->name('show.set.new.password');
+Route::post('set_new_password/{token}', [AuthController::class, 'new_password_store'])->name('set.new.password');
+
 
 
 
