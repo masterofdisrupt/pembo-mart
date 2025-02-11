@@ -252,7 +252,7 @@
                                                 <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
                                                 <td>
                                                     <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ url('admin/users/view/' . $value->id) }}"><svg
+                                                        href="{{ route('admin.users.view', $value->id) }}"><svg
                                                             xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
                                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -263,7 +263,7 @@
                                                         </svg> <span class="">View</span></a>
 
                                                     <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ url('admin/users/edit/' . $value->id) }}"><svg
+                                                        href="{{ route('admin.users.edit', $value->id) }}"><svg
                                                             xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
                                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -274,9 +274,10 @@
                                                             </path>
                                                         </svg> <span class="">Edit</span></a>
 
-                                                    <a class="dropdown-item d-flex align-items-center"
+                                                    <a id="delete-form-{{ $value->id }}"
+                                                        class="dropdown-item d-flex align-items-center"
                                                         href="{{ url('admin/users/delete/' . $value->id) }}"
-                                                        onclick="return confirm('Are you sure you want to delete?')"><svg
+                                                        onclick="confirmDelete({{ $value->id }})"><svg
                                                             xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
                                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -287,6 +288,7 @@
                                                                 d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
                                                             </path>
                                                         </svg> <span class="">Delete</span></a>
+
                                                 </td>
 
                                             </tr>
@@ -346,5 +348,12 @@
                 }
             });
         });
+    </script>
+    <script type="text/javascript">
+        function confirmDelete(id) {
+            if (confirm("Are you sure you want to delete this user?")) {
+                document.getElementById("delete-form-" + id).submit();
+            }
+        }
     </script>
 @endsection
