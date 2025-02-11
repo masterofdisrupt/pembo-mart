@@ -20,7 +20,7 @@
 
         .wrapper {
             background: linear-gradient(135deg, #2dce89, #28a745);
-            max-width: 450px;
+            max-width: 600px;
             width: 100%;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -35,7 +35,7 @@
         }
 
         .form header {
-            font-size: 26px;
+            font-size: 36px;
             font-weight: 700;
             padding-bottom: 10px;
             color: #fff;
@@ -62,9 +62,9 @@
         }
 
         .form form .input input {
-            height: 45px;
-            width: 24.5vw;
-            font-size: 16px;
+            height: 7vh;
+            width: 29vw;
+            font-size: 2rem;
             padding: 0 15px;
             border-radius: 8px;
             border: none;
@@ -79,10 +79,10 @@
         }
 
         .form form .button input {
-            height: 50px;
+            height: 7vh;
             border: none;
             color: #fff;
-            font-size: 18px;
+            font-size: 2rem;
             font-weight: bold;
             background: linear-gradient(135deg, #ff105f, #ffad06);
             border-radius: 8px;
