@@ -76,7 +76,7 @@
                                     <input type="email" class="form-control" name="email" autocomplete="off"
                                         placeholder="Email" value="{{ old('email') }}" onblur="duplicateEmail(this)"
                                         required>
-                                    {{-- <span style="color: red;" class="duplicate_message">{{ $errors->first('email') }}</span> --}}
+
                                     @error('email')
                                         <div class="text-danger">
                                             {{ $message }}<br>
@@ -127,7 +127,7 @@
                             </div>
 
                             <button type="submit" class="btn btn-primary me-2">Submit</button>
-                            <a href="{{ url('admin/users') }}" class="btn btn-secondary">Back</a>
+                            <a href="{{ route('admin.users') }}" class="btn btn-secondary">Back</a>
                         </form>
 
                     </div>

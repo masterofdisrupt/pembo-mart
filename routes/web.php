@@ -31,11 +31,13 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::post('admin_profile/update', [AdminController::class, 'profile_update']);
     Route::get('admin/users', [AdminController::class, 'users'])->name('admin.users');
-    Route::get('admin/users/view/{id}', [AdminController::class, 'view_users']);
+    Route::get('admin/users/view/{id}', [AdminController::class, 'view_users'])->name('admin.users.view');
 
     Route::get('admin/users/add', [AdminController::class, 'admin_add_users'])->name('admin.add.users');
     Route::post('admin/users/add', [AdminController::class, 'add_users_store'])->name('add.users.store');
-
+    Route::get('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit'])->name('admin.users.edit');
+    Route::post('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit_store'])->name('admin.users.edit.store');
+    Route::get('admin/users/delete/{id}', [AdminController::class, 'admin_users_delete'])->name('admin.users.delete');
 
     Route::get('admin/email/compose', [EmailController::class, 'email_compose']);
     Route::post('admin/email/post', [EmailController::class, 'email_store']);
@@ -43,9 +45,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::delete('admin/email_sent', [EmailController::class, 'sent_delete'])->name('sent.delete');
     Route::get('admin/email/read/{id}', [EmailController::class, 'email_read'])->name('email.read');
     Route::get('admin/email/read_delete/{id}', [EmailController::class, 'read_delete'])->name('read.delete');
-
-
-
 
 });
 

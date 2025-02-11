@@ -86,12 +86,7 @@ class AdminController
     public function users(Request $request)
     {
         $data['getRecord'] = User::getRecord($request);
-        // $data['TotalAdmin'] = User::where('role', '=', 'admin')->where('is_delete', '=', 0)->count();
-        // $data['TotalAgent'] = User::where('role', '=', 'agent')->where('is_delete', '=', 0)->count();
-        // $data['TotalUser'] = User::where('role', '=', 'user')->where('is_delete', '=', 0)->count();
-        // $data['TotalActive'] = User::where('status', '=', 'active')->where('is_delete', '=', 0)->count();
-        // $data['TotalInActive'] = User::where('status', '=', 'inactive')->where('is_delete', '=', 0)->count();
-        // $data['Total'] = User::where('is_delete', '=', 0)->count();
+
         return view('backend.admin.users.list', $data);
     }
 
@@ -131,14 +126,67 @@ class AdminController
             $file = $request->file('photo');
             $randomStr = Str::random(30);
             $filename = $randomStr . '.' . $file->getClientOriginalExtension();
-            $file->move('upload/', $filename);
+            // Store file securely
+            $file->move(public_path('backend/upload/profile/'), $filename);
             $user->photo = $filename;
         }
+
         $user->save();
 
         Mail::to($user->email)->send(new RegisteredEmailMail($user));
 
         return redirect(route('admin.users'))->with('success', "New account successfully created.");
     }
+
+    public function admin_users_edit($id)
+    {
+        $data['getRecord'] = User::find($id);
+        return view('backend.admin.users.edit', $data);
+    }
+
+    public function admin_users_edit_store($id, Request $request)
+    {
+        $save = User::find($id);
+        $save->name = trim($request->name);
+        $save->middle_name = trim($request->middle_name);
+        $save->surname = trim($request->surname);
+        $save->username = trim($request->username);
+        $save->phone = trim($request->phone);
+        $save->role = trim($request->role);
+        $save->status = trim($request->status);
+
+
+        if (!empty($request->file('photo'))) {
+            if (!empty($save->getProfile())) {
+
+                unlink(public_path('backend/upload/profile/') . $save->photo);
+
+            }
+            $ext = $request->file('photo')->getClientOriginalExtension();
+            $file = $request->file('photo');
+            $randomStr = date('Ymdhis') . Str::random(20);
+            $filename = strtolower($randomStr) . '.' . $ext;
+            $file->move(public_path('backend/upload/profile/'), $filename);
+
+            $save->photo = $filename;
+        }
+
+        $save->save();
+
+        return redirect(route('admin.users'))->with('success', "Record Successfully Updated.");
+    }
+
+    public function admin_users_delete($id, Request $request)
+    {
+        $userDelete = User::find($id);
+
+        if ($userDelete) {
+            $userDelete->is_delete = 1; // Soft delete by setting is_delete to 1
+            $userDelete->save();
+        }
+
+        return redirect(route('admin.users'))->with('success', "User Record successfully Moved to Trash!");
+    }
+
 
 }

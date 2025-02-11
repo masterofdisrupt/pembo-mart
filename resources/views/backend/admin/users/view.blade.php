@@ -3,7 +3,7 @@
     <div class="page-content">
         <nav class="page-breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Users</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.users') }}">Users</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Users View</li>
             </ol>
         </nav>

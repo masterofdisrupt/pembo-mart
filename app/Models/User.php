@@ -71,7 +71,7 @@ class User extends Authenticatable
 
         $return = self::select('users.*')
             ->where('is_delete', '=', 0)
-            ->orderBy('id', 'asc');
+            ->orderBy('id', 'desc');
 
         // Search start
         if (!empty($request->id)) {
