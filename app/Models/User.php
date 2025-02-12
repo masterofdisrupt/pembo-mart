@@ -114,12 +114,9 @@ class User extends Authenticatable
             $return = $return->where('users.status', '=', $request->status);
         }
 
-        if (!empty($request->start_date)) {
-            $return = $return->where('users.created_at', '>=', $request->start_date);
-        }
 
-        if (!empty($request->end_date)) {
-            $return = $return->where('users.created_at', '<=', $request->end_date);
+        if (!empty(Request::get('start_date')) && !empty(Request::get('end_date'))) {
+            $return = $return->where('users.created_at', '>=', Request::get('start_date'))->where('users.created_at', '<=', Request::get('end_date'));
         }
 
         //search end
