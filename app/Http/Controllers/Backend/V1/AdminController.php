@@ -86,7 +86,12 @@ class AdminController
     public function users(Request $request)
     {
         $data['getRecord'] = User::getRecord($request);
-
+        $data['TotalAdmin'] = User::where('role', '=', 'admin')->where('is_delete', '=', 0)->count();
+        $data['TotalAgent'] = User::where('role', '=', 'agent')->where('is_delete', '=', 0)->count();
+        $data['TotalUser'] = User::where('role', '=', 'user')->where('is_delete', '=', 0)->count();
+        $data['TotalActive'] = User::where('status', '=', 'active')->where('is_delete', '=', 0)->count();
+        $data['TotalInActive'] = User::where('status', '=', 'inactive')->where('is_delete', '=', 0)->count();
+        $data['Total'] = User::where('is_delete', '=', 0)->count();
         return view('backend.admin.users.list', $data);
     }
 
@@ -184,9 +189,71 @@ class AdminController
             $userDelete->is_delete = 1; // Soft delete by setting is_delete to 1
             $userDelete->save();
         }
-
+        // Check out soft delete using Ajax. To be worked on future date
         return redirect(route('admin.users'))->with('success', "User Record successfully Moved to Trash!");
     }
 
+    public function admin_users_update(Request $request)
+    {
+        $getRecord = User::find($request->input('edit_id'));
+        $getRecord->name = $request->input('edit_name');
+        $getRecord->middle_name = $request->input('edit_middle_name');
+        $getRecord->surname = $request->input('edit_surname');
+        $getRecord->save();
+        $json['success'] = 'Data Updated Successfully';
+        echo json_encode($json);
+    }
+
+    public function admin_users_changeStatus(Request $request)
+    {
+        $order = User::find($request->order_id);
+        $order->status = $request->status_id;
+        $order->save();
+        $json['success'] = true;
+        echo json_encode($json);
+    }
+
+    public function my_profile(Request $request)
+    {
+        $data['getRecord'] = User::find(Auth::user()->id);
+        return view('backend.admin.profile', $data);
+    }
+
+    public function my_profile_update(Request $request)
+    {
+        // dd($request->all());
+        $user = request()->validate([
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
+            'middle_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
+            'surname' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(), // Valid email format
+            'password' => 'nullable|string|min:8|max:255|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).+$/', // At least one uppercase, lowercase, number, and special character
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Only specific image formats allowed, size <= 2MB
+
+
+        ]);
+
+        $user = User::find(Auth::user()->id);
+        $user->name = trim($request->name);
+        $user->email = trim($request->email);
+
+        if ($request->password) {
+            $user->password = Hash::make($request->password);
+        }
+
+        if (!empty($request->file('photo'))) {
+            $file = $request->file('photo');
+            $randomStr = Str::random(30);
+            $filename = $randomStr . '.' . $file->getClientOriginalExtension();
+
+            $file->move(public_path('backend/upload/profile/'), $filename);
+
+            $user->photo = $filename;
+        }
+
+        $user->save();
+
+        return redirect(route('admin.my.profile'))->with('success', "My Account Successfully Updated.");
+    }
 
 }
