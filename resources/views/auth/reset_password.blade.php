@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <title>Pembo Mart | Password Set</title>
 
     <style type="text/css">
@@ -20,7 +22,7 @@
 
         .wrapper {
             background: linear-gradient(135deg, #2dce89, #28a745);
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -62,9 +64,13 @@
         }
 
         .form form .input input {
-            height: 7vh;
-            width: 29vw;
-            font-size: 2rem;
+            height: 60px;
+            /* Fixed height */
+            width: 100%;
+            /* Full width */
+            max-width: 468px;
+            /* Prevents oversized fields */
+            font-size: 1.5rem;
             padding: 0 15px;
             border-radius: 8px;
             border: none;
@@ -79,7 +85,7 @@
         }
 
         .form form .button input {
-            height: 7vh;
+            height: 60px;
             border: none;
             color: #fff;
             font-size: 2rem;

@@ -11,27 +11,27 @@
 
             <div class="d-flex align-items-center">
                 <a href="javascript:void(0)" class="btn btn-info">
-                    {{-- {{ $TotalAdmin }}  --}}
+                    {{ $TotalAdmin }}
                     Admin
                 </a>&nbsp;&nbsp;
                 <a href="javascript:void(0)" class="btn btn-secondary">
-                    {{-- {{ $TotalAgent }}  --}}
+                    {{ $TotalAgent }}
                     Agent
                 </a>&nbsp;&nbsp;
                 <a href="javascript:void(0)" class="btn btn-primary">
-                    {{-- {{ $TotalUser }}  --}}
+                    {{ $TotalUser }}
                     User
                 </a>&nbsp;&nbsp;
                 <a href="javascript:void(0)" class="btn btn-warning">
-                    {{-- {{ $TotalActive }}  --}}
+                    {{ $TotalActive }}
                     Active
                 </a>&nbsp;&nbsp;
                 <a href="javascript:void(0)" class="btn btn-danger">
-                    {{-- {{ $TotalInActive }}  --}}
+                    {{ $TotalInActive }}
                     In Active
                 </a>&nbsp;&nbsp;
                 <a href="javascript:void(0)" class="btn btn-success">
-                    {{-- {{ $Total }}  --}}
+                    {{ $Total }}
                     Total
                 </a>
             </div>
@@ -216,8 +216,22 @@
                                                     <button type="button" class="btn btn-success submitform"
                                                         id="{{ $value->id }}">Save</button>
                                                 </td>
-                                                <td>{{ $value->middle_name }}</td>
-                                                <td>{{ $value->surname }}</td>
+                                                <td style="min-width: 150px;">
+                                                    <input type="hidden" name="edit_id" value="{{ $value->id }}">
+                                                    <input type="text" class="form-control" name="edit_middle_name"
+                                                        value="{{ old('middle_name', $value->middle_name) }}">
+                                                    <br>
+                                                    <button type="button" class="btn btn-success submitform"
+                                                        id="{{ $value->id }}">Save</button>
+                                                </td>
+                                                <td style="min-width: 150px;">
+                                                    <input type="hidden" name="edit_id" value="{{ $value->id }}">
+                                                    <input type="text" class="form-control" name="edit_surname"
+                                                        value="{{ old('surname', $value->surname) }}">
+                                                    <br>
+                                                    <button type="button" class="btn btn-success submitform"
+                                                        id="{{ $value->id }}">Save</button>
+                                                </td>
                                                 <td>{{ $value->username }}</td>
                                                 <td>{{ $value->email }}</td>
                                                 <td>
@@ -274,9 +288,10 @@
                                                             </path>
                                                         </svg> <span class="">Edit</span></a>
 
+                                                    {{-- Checkout soft delete using Ajax --}}
                                                     <a id="delete-form-{{ $value->id }}"
                                                         class="dropdown-item d-flex align-items-center"
-                                                        href="{{ url('admin/users/delete/' . $value->id) }}"
+                                                        href="{{ route('admin.users.delete', $value->id) }}"
                                                         onclick="confirmDelete({{ $value->id }})"><svg
                                                             xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
@@ -321,7 +336,7 @@
             // alert(id);
             $.ajax({
 
-                url: "{{ url('admin/users/update') }}",
+                url: "{{ route('admin.users.update') }}",
                 method: "POST",
                 data: $('.a_form' + id).serialize(),
                 dataType: 'json',
@@ -336,7 +351,7 @@
             var order_id = $(this).attr('id');
             $.ajax({
                 type: 'GET',
-                url: "{{ url('admin/users/changeStatus') }}",
+                url: "{{ route('admin.users.change.status') }}",
                 data: {
                     status_id: status_id,
                     order_id: order_id
