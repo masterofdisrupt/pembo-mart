@@ -5,7 +5,7 @@
   <nav class="sidebar">
       <div class="sidebar-header">
           <a href="{{ route('admin.dashboard') }}" class="sidebar-brand">
-              PEMBO<span>UI</span>
+              PEMBO<span>MART</span>
           </a>
           <div class="sidebar-toggler not-active">
               <span></span>

@@ -17,4 +17,14 @@ class ComposeEmailModel extends Model
     {
         return self::find($id);
     }
+
+    public static function getAgentRecord($user_id)
+    {
+        return self::select('compose_email.*')
+            ->where('compose_email.user_id', '=', $user_id)
+            ->where('is_sent', 0)
+            ->where('is_delete', 0)
+            ->orderBy('created_at', 'desc')
+            ->paginate(40);
+    }
 }

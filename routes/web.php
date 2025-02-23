@@ -62,6 +62,8 @@ Route::group(['middleware' => 'admin'], function () {
 Route::group(['middleware' => 'agent'], function () {
     Route::get('agent/dashboard', [DashboardController::class, 'dashboard'])->name('agent.dashboard');
 
+    Route::get('agent/email/inbox', [AgentController::class, 'agent_email_inbox'])->name('agent.email.inbox');
+
 });
 
 Route::group(['middleware' => 'user'], function () {
