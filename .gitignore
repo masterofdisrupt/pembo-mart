@@ -5,6 +5,7 @@
 /public/storage
 /public/assets
 /public/backend/upload
+/public/backend/upload/profile
 /storage/*.key
 /vendor
 .env

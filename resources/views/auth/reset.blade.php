@@ -66,15 +66,30 @@
                                                 <label for="login" class="form-label">Password</label>
                                                 <input type="password" name="password" class="form-control"
                                                     placeholder="Password" required>
-                                                <span style="color: red;">{{ $errors->first('password') }}</span>
+                                                 @if ($errors->has('password'))
+                        <span class="text-danger">
+                            {{ $errors->first('password') }} <br>
+                            Password must include at least:
+                            <ul>
+                                <li>One uppercase letter</li>
+                                <li>One lowercase letter</li>
+                                <li>One number</li>
+                                <li>One special character</li>
+                            </ul>
+                        </span>
+                    @endif
                                             </div>
 
                                             <div class="mb-3">
                                                 <label class="form-label">Confirm Password</label>
                                                 <input type="password" name="password_confirmation" class="form-control"
-                                                    placeholder="Confirm Password" required>
-                                                <span
-                                                    style="color: red;">{{ $errors->first('password_confirmation') }}</span>
+                                                    placeholder="Enter Confirm Password" required>
+                                                @error('password_confirmation')
+                        <div class="text-danger">
+                            {{ $message }}<br>
+                              {{ __('The confirmation password must match the password.') }} 
+                        </div>
+                    @enderror
                                             </div>
 
 

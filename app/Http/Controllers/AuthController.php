@@ -89,7 +89,8 @@ class AuthController
     {
         // Validate the input
         $request->validate([
-            'email' => 'required|email',
+
+            'email' => 'required|email|max:255',
         ]);
 
         $user = User::where('email', strtolower($request->email))->first();
@@ -134,7 +135,7 @@ class AuthController
     {
         // Validate the input fields
         $request->validate([
-            'password' => 'required|min:8|confirmed', // Checks password and password_confirmation match
+            'password' => 'required|string|min:8|max:255|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).+$/|confirmed', // Checks password and password_confirmation match
         ]);
 
         // Fetch user based on the token

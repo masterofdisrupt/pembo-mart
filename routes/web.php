@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Backend\V1\AdminController;
 use App\Http\Controllers\Backend\V1\AgentController;
 use App\Http\Controllers\Backend\V1\EmailController;
+use App\Http\Controllers\Backend\V1\UserTimeController;
 
 
 
@@ -51,6 +52,16 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/email/read/{id}', [EmailController::class, 'email_read'])->name('email.read');
     Route::get('admin/email/read_delete/{id}', [EmailController::class, 'read_delete'])->name('read.delete');
 
+    // User Week Start
+    Route::get('admin/week', [UserTimeController::class, 'week_list'])->name('week.list');
+    Route::get('admin/week/add', [UserTimeController::class, 'week_add'])->name('week.add');
+    Route::post('admin/week/add', [UserTimeController::class, 'week_store'])->name('week.add.store');
+    Route::get('admin/week/edit/{id}', [UserTimeController::class, 'week_edit'])->name('week.edit');
+    Route::post('admin/week/edit/{id}', [UserTimeController::class, 'week_update'])->name('week.edit.update');
+    Route::get('admin/week/delete/{id}', [UserTimeController::class, 'week_delete'])->name('week.delete');
+
+    // User Week End
+
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
     Route::post('admin/my_profile/update', [AdminController::class, 'my_profile_update'])->name('admin.my.profile.update');
@@ -61,6 +72,8 @@ Route::group(['middleware' => 'admin'], function () {
 
 Route::group(['middleware' => 'agent'], function () {
     Route::get('agent/dashboard', [DashboardController::class, 'dashboard'])->name('agent.dashboard');
+
+    Route::get('agent/email/inbox', [AgentController::class, 'agent_email_inbox'])->name('agent.email.inbox');
 
 });
 
