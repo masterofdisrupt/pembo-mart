@@ -70,20 +70,17 @@
                                     @enderror
                                 </div>
                             </div>
+                            
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Email<span style="color: red;">*</span></label>
                                 <div class="col-sm-9">
                                     <input type="email" class="form-control" name="email" autocomplete="off"
                                         placeholder="Email" value="{{ old('email') }}" onblur="duplicateEmail(this)"
                                         required>
-
-                                    @error('email')
-                                        <div class="text-danger">
-                                            {{ $message }}<br>
-                                        </div>
-                                    @enderror
+                                    <span style="color: red;" class="duplicate_message">{{ $errors->first('email') }}</span>
                                 </div>
                             </div>
+                            
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Photo</label>
                                 <div class="col-sm-9">
@@ -138,14 +135,14 @@
     </div>
 @endsection
 
-{{-- @section('script')
+@section('script')
     <script type="text/javascript">
         function duplicateEmail(element) {
             var email = $(element).val();
             // alert(email);
             $.ajax({
                 type: "POST",
-                url: "{{ url('checkemail') }}", //Create Route in admin route
+                url: "{{ route('check.email') }}", //Create Route in admin route
                 data: {
                     email: email,
                     _token: "{{ csrf_token() }}"
@@ -165,4 +162,5 @@
             });
         }
     </script>
-@endsection --}}
+@endsection
+
