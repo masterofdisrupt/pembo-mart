@@ -69,7 +69,12 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/week_time/edit/{id}', [UserTimeController::class, 'week_time_edit'])->name('week.time.edit');
     Route::post('admin/week_time/edit/{id}', [UserTimeController::class, 'week_time_update'])->name('week.time.edit.update');
     Route::get('admin/week_time/delete/{id}', [UserTimeController::class, 'week_time_delete'])->name('week.time.delete');
+// Week Time End
 
+// Schedule Start
+    Route::get('admin/schedule', [UserTimeController::class, 'admin_schedule'])->name('admin.schedule');
+    Route::post('admin/schedule', [UserTimeController::class, 'admin_schedule_update'])->name('admin.schedule.update');
+    // Schedule End
 
 
     // Personal profile edit
