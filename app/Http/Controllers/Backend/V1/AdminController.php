@@ -213,6 +213,19 @@ class AdminController
         echo json_encode($json);
     }
 
+    public function checkEmail(Request $request)
+    {
+        $email = $request->input('email');
+        $isExists = User::where('email', '=', $email)->first();
+
+        if ($isExists) {
+            return response()->json(array("exists" => true));
+        } else {
+            return response()->json(array("exists" => false));
+
+        }
+    }
+
     public function my_profile(Request $request)
     {
         $data['getRecord'] = User::find(Auth::user()->id);
