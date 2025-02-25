@@ -42,6 +42,8 @@ Route::group(['middleware' => 'admin'], function () {
     // Single user name update
     Route::post('admin/users/update', [AdminController::class, 'admin_users_update'])->name('admin.users.update');
     Route::get('admin/users/changeStatus', [AdminController::class, 'admin_users_changeStatus'])->name('admin.users.change.status');
+    Route::post('checkemail', [AdminController::class, 'checkEmail'])->name('check.email');
+
 
 
 
