@@ -111,7 +111,7 @@
 
               <li class="nav-item nav-category">User Week</li>
               <li class="nav-item" @if (Request::segment(2) == 'week') active @endif>
-                  <a href="{{ url('admin/week') }}" class="nav-link">
+                  <a href="{{ route('week.list') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Week</span>
                   </a>
@@ -119,7 +119,7 @@
 
 
               <li class="nav-item" @if (Request::segment(2) == 'week_time') active @endif>
-                  <a href="{{ url('admin/week_time') }}" class="nav-link">
+                  <a href="{{ route('week.time.list') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Week Time</span>
                   </a>

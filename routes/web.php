@@ -62,6 +62,21 @@ Route::group(['middleware' => 'admin'], function () {
 
     // User Week End
 
+    // Week Time Start
+    Route::get('admin/week_time', [UserTimeController::class, 'week_time_list'])->name('week.time.list');
+    Route::get('admin/week_time/add', [UserTimeController::class, 'week_time_add'])->name('week.time.add');
+    Route::post('admin/week_time/add', [UserTimeController::class, 'week_time_store'])->name('week.time.add.store');
+    Route::get('admin/week_time/edit/{id}', [UserTimeController::class, 'week_time_edit'])->name('week.time.edit');
+    Route::post('admin/week_time/edit/{id}', [UserTimeController::class, 'week_time_update'])->name('week.time.edit.update');
+    Route::get('admin/week_time/delete/{id}', [UserTimeController::class, 'week_time_delete'])->name('week.time.delete');
+// Week Time End
+
+// Schedule Start
+    Route::get('admin/schedule', [UserTimeController::class, 'admin_schedule'])->name('admin.schedule');
+    Route::post('admin/schedule', [UserTimeController::class, 'admin_schedule_update'])->name('admin.schedule.update');
+    // Schedule End
+
+
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
     Route::post('admin/my_profile/update', [AdminController::class, 'my_profile_update'])->name('admin.my.profile.update');
