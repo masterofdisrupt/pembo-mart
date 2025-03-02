@@ -7,6 +7,7 @@ use App\Http\Controllers\Backend\V1\AdminController;
 use App\Http\Controllers\Backend\V1\AgentController;
 use App\Http\Controllers\Backend\V1\EmailController;
 use App\Http\Controllers\Backend\V1\UserTimeController;
+use App\Http\Controllers\Backend\V1\NotificationController;
 
 
 
@@ -45,8 +46,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('checkemail', [AdminController::class, 'checkEmail'])->name('check.email');
 
 
-
-
     Route::get('admin/email/compose', [EmailController::class, 'email_compose']);
     Route::post('admin/email/post', [EmailController::class, 'email_store']);
     Route::get('admin/email/sent', [EmailController::class, 'email_sent'])->name('email.send');
@@ -77,6 +76,11 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/schedule', [UserTimeController::class, 'admin_schedule'])->name('admin.schedule');
     Route::post('admin/schedule', [UserTimeController::class, 'admin_schedule_update'])->name('admin.schedule.update');
     // Schedule End
+
+    // Notification Start
+    Route::get('admin/notification', [NotificationController::class, 'notification_index'])->name('notification');
+    Route::post('admin/notification_send', [NotificationController::class, 'notification_send'])->name('notification.send');
+    // Notification End
 
 
     // Personal profile edit
