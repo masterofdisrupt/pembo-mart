@@ -8,6 +8,8 @@ use App\Http\Controllers\Backend\V1\AgentController;
 use App\Http\Controllers\Backend\V1\EmailController;
 use App\Http\Controllers\Backend\V1\UserTimeController;
 use App\Http\Controllers\Backend\V1\NotificationController;
+use App\Http\Controllers\Backend\V1\QRCodeController;
+use App\Http\Controllers\Backend\V1\ProductController;
 
 
 
@@ -70,7 +72,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/week_time/edit/{id}', [UserTimeController::class, 'week_time_edit'])->name('week.time.edit');
     Route::post('admin/week_time/edit/{id}', [UserTimeController::class, 'week_time_update'])->name('week.time.edit.update');
     Route::get('admin/week_time/delete/{id}', [UserTimeController::class, 'week_time_delete'])->name('week.time.delete');
-// Week Time End
+    // Week Time End
 
 // Schedule Start
     Route::get('admin/schedule', [UserTimeController::class, 'admin_schedule'])->name('admin.schedule');
@@ -82,6 +84,14 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/notification_send', [NotificationController::class, 'notification_send'])->name('notification.send');
     // Notification End
 
+    // Product Start
+    Route::get('admin/product', [ProductController::class, 'list'])->name('product');
+    Route::get('admin/product/add', [ProductController::class, 'add_product'])->name('product.add');
+    Route::post('admin/product/add', [ProductController::class, 'store_product'])->name('product.store');
+    Route::get('admin/product/edit/{id}', [ProductController::class, 'edit_product'])->name('product.edit');
+    Route::put('admin/product/edit/{id}', [ProductController::class, 'update_product'])->name('product.update');
+    Route::delete('admin/product/delete/{id}', [ProductController::class, 'delete_product'])->name('product.delete');
+    // Product End
 
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
