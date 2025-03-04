@@ -10,6 +10,7 @@ use App\Http\Controllers\Backend\V1\UserTimeController;
 use App\Http\Controllers\Backend\V1\NotificationController;
 use App\Http\Controllers\Backend\V1\QRCodeController;
 use App\Http\Controllers\Backend\V1\ProductController;
+use App\Http\Controllers\Backend\V1\SMTPController;
 
 
 
@@ -92,6 +93,12 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/product/edit/{id}', [ProductController::class, 'update_product'])->name('product.update');
     Route::delete('admin/product/delete/{id}', [ProductController::class, 'delete_product'])->name('product.delete');
     // Product End
+
+    // SMTP Start
+    Route::get('admin/smtp', [SMTPController::class, 'smtp_list'])->name('smtp');
+    Route::put('admin/smtp_update', [SMTPController::class, 'smtp_update'])->name('smtp.update');
+    // SMTP End
+
 
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
