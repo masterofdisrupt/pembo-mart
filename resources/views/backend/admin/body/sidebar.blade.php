@@ -47,11 +47,12 @@
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/product_cart') }}" class="nav-link">
+                  <a href="{{ route('product') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Product Cart</span>
+                      <span class="link-title">Product</span>
                   </a>
               </li>
+
 
               <li class="nav-item">
                   <a href="{{ url('admin/order') }}" class="nav-link">
@@ -60,7 +61,8 @@
                   </a>
               </li>
 
-              <li class="nav-item">
+
+             <li class="nav-item">
                   <a href="{{ url('admin/blog') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Blog</span>
@@ -170,15 +172,9 @@
                   </a>
               </li>
 
-              <li class="nav-item">
-                  <a href="{{ url('admin/qrcode') }}" class="nav-link">
-                      <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">QRCode</span>
-                  </a>
-              </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/smtp') }}" class="nav-link">
+                  <a href="{{ route('smtp') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">SMTP</span>
                   </a>
