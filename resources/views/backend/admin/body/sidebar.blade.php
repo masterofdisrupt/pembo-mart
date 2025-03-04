@@ -174,7 +174,7 @@
 
 
               <li class="nav-item">
-                  <a href="{{ url('admin/smtp') }}" class="nav-link">
+                  <a href="{{ route('smtp') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">SMTP</span>
                   </a>
