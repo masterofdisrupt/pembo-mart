@@ -28,7 +28,7 @@ class ColourController
 {
     // Validate input
     $validatedData = $request->validate([
-        'name' => 'required|string|max:255|unique:colours,name',
+        'name' => 'required|string|max:255|unique:colour,name',
     ]);
 
     try {
