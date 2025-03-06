@@ -40,7 +40,7 @@
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/colour') }}" class="nav-link">
+                  <a href="{{ route('colour') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Colour</span>
                   </a>
