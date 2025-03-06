@@ -6,18 +6,18 @@
         <nav class="page-breadcrumb">
 
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Week Time</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Week Time List</li>
+                <li class="breadcrumb-item"><a href="#">Colour</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Colour List</li>
             </ol>
         </nav>
 
-        {{-- Search Start --}}
+        {{-- Search Box Start --}}
         <div class="row">
             <div class="col-lg-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">Search Week Time</h6>
-                        <form action="" method="get">
+                        <h6 class="card-title">Search Blog</h6>
+                        <form action="">
                             <div class="row">
                                 <div class="col-sm-2">
                                     <div class="mb-3">
@@ -27,22 +27,32 @@
                                     </div>
                                 </div>
 
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Week Time Name</label>
+                                        <label for="" class="form-label">Name</label>
                                         <input type="text" name="name" class="form-control"
-                                            value="{{ Request()->name }}" placeholder="Enter Week Time Name">
+                                            value="{{ Request()->name }}" placeholder="Enter Name">
                                     </div>
                                 </div>
+
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Created At</label>
+                                        <input type="date" name="created_at" class="form-control"
+                                            value="{{ Request()->created_at }}">
+                                    </div>
+                                </div>
+
                             </div>
                             <button type="submit" class="btn btn-primary">Search</button>
-                            <a href="{{ route('week.time.list') }}" class="btn btn-danger">Reset</a>
+                            <a href="{{ route('colour') }}" class="btn btn-danger">Reset</a>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        {{-- Search End --}}
+        {{-- Search Box End --}}
+        <br>
 
         <div class="row">
             <div class="col-lg-12 stretch-card">
@@ -50,10 +60,20 @@
                     <div class="card-body">
 
                         <div class="d-flex justify-content-between align-items-center flex-wrap">
-                            <h4 class="card-title">Week Time List</h4>
+                            <h4 class="card-title">Colour List</h4>
                             <div class="d-flex align-items-center">
-                                <a href="{{ route('week.time.add') }}" class="btn btn-primary">
-                                    Add Week Time
+
+                                <a href="{{ url('admin/pdf_colour') }}" class="btn btn-info">
+                                    PDF Colour
+                                </a>
+                                &nbsp;&nbsp;&nbsp;
+
+                                <a href="{{ url('admin/pdf_demo') }}" class="btn btn-primary">
+                                    PDF Demo
+                                </a>
+                                &nbsp;&nbsp;&nbsp;
+                                <a href="{{ route('colour.add') }}" class="btn btn-primary">
+                                    Add Colour
                                 </a>
                             </div>
                         </div>
@@ -64,6 +84,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Name</th>
+                                        <th>Status</th>
                                         <th>Created At</th>
                                         <th>Action</th>
                                     </tr>
@@ -73,13 +94,19 @@
                                         <tr class="table-info text-dark">
                                             <td>{{ $value->id }}</td>
                                             <td>{{ $value->name }}</td>
+                                            <td>
+                                                <label class="switch">
+                                                    <input type="checkbox" class="statusCheckbox" data-id="{{ $value->id }}" {{ $value->status ? 'checked' : '' }}>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </td>
                                             <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
 
                                             <td>
-
-
+                                                <a href="{{ url('admin/colour/pdf/' . $value->id) }}"
+                                                    class="btn btn-success">PDF</a>
                                                 <a class="dropdown-item"
-                                                    href="{{ route('week.time.edit', $value->id) }}"><svg
+                                                    href="{{ route('colour.edit', $value->id) }}"><svg
                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -88,8 +115,7 @@
                                                         </path>
                                                     </svg> <span class="">Edit</span></a>
 
-                                                
-                                                 <form action="{{ route('week.time.delete', $value->id) }}" 
+                                                <form action="{{ route('colour.delete', $value->id) }}" 
                                                     method="POST" onsubmit="return confirm('Are you sure you want to delete?');" 
                                                     style="display:inline;">
     @csrf
@@ -113,9 +139,11 @@
                                             <td colspan="100%">No Record Found.</td>
                                         </tr>
                                     @endforelse
-
                                 </tbody>
                             </table>
+                        </div>
+                        <div style="padding: 20px; float: right;">
+
                         </div>
 
                     </div>

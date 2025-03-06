@@ -11,6 +11,7 @@ use App\Http\Controllers\Backend\V1\NotificationController;
 use App\Http\Controllers\Backend\V1\QRCodeController;
 use App\Http\Controllers\Backend\V1\ProductController;
 use App\Http\Controllers\Backend\V1\SMTPController;
+use App\Http\Controllers\Backend\V1\ColourController;
 
 
 
@@ -62,18 +63,18 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/week/add', [UserTimeController::class, 'week_store'])->name('week.add.store');
     Route::get('admin/week/edit/{id}', [UserTimeController::class, 'week_edit'])->name('week.edit');
     Route::post('admin/week/edit/{id}', [UserTimeController::class, 'week_update'])->name('week.edit.update');
-    Route::get('admin/week/delete/{id}', [UserTimeController::class, 'week_delete'])->name('week.delete');
+    Route::delete('admin/week/delete/{id}', [UserTimeController::class, 'week_delete'])->name('week.delete');
 
     // User Week End
 
-    // Week Time Start
+    // User Week Time Start
     Route::get('admin/week_time', [UserTimeController::class, 'week_time_list'])->name('week.time.list');
     Route::get('admin/week_time/add', [UserTimeController::class, 'week_time_add'])->name('week.time.add');
     Route::post('admin/week_time/add', [UserTimeController::class, 'week_time_store'])->name('week.time.add.store');
     Route::get('admin/week_time/edit/{id}', [UserTimeController::class, 'week_time_edit'])->name('week.time.edit');
     Route::post('admin/week_time/edit/{id}', [UserTimeController::class, 'week_time_update'])->name('week.time.edit.update');
-    Route::get('admin/week_time/delete/{id}', [UserTimeController::class, 'week_time_delete'])->name('week.time.delete');
-    // Week Time End
+    Route::delete('admin/week_time/delete/{id}', [UserTimeController::class, 'week_time_delete'])->name('week.time.delete');
+    // User Week Time End
 
 // Schedule Start
     Route::get('admin/schedule', [UserTimeController::class, 'admin_schedule'])->name('admin.schedule');
@@ -98,6 +99,17 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/smtp', [SMTPController::class, 'smtp_list'])->name('smtp');
     Route::put('admin/smtp_update', [SMTPController::class, 'smtp_update'])->name('smtp.update');
     // SMTP End
+
+    // Colour Start
+    Route::get('admin/colour', [ColourController::class, 'colour_list'])->name('colour');
+    Route::get('admin/colour/add', [ColourController::class, 'add_colour'])->name('colour.add');
+    Route::post('admin/colour/add', [ColourController::class, 'store_colour'])->name('colour.store');
+    Route::get('admin/colour/edit/{id}', [ColourController::class, 'edit_colour'])->name('colour.edit');
+    Route::put('admin/colour/edit/{id}', [ColourController::class, 'update_colour'])->name('colour.update');
+    Route::delete('admin/colour/delete/{id}', [ColourController::class, 'delete_colour'])->name('colour.delete');
+    Route::post('admin/colour/change_status', [ColourController::class, 'change_status'])->name('colour.change.status');
+    // Colour End
+
 
 
     // Personal profile edit
