@@ -12,6 +12,7 @@ use App\Http\Controllers\Backend\V1\QRCodeController;
 use App\Http\Controllers\Backend\V1\ProductController;
 use App\Http\Controllers\Backend\V1\SMTPController;
 use App\Http\Controllers\Backend\V1\ColourController;
+use App\Http\Controllers\Backend\V1\OrdersController;
 
 
 
@@ -110,7 +111,14 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/colour/change_status', [ColourController::class, 'change_status'])->name('colour.change.status');
     // Colour End
 
-
+    // Order Start
+    Route::get('admin/orders', [OrdersController::class, 'list_orders'])->name('orders');
+    Route::get('admin/orders/add', [OrdersController::class, 'add_orders'])->name('add.orders');
+    Route::post('admin/orders/add', [OrdersController::class, 'store_orders'])->name('store.orders');
+    Route::get('admin/orders/edit/{id}', [OrdersController::class, 'edit_orders'])->name('edit.orders');
+    Route::put('admin/orders/edit/{id}', [OrdersController::class, 'update_orders'])->name('update.orders');
+    Route::delete('admin/orders/delete/{id}', [OrdersController::class, 'delete_orders'])->name('delete.orders');
+    // Order End
 
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
