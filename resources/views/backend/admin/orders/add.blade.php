@@ -3,8 +3,8 @@
     <div class="page-content">
         <nav class="page-breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('orders') }}">Order</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Add Order</li>
+                <li class="breadcrumb-item"><a href="{{ route('orders') }}">Orders</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add Orders</li>
             </ol>
         </nav>
         <div class="row">
@@ -12,58 +12,60 @@
                 <div class="card">
                     <div class="card-body">
 
-                        <h6 class="card-title">Add Order</h6>
+                        <h6 class="card-title">Add Orders</h6>
 
-                        <form class="forms-sample" method="POST" action="{{ route('add.orders') }}">
-                            
+                        <form class="forms-sample" method="POST" action="{{ route('store.orders') }}">
                             @csrf
                             <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Product Name <span
-                                        style="color: red;">*</span></label>
+                                <label class="col-sm-3 col-form-label">Product Name <span class="text-danger">*</span></label>
                                 <div class="col-sm-9">
-                                    <select name="product_id" class="form-control">
+                                    <select name="product_id" class="form-control" required>
                                         <option value="">Select Product</option>
-                                        @foreach ($getProduct as $valueP)
-                                            <option value="{{ $valueP->id }}">{{ $valueP->title }}</option>
-                                        @endforeach
+                                        @forelse ($getProduct as $valueP)
+                                            <option value="{{ $valueP->id }}" {{ old('product_id') == $valueP->id ? 'selected' : '' }}>
+                                                {{ $valueP->title }}
+                                            </option>
+                                        @empty
+                                            <option disabled>No products available</option>
+                                        @endforelse
                                     </select>
-                                </div>
-                            </div>
-
-                             {{-- Colour Selection --}}
-                            <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Colour Name<span style="color: red;">*</span></label>
-                                <div class="col-sm-9">
-                                    @foreach ($getColour as $valueC)
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="colour_id[]" class="form-check-input" value="{{ $valueC->id }}">
-                                                {{ $valueC->name }}
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                    @error('colour_id')
-                                        <div class="text-danger">{{ $message }}</div>
+                                    @error('product_id')
+                                        <span class="text-danger">{{ $message }}</span>
                                     @enderror
-
                                 </div>
                             </div>
-
-
 
                             <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Qtys<span style="color: red;">*</span></label>
+                                <label class="col-sm-3 col-form-label">Colour Name <span class="text-danger">*</span></label>
                                 <div class="col-sm-9">
-
-                                    <input type="text" class="form-control" name="qtys" value="">
-
-
-
-
+                                    @forelse ($getColour as $valueC)
+                                        <div class="form-check">
+                                            <input type="checkbox" name="colour_id[]" value="{{ $valueC->id }}" class="form-check-input"
+                                                {{ (is_array(old('colour_id')) && in_array($valueC->id, old('colour_id'))) ? 'checked' : '' }}>
+                                            <label class="form-check-label">{{ $valueC->name }}</label>
+                                        </div>
+                                    @empty
+                                        <p>No colors available</p>
+                                    @endforelse
+                                    @error('colour_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary me-2">Submit</button>
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Qtys <span class="text-danger">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="qtys" min="1" required value="{{ old('qtys') }}">
+                                    @error('qtys')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary me-2" onclick="this.disabled=true; this.form.submit();">
+                                Submit
+                            </button>
                             <a href="{{ route('orders') }}" class="btn btn-secondary">Back</a>
                         </form>
 
@@ -71,6 +73,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
