@@ -55,9 +55,9 @@
 
 
               <li class="nav-item">
-                  <a href="{{ url('admin/order') }}" class="nav-link">
+                  <a href="{{ route('orders') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Order</span>
+                      <span class="link-title">Orders</span>
                   </a>
               </li>
 
