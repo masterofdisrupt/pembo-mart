@@ -21,17 +21,6 @@ class OrdersController
         return view('backend.admin.orders.list', compact('getOrders'));
     }
 
-// Optimize Query Performance
-// If the dataset is large, eager-loading may be necessary. Instead of fetching all records blindly, load only the required columns:
-
-// public function add_orders(Request $request)
-// {
-//     $getProduct = ProductModel::select('id', 'name')->get(); // Fetch only required columns
-//     $getColour = ColourModel::select('id', 'name')->get(); // Fetch only required columns
-
-//     return view('backend.admin.orders.add', compact('getProduct', 'getColour'));
-// }
-
 
     public function add_orders(Request $request)
 {
