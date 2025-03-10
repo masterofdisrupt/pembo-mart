@@ -43,7 +43,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/users/add', [AdminController::class, 'admin_add_users'])->name('admin.add.users');
     Route::post('admin/users/add', [AdminController::class, 'add_users_store'])->name('add.users.store');
     Route::get('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit'])->name('admin.users.edit');
-    Route::post('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit_store'])->name('admin.users.edit.store');
+    Route::put('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit_update'])->name('admin.users.edit.update');
     Route::get('admin/users/delete/{id}', [AdminController::class, 'admin_users_delete'])->name('admin.users.delete');
     // Single user name update
     Route::post('admin/users/update', [AdminController::class, 'admin_users_update'])->name('admin.users.update');
