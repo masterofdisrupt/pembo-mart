@@ -12,6 +12,7 @@ use App\Http\Controllers\Backend\V1\QRCodeController;
 use App\Http\Controllers\Backend\V1\ProductController;
 use App\Http\Controllers\Backend\V1\SMTPController;
 use App\Http\Controllers\Backend\V1\ColourController;
+use App\Http\Controllers\Backend\V1\OrdersController;
 
 
 
@@ -42,7 +43,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/users/add', [AdminController::class, 'admin_add_users'])->name('admin.add.users');
     Route::post('admin/users/add', [AdminController::class, 'add_users_store'])->name('add.users.store');
     Route::get('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit'])->name('admin.users.edit');
-    Route::post('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit_store'])->name('admin.users.edit.store');
+    Route::put('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit_update'])->name('admin.users.edit.update');
     Route::get('admin/users/delete/{id}', [AdminController::class, 'admin_users_delete'])->name('admin.users.delete');
     // Single user name update
     Route::post('admin/users/update', [AdminController::class, 'admin_users_update'])->name('admin.users.update');
@@ -110,7 +111,14 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/colour/change_status', [ColourController::class, 'change_status'])->name('colour.change.status');
     // Colour End
 
-
+    // Order Start
+    Route::get('admin/orders', [OrdersController::class, 'list_orders'])->name('orders');
+    Route::get('admin/orders/add', [OrdersController::class, 'add_orders'])->name('add.orders');
+    Route::post('admin/orders/add', [OrdersController::class, 'store_orders'])->name('store.orders');
+    Route::get('admin/orders/edit/{id}', [OrdersController::class, 'edit_orders'])->name('edit.orders');
+    Route::put('admin/orders/edit/{id}', [OrdersController::class, 'update_orders'])->name('update.orders');
+    Route::delete('admin/orders/delete/{id}', [OrdersController::class, 'delete_orders'])->name('delete.orders');
+    // Order End
 
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');

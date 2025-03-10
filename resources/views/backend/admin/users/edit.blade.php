@@ -15,13 +15,14 @@
                         <h6 class="card-title">Update User</h6>
 
                         <form class="forms-sample" method="POST"
-                            action="{{ route('admin.users.edit.store', $getRecord->id) }}" enctype="multipart/form-data">
-                            {{ csrf_field() }}
+                            action="{{ route('admin.users.edit.update', $getRecord->id) }}" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
                             <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Name <span style="color: red;">*</span></label>
+                                <label class="col-sm-3 col-form-label">First Name <span style="color: red;">*</span></label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="name" value="{{ $getRecord->name }}"
-                                        placeholder="Name" required>
+                                        placeholder="Enter First Name" required>
                                 </div>
                             </div>
 

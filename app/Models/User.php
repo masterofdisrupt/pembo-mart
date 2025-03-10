@@ -67,63 +67,33 @@ class User extends Authenticatable
     }
 
     static public function getRecord($request)
-    {
+{
+    $return = self::select('users.*')
+        ->where('is_delete', 0)
+        ->orderBy('id', 'desc');
 
-        $return = self::select('users.*')
-            ->where('is_delete', '=', 0)
-            ->orderBy('id', 'desc');
+    // Dynamic Search Conditions
+    $return->when($request->id, fn($query) => $query->where('users.id', $request->id));
+    $return->when($request->name, fn($query) => $query->where('users.name', 'like', "%{$request->name}%"));
+    $return->when($request->middle_name, fn($query) => $query->where('users.middle_name', 'like', "%{$request->middle_name}%"));
+    $return->when($request->surname, fn($query) => $query->where('users.surname', 'like', "%{$request->surname}%"));
+    $return->when($request->username, fn($query) => $query->where('users.username', 'like', "%{$request->username}%"));
+    $return->when($request->email, fn($query) => $query->where('users.email', 'like', "%{$request->email}%"));
+    $return->when($request->phone, fn($query) => $query->where('users.phone', 'like', "%{$request->phone}%"));
+    $return->when($request->address, fn($query) => $query->where('users.address', 'like', "%{$request->address}%"));
+    $return->when($request->role, fn($query) => $query->where('users.role', 'like', "%{$request->role}%"));
+    $return->when($request->status, fn($query) => $query->where('users.status', $request->status));
 
-        // Search start
-        if (!empty($request->id)) {
-            $return = $return->where('users.id', '=', $request->id);
-        }
-
-        if (!empty($request->name)) {
-            $return = $return->where('users.name', 'like', '%' . $request->name . '%');
-        }
-
-        if (!empty($request->middle_name)) {
-            $return = $return->where('users.middle_name', 'like', '%' . $request->middle_name . '%');
-        }
-
-        if (!empty($request->surname)) {
-            $return = $return->where('users.surname', 'like', '%' . $request->surname . '%');
-        }
-
-        if (!empty($request->username)) {
-            $return = $return->where('users.username', 'like', '%' . $request->username . '%');
-        }
-
-        if (!empty($request->email)) {
-            $return = $return->where('users.email', 'like', '%' . $request->email . '%');
-        }
-
-        if (!empty($request->phone)) {
-            $return = $return->where('users.phone', 'like', '%' . $request->phone . '%');
-        }
-
-        if (!empty($request->address)) {
-            $return = $return->where('users.address', 'like', '%' . $request->address . '%');
-        }
-
-        if (!empty($request->role)) {
-            $return = $return->where('users.role', 'like', '%' . $request->role . '%');
-        }
-
-        if (!empty($request->status)) {
-            $return = $return->where('users.status', '=', $request->status);
-        }
-
-
-        if (!empty(Request::get('start_date')) && !empty(Request::get('end_date'))) {
-            $return = $return->where('users.created_at', '>=', Request::get('start_date'))->where('users.created_at', '<=', Request::get('end_date'));
-        }
-
-        //search end
-
-        $perPage = $request->get('per_page', 100); // Default pagination limit
-        return $return->paginate($perPage);
+    // Date Range Filter
+    if (!empty($request->start_date) && !empty($request->end_date)) {
+        $return->whereBetween('users.created_at', [$request->start_date, $request->end_date]);
     }
+
+    // Pagination
+    $perPage = is_numeric($request->per_page) ? (int) $request->per_page : 10;
+    return $return->paginate($perPage);
+}
+
 
     public function getProfile()
     {
