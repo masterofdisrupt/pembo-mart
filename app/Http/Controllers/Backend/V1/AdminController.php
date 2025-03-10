@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backend\V1;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Mail\RegisteredEmailMail;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver; 
 use Auth;
 use Hash;
 use Str;
@@ -132,7 +134,10 @@ class AdminController
             $randomStr = Str::random(30);
             $filename = $randomStr . '.' . $file->getClientOriginalExtension();
             // Store file securely
-            $file->move(public_path('backend/upload/profile/'), $filename);
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file)->resize(300, 300); // Resize to prevent distortion
+            $image->save(public_path('backend/upload/profile/' . $filename));
+           
             $user->photo = $filename;
         }
 
@@ -145,41 +150,58 @@ class AdminController
 
     public function admin_users_edit($id)
     {
-        $data['getRecord'] = User::find($id);
-        return view('backend.admin.users.edit', $data);
+        $getRecord = User::findOrFail($id);
+        return view('backend.admin.users.edit', compact('getRecord'));
     }
 
-    public function admin_users_edit_store($id, Request $request)
-    {
-        $save = User::find($id);
-        $save->name = trim($request->name);
-        $save->middle_name = trim($request->middle_name);
-        $save->surname = trim($request->surname);
-        $save->username = trim($request->username);
-        $save->phone = trim($request->phone);
-        $save->role = trim($request->role);
-        $save->status = trim($request->status);
+  public function admin_users_edit_update(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
+        'username' => 'required|string|min:3|max:20|alpha_dash|unique:users,username,' . $id,
+        'email' => 'required|email|max:255|unique:users,email,' . $id,
+        'role' => 'required',
+        'status' => 'required',
+        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
+    // Check if user exists
+    $user = User::find($id);
+    if (!$user) {
+        return back()->with('error', 'User not found.');
+    }
+    
+    $user->name = trim($request->name);
+    $user->middle_name = trim($request->middle_name);
+    $user->surname = trim($request->surname);
+    $user->username = trim($request->username);
+    $user->email = trim($request->email);
+    $user->phone = trim($request->phone);
+    $user->role = trim($request->role);
+    $user->status = trim($request->status);
 
-        if (!empty($request->file('photo'))) {
-            if (!empty($save->getProfile())) {
-
-                unlink(public_path('backend/upload/profile/') . $save->photo);
-
-            }
-            $ext = $request->file('photo')->getClientOriginalExtension();
-            $file = $request->file('photo');
-            $randomStr = date('Ymdhis') . Str::random(20);
-            $filename = strtolower($randomStr) . '.' . $ext;
-            $file->move(public_path('backend/upload/profile/'), $filename);
-
-            $save->photo = $filename;
+    if ($request->hasFile('photo')) {
+        // Delete old photo if it exists
+        if (!empty($user->photo) && file_exists(public_path('backend/upload/profile/' . $user->photo))) {
+            unlink(public_path('backend/upload/profile/' . $user->photo));
         }
 
-        $save->save();
+        // Use Intervention ImageManager for resizing
+        $file = $request->file('photo');
+        $randomStr = Str::random(30);
+        $filename = $randomStr . '.' . $file->getClientOriginalExtension();
 
-        return redirect(route('admin.users'))->with('success', "Record Successfully Updated.");
+        $manager = new ImageManager(new Driver());
+        $image = $manager->read($file)->resize(300, 300); // Resize to prevent distortion
+        $image->save(public_path('backend/upload/profile/' . $filename));
+
+        $user->photo = $filename;
     }
+
+    $user->save();
+
+    return redirect(route('admin.users'))->with('success', "Record Successfully Updated.");
+}
 
     public function admin_users_delete($id, Request $request)
     {
