@@ -22,7 +22,7 @@
                                     <div class="mb-3">
                                         <label for="" class="form-label">ID</label>
                                         <input type="text" name="id" class="form-control"
-                                            value="{{ Request()->id }}" placeholder="Enter ID">
+                                            value="{{ request()->id }}" placeholder="Enter ID">
                                     </div>
                                 </div>
 
@@ -30,7 +30,7 @@
                                     <div class="mb-3">
                                         <label for="" class="form-label">Product Title</label>
                                         <input type="text" name="title" class="form-control"
-                                            value="{{ Request()->title }}" placeholder="Enter Product Title">
+                                            value="{{ request()->title }}" placeholder="Enter Product Title">
                                     </div>
                                 </div>
 
@@ -38,7 +38,7 @@
                                     <div class="mb-3">
                                         <label for="" class="form-label">Created At</label>
                                         <input type="date" name="created_at" class="form-control"
-                                            value="{{ Request()->created_at }}" placeholder="Enter Created At">
+                                            value="{{ request()->created_at }}" placeholder="Enter Created At">
                                     </div>
                                 </div>
 
@@ -46,7 +46,7 @@
                                     <div class="mb-3">
                                         <label for="" class="form-label">Updated At</label>
                                         <input type="date" name="updated_at" class="form-control"
-                                            value="{{ Request()->updated_at }}" placeholder="Enter Updated At">
+                                            value="{{ request()->updated_at }}" placeholder="Enter Updated At">
                                     </div>
                                 </div>
                             </div>
