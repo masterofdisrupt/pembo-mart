@@ -14,8 +14,6 @@
 
                         <h6 class="card-title">View Blog</h6>
 
-                        <form class="forms-sample" method="" action="">
-                            @csrf
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">ID</label>
                                 <div class="col-sm-9">
@@ -57,13 +55,12 @@
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Updated At</label>
                                 <div class="col-sm-9">
-                                    {{ date('d-m-Y H:s A', strtotime($getRecord->updated_at)) }}
+                                    {{ date('d-m-Y H:i:s A', strtotime($getRecord->updated_at)) }}
 
                                 </div>
                             </div>
 
                             <a href="{{ route('blog') }}" class="btn btn-secondary">Back</a>
-                        </form>
 
                     </div>
                 </div>
