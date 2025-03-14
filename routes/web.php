@@ -13,6 +13,7 @@ use App\Http\Controllers\Backend\V1\ProductController;
 use App\Http\Controllers\Backend\V1\SMTPController;
 use App\Http\Controllers\Backend\V1\ColourController;
 use App\Http\Controllers\Backend\V1\OrdersController;
+use App\Http\Controllers\Backend\V1\BlogController;
 
 
 
@@ -119,6 +120,16 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/orders/edit/{id}', [OrdersController::class, 'update_orders'])->name('update.orders');
     Route::delete('admin/orders/delete/{id}', [OrdersController::class, 'delete_orders'])->name('delete.orders');
     // Order End
+
+    // Blog Start
+    Route::get('admin/blog', [BlogController::class, 'list_blog'])->name('blog');
+    Route::get('admin/blog/add', [BlogController::class, 'add_blog'])->name('add.blog');
+    Route::post('admin/blog/add', [BlogController::class, 'store_blog'])->name('store.blog');
+    Route::get('admin/blog/edit/{id}', [BlogController::class, 'edit_blog'])->name('edit.blog');
+    Route::put('admin/blog/edit/{id}', [BlogController::class, 'update_blog'])->name('update.blog');
+    Route::get('admin/blog/view/{id}', [BlogController::class, 'view_blog'])->name('view.blog');
+    Route::delete('admin/blog/delete/{id}', [BlogController::class, 'delete_blog'])->name('delete.blog');
+    // Blog End
 
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
