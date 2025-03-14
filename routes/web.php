@@ -14,6 +14,7 @@ use App\Http\Controllers\Backend\V1\SMTPController;
 use App\Http\Controllers\Backend\V1\ColourController;
 use App\Http\Controllers\Backend\V1\OrdersController;
 use App\Http\Controllers\Backend\V1\BlogController;
+use App\Http\Controllers\Backend\V1\LocationController;
 
 
 
@@ -136,6 +137,15 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/pdf_colour', [ColourController::class, 'pdf_colour'])->name('pdf.colour');
     Route::get('admin/colour/pdf/{id}', [ColourController::class, 'pdf_by_id'])->name('pdf.by.id');
     // PDF End
+
+    // Address Start
+    Route::get('admin/countries', [LocationController::class, 'countries_index'])->name('countries');
+    Route::get('admin/countries/add', [LocationController::class, 'countries_add'])->name('countries.add');
+    Route::post('admin/countries/add', [LocationController::class, 'countries_store'])->name('countries.store');
+    Route::get('admin/countries/edit/{id}', [LocationController::class, 'countries_edit'])->name('countries.edit');
+    Route::put('admin/countries/edit/{id}', [LocationController::class, 'countries_update'])->name('countries.update');
+    Route::delete('admin/countries/delete/{id}', [LocationController::class, 'countries_delete'])->name('countries.delete');
+
 
 
     // Personal profile edit
