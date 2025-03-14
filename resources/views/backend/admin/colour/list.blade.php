@@ -23,7 +23,7 @@
                                     <div class="mb-3">
                                         <label for="" class="form-label">ID</label>
                                         <input type="text" name="id" class="form-control"
-                                            value="{{ Request()->id }}" placeholder="Enter ID">
+                                            value="{{ request()->id }}" placeholder="Enter ID">
                                     </div>
                                 </div>
 
@@ -31,7 +31,7 @@
                                     <div class="mb-3">
                                         <label for="" class="form-label">Name</label>
                                         <input type="text" name="name" class="form-control"
-                                            value="{{ Request()->name }}" placeholder="Enter Name">
+                                            value="{{ request()->name }}" placeholder="Enter Name">
                                     </div>
                                 </div>
 
@@ -39,7 +39,7 @@
                                     <div class="mb-3">
                                         <label for="" class="form-label">Created At</label>
                                         <input type="date" name="created_at" class="form-control"
-                                            value="{{ Request()->created_at }}">
+                                            value="{{ request()->created_at }}">
                                     </div>
                                 </div>
 
@@ -63,13 +63,13 @@
                             <h4 class="card-title">Colour List</h4>
                             <div class="d-flex align-items-center">
 
-                                <a href="{{ url('admin/pdf_colour') }}" class="btn btn-info">
+                                <a href="{{ route('pdf.colour') }}" class="btn btn-info">
                                     PDF Colour
                                 </a>
                                 &nbsp;&nbsp;&nbsp;
 
-                                <a href="{{ url('admin/pdf_demo') }}" class="btn btn-primary">
-                                    PDF Demo
+                                <a href="{{ route('pdf') }}" class="btn btn-primary">
+                                    PDF
                                 </a>
                                 &nbsp;&nbsp;&nbsp;
                                 <a href="{{ route('colour.add') }}" class="btn btn-primary">
@@ -103,7 +103,7 @@
                                             <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
 
                                             <td>
-                                                <a href="{{ url('admin/colour/pdf/' . $value->id) }}"
+                                                <a href="{{ route('pdf.by.id', $value->id) }}"
                                                     class="btn btn-success">PDF</a>
                                                 <a class="dropdown-item"
                                                     href="{{ route('colour.edit', $value->id) }}"><svg
@@ -118,19 +118,20 @@
                                                 <form action="{{ route('colour.delete', $value->id) }}" 
                                                     method="POST" onsubmit="return confirm('Are you sure you want to delete?');" 
                                                     style="display:inline;">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="feather feather-trash icon-sm me-2">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-        </svg>
-        <span>Delete</span>
-    </button>
-</form>
+                                                    
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="feather feather-trash icon-sm me-2">
+                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                    </svg>
+                                                    <span>Delete</span>
+                                                </button>
+                                            </form>
                                             </td>
 
                                         </tr>
