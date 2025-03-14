@@ -131,6 +131,13 @@ Route::group(['middleware' => 'admin'], function () {
     Route::delete('admin/blog/delete/{id}', [BlogController::class, 'delete_blog'])->name('delete.blog');
     // Blog End
 
+    // PDF Start
+    Route::get('admin/pdf', [ColourController::class, 'pdf'])->name('pdf');
+    Route::get('admin/pdf_colour', [ColourController::class, 'pdf_colour'])->name('pdf.colour');
+    Route::get('admin/colour/pdf/{id}', [ColourController::class, 'pdf_by_id'])->name('pdf.by.id');
+    // PDF End
+
+
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
     Route::post('admin/my_profile/update', [AdminController::class, 'my_profile_update'])->name('admin.my.profile.update');
