@@ -137,7 +137,7 @@
               {{-- Address  --}}
               <li class="nav-item nav-category">Address</li>
               <li class="nav-item">
-                  <a href="{{ url('admin/countries') }}" class="nav-link">
+                  <a href="{{ route('countries') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Country</span>
                   </a>
