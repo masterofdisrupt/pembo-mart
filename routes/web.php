@@ -146,6 +146,13 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/countries/edit/{id}', [LocationController::class, 'countries_update'])->name('countries.update');
     Route::delete('admin/countries/delete/{id}', [LocationController::class, 'countries_delete'])->name('countries.delete');
 
+    Route::get('admin/states', [LocationController::class, 'states_index'])->name('states');
+    Route::get('admin/states/add', [LocationController::class, 'states_add'])->name('add.states');
+    Route::post('admin/states/add', [LocationController::class, 'states_store'])->name('store.states');
+    Route::get('admin/states/edit/{id}', [LocationController::class, 'states_edit'])->name('edit.states');
+    Route::put('admin/states/edit/{id}', [LocationController::class, 'states_update'])->name('update.states');
+    Route::delete('admin/states/delete/{id}', [LocationController::class, 'states_delete'])->name('delete.states');
+
 
 
     // Personal profile edit
