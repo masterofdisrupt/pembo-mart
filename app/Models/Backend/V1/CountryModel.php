@@ -11,6 +11,6 @@ class CountryModel extends Model
 
     protected $table = 'countries';
 
-    protected $fillable = ['name', 'code']; // Add 'name' to allow mass assignment
+    protected $fillable = ['countries_name', 'countries_code']; // Add 'name' to allow mass assignment
 
 }
