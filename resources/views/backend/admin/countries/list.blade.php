@@ -42,8 +42,8 @@
                                     @foreach ($getRecord as $value)
                                         <tr class="table-info text-dark">
                                             <td>{{ $value->id }}</td>
-                                            <td>{{ $value->name }}</td>
-                                            <td>{{ $value->code }}</td>
+                                            <td>{{ $value->countries_name }}</td>
+                                            <td>{{ $value->countries_code }}</td>
                                             <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
                                             <td>{{ date('d-m-Y', strtotime($value->updated_at)) }}</td>
 
@@ -84,8 +84,7 @@
                             </table>
                         </div>
                         <div style="padding: 20px; float: right;">
-                            {{-- {!! $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() !!} --}}
-
+                           
                         </div>
 
                     </div>
