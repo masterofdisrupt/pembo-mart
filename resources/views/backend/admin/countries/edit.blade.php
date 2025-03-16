@@ -21,10 +21,10 @@
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Country Name <span style="color: red;">*</span></label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="name"
-                                        value="{{ old('name', $getRecord->name) }}" placeholder="Enter Country Name" required>
-                                    @error('name')
-                                        <small class="text-danger">{{ $message }}</small>
+                                    <input type="text" class="form-control" name="countries_name"
+                                        value="{{ old('countries_name', $getRecord->countries_name) }}" placeholder="Enter Country Name" required>
+                                    @error('countries_name')
+                                        <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -32,10 +32,10 @@
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Country Code <span style="color: red;">*</span></label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="code"
-                                        placeholder="Enter Country Code" value="{{ old('code', $getRecord->code) }}" required>
-                                    @error('code')
-                                        <small class="text-danger">{{ $message }}</small>
+                                    <input type="number" class="form-control" name="countries_code"
+                                        placeholder="Enter Country Code" value="{{ old('countries_code', $getRecord->countries_code) }}" required>
+                                    @error('countries_code')
+                                        <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
