@@ -19,14 +19,14 @@
                             @method('PUT')
 
                             <div class="row mb-3">
-                                <label for="" class="col-sm-3 col-form-label">Countries Name<span
+                                <label for="" class="col-sm-3 col-form-label">Country Name<span
                                         style="color: red;">*</span></label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" name="countries_id" required>
-                                        <option value="">Select Countries Name</option>
+                                    <select class="form-control" name="country_id" required>
+                                        <option value="">Select Country Name</option>
                                         @foreach ($getCountries as $value)
-                                            <option {{ ($getRecord->countries_id == $value->id) ? 'selected' : '' }} value="{{ $value->id }}">
-                                                {{ $value->countries_name }}</option>
+                                            <option {{ ($getRecord->country_id == $value->id) ? 'selected' : '' }} value="{{ $value->id }}">
+                                                {{ $value->country_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -34,8 +34,8 @@
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">State Name <span style="color: red;">*</span></label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="states_name"
-                                        value="{{ $getRecord->states_name }}" placeholder="Enter State Name" required>
+                                    <input type="text" class="form-control" name="state_name"
+                                        value="{{ $getRecord->state_name }}" placeholder="Enter State Name" required>
                                 </div>
                             </div>
 
