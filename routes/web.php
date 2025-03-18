@@ -153,6 +153,13 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/states/edit/{id}', [LocationController::class, 'states_update'])->name('update.states');
     Route::delete('admin/states/delete/{id}', [LocationController::class, 'states_delete'])->name('delete.states');
 
+    Route::get('admin/cities', [LocationController::class, 'cities_index'])->name('cities');
+    Route::get('admin/cities/add', [LocationController::class, 'cities_add'])->name('add.cities');
+    Route::get('get-states-record/{countryId}', [LocationController::class, 'get_state_name']);
+    Route::post('admin/cities/add', [LocationController::class, 'cities_store'])->name('store.cities');
+    Route::get('admin/cities/edit/{id}', [LocationController::class, 'cities_edit'])->name('edit.cities');
+    Route::put('admin/cities/edit/{id}', [LocationController::class, 'cities_update'])->name('update.cities');
+    Route::delete('admin/cities/delete/{id}', [LocationController::class, 'cities_delete'])->name('delete.cities');
 
 
     // Personal profile edit
