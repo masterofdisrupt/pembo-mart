@@ -9,3 +9,11 @@
         {{ session('error') }}
     </div>
 @endif
+
+@if (!empty(session('info')))
+    <div class="alert alert-info" role="alert">
+        {{ session('info') }}
+    </div>
+@endif
+
+

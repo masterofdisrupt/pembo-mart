@@ -6,22 +6,22 @@
         <nav class="page-breadcrumb">
 
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Colour</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Colour List</li>
+                <li class="breadcrumb-item"><a href="#">Cities</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Cities List</li>
             </ol>
         </nav>
 
-        {{-- Search Box Start --}}
+        {{-- Search Start --}}
         <div class="row">
             <div class="col-lg-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">Search Blog</h6>
-                        <form action="">
+                        <h6 class="card-title">Search Cities</h6>
+                        <form action="" method="GET">
                             <div class="row">
                                 <div class="col-sm-2">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">ID</label>
+                                        <label class="form-label">ID</label>
                                         <input type="text" name="id" class="form-control"
                                             value="{{ request()->id }}" placeholder="Enter ID">
                                     </div>
@@ -29,30 +29,37 @@
 
                                 <div class="col-sm-3">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Name</label>
-                                        <input type="text" name="name" class="form-control"
-                                            value="{{ request()->name }}" placeholder="Enter Name">
+                                        <label class="form-label">Country Name</label>
+                                        <input type="text" name="country_name" class="form-control"
+                                            value="{{ request()->country_name }}" placeholder="Enter Country Name">
                                     </div>
                                 </div>
 
                                 <div class="col-sm-3">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Created At</label>
-                                        <input type="date" name="created_at" class="form-control"
-                                            value="{{ request()->created_at }}">
+                                        <label class="form-label">State Name</label>
+                                        <input type="text" name="state_name" class="form-control"
+                                            value="{{ request()->state_name }}" placeholder="Enter State Name">
                                     </div>
                                 </div>
 
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">City Name</label>
+                                        <input type="text" name="city_name" class="form-control"
+                                            value="{{ request()->city_name }}" placeholder="Enter City Name">
+                                    </div>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Search</button>
-                            <a href="{{ route('colour') }}" class="btn btn-danger">Reset</a>
+                            <a href="{{ route('cities') }}" class="btn btn-danger">Reset</a>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        {{-- Search Box End --}}
         <br>
+        {{-- Search End --}}
 
         <div class="row">
             <div class="col-lg-12 stretch-card">
@@ -60,20 +67,11 @@
                     <div class="card-body">
 
                         <div class="d-flex justify-content-between align-items-center flex-wrap">
-                            <h4 class="card-title">Colour List</h4>
+                            <h4 class="card-title">Cities List</h4>
                             <div class="d-flex align-items-center">
 
-                                <a href="{{ route('pdf.colour') }}" class="btn btn-info">
-                                    PDF Colour
-                                </a>
-                                &nbsp;&nbsp;&nbsp;
-
-                                <a href="{{ route('pdf') }}" class="btn btn-primary">
-                                    PDF
-                                </a>
-                                &nbsp;&nbsp;&nbsp;
-                                <a href="{{ route('colour.add') }}" class="btn btn-primary">
-                                    Add Colour
+                                <a href="{{ route('add.cities') }}" class="btn btn-primary">
+                                    Add Cities
                                 </a>
                             </div>
                         </div>
@@ -82,10 +80,12 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Status</th>
+                                        <th>ID</th>
+                                        <th>Country Name</th>
+                                        <th>State Name</th>
+                                        <th>City Name</th>
                                         <th>Created At</th>
+                                        <th>Updated At</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -93,20 +93,16 @@
                                     @forelse ($getRecord as $value)
                                         <tr class="table-info text-dark">
                                             <td>{{ $value->id }}</td>
-                                            <td>{{ $value->name }}</td>
-                                            <td>
-                                                <label class="switch">
-                                                    <input type="checkbox" class="statusCheckbox" data-id="{{ $value->id }}" {{ $value->status ? 'checked' : '' }}>
-                                                    <span class="slider"></span>
-                                                </label>
-                                            </td>
+                                            <td>{{ $value->country_name }}</td>
+                                            <td>{{ $value->state_name }}</td>
+                                            <td>{{ $value->city_name }}</td>
                                             <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
+                                            <td>{{ date('d-m-Y', strtotime($value->updated_at)) }}</td>
 
                                             <td>
-                                                <a href="{{ route('pdf.by.id', $value->id) }}"
-                                                    class="btn btn-success">PDF</a>
+
                                                 <a class="dropdown-item"
-                                                    href="{{ route('colour.edit', $value->id) }}"><svg
+                                                    href="{{ route('edit.cities', $value->id) }}"><svg
                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -115,7 +111,8 @@
                                                         </path>
                                                     </svg> <span class="">Edit</span></a>
 
-                                                <form action="{{ route('colour.delete', $value->id) }}" 
+
+                                                    <form action="{{ route('delete.cities', $value->id) }}" 
                                                     method="POST" onsubmit="return confirm('Are you sure you want to delete?');" 
                                                     style="display:inline;">
                                                     
@@ -144,6 +141,7 @@
                             </table>
                         </div>
                         <div style="padding: 20px; float: right;">
+                            {!! $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() !!}
 
                         </div>
 

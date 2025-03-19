@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\V1;
 use Illuminate\Http\Request;
 use App\Models\Backend\V1\ColourModel;
 use Exception;
+use PDF;
 
 class ColourController
 {
@@ -86,5 +87,43 @@ class ColourController
 
     return redirect()->route('colour')->with("success", "Colour Successfully Deleted!");
 }
+
+public function pdf()
+    {
+        $data = [
+            'title' => 'Welcome To pembo-mart PDF. An Exciting Ride Awaits You.',
+            'date' => date('m-d-Y')
+        ];
+        $pdf = PDF::loadView('pdf.pembo-martPDF', $data);
+
+        return $pdf->download('Pembo-mart.pdf');
+    }
+
+    public function pdf_colour()
+    {
+        $getRecord = ColourModel::get();
+        $data = [
+            'title' => 'Show All Colour',
+            'date' => date('m-d-Y'),
+            'getRecord' => $getRecord
+        ];
+
+        $pdf = PDF::loadView('pdf.PDFColour', $data);
+        return $pdf->download('colour.pdf');
+    }
+
+    public function pdf_by_id($id)
+    {
+        $getRecord = ColourModel::find($id);
+
+        $data = [
+            'title' => 'New PDF Download Pembo.org',
+            'date' => date('d-m-Y'),
+            'getRecord' => $getRecord
+        ];
+
+        $pdf = PDF::loadView('pdf.myColourPDF', $data);
+        return $pdf->download('mycolour.pdf');
+    }
 
 }

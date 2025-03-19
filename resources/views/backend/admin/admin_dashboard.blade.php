@@ -102,6 +102,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
     @yield('script')
 
@@ -177,25 +179,40 @@
         });
     </script>
 
-    <script type="text/javascript">
+  <script type="text/javascript">
+    $(document).ready(function() {
         $('#country').on('change', function() {
             var countryId = this.value;
+            var url = "{{ url('get-states-record/') }}/" + countryId;
 
-            var url = "{{ url('get-states-record/') }}" + "/" + countryId;
+            // Disable state dropdown & show loading indicator
+            $('#state').html('<option value="">Loading...</option>').prop('disabled', true);
 
             $.ajax({
                 url: url,
                 type: 'GET',
+                dataType: 'json',
                 success: function(data) {
                     $('#state').html('<option value="">Select State Name</option>');
-                    $.each(data, function(key, value) {
-                        $('#state').append('<option value="' + value.id + '">' + value
-                            .state_name + '<option>');
-                    });
+                    
+                    if (data.length > 0) {
+                        $.each(data, function(key, value) {
+                            $('#state').append('<option value="' + value.id + '">' + value.state_name + '</option>');
+                        });
+                        $('#state').prop('disabled', false);
+                    } else {
+                        $('#state').html('<option value="">No states available</option>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    alert("Failed to fetch states. Please try again.");
+                    $('#state').html('<option value="">Select State Name</option>').prop('disabled', true);
                 }
             });
         });
-    </script>
+    });
+</script>
 
     <script type="text/javascript">
         $(document).ready(function() {

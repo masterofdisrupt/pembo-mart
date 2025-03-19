@@ -14,6 +14,7 @@ use App\Http\Controllers\Backend\V1\SMTPController;
 use App\Http\Controllers\Backend\V1\ColourController;
 use App\Http\Controllers\Backend\V1\OrdersController;
 use App\Http\Controllers\Backend\V1\BlogController;
+use App\Http\Controllers\Backend\V1\LocationController;
 
 
 
@@ -130,6 +131,36 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/blog/view/{id}', [BlogController::class, 'view_blog'])->name('view.blog');
     Route::delete('admin/blog/delete/{id}', [BlogController::class, 'delete_blog'])->name('delete.blog');
     // Blog End
+
+    // PDF Start
+    Route::get('admin/pdf', [ColourController::class, 'pdf'])->name('pdf');
+    Route::get('admin/pdf_colour', [ColourController::class, 'pdf_colour'])->name('pdf.colour');
+    Route::get('admin/colour/pdf/{id}', [ColourController::class, 'pdf_by_id'])->name('pdf.by.id');
+    // PDF End
+
+    // Address Start
+    Route::get('admin/countries', [LocationController::class, 'countries_index'])->name('countries');
+    Route::get('admin/countries/add', [LocationController::class, 'countries_add'])->name('countries.add');
+    Route::post('admin/countries/add', [LocationController::class, 'countries_store'])->name('countries.store');
+    Route::get('admin/countries/edit/{id}', [LocationController::class, 'countries_edit'])->name('countries.edit');
+    Route::put('admin/countries/edit/{id}', [LocationController::class, 'countries_update'])->name('countries.update');
+    Route::delete('admin/countries/delete/{id}', [LocationController::class, 'countries_delete'])->name('countries.delete');
+
+    Route::get('admin/states', [LocationController::class, 'states_index'])->name('states');
+    Route::get('admin/states/add', [LocationController::class, 'states_add'])->name('add.states');
+    Route::post('admin/states/add', [LocationController::class, 'states_store'])->name('store.states');
+    Route::get('admin/states/edit/{id}', [LocationController::class, 'states_edit'])->name('edit.states');
+    Route::put('admin/states/edit/{id}', [LocationController::class, 'states_update'])->name('update.states');
+    Route::delete('admin/states/delete/{id}', [LocationController::class, 'states_delete'])->name('delete.states');
+
+    Route::get('admin/cities', [LocationController::class, 'cities_index'])->name('cities');
+    Route::get('admin/cities/add', [LocationController::class, 'cities_add'])->name('add.cities');
+    Route::get('get-states-record/{countryId}', [LocationController::class, 'get_state_name']);
+    Route::post('admin/cities/add', [LocationController::class, 'cities_store'])->name('store.cities');
+    Route::get('admin/cities/edit/{id}', [LocationController::class, 'cities_edit'])->name('edit.cities');
+    Route::put('admin/cities/edit/{id}', [LocationController::class, 'cities_update'])->name('update.cities');
+    Route::delete('admin/cities/delete/{id}', [LocationController::class, 'cities_delete'])->name('delete.cities');
+
 
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
