@@ -128,7 +128,7 @@
               </li>
 
               <li class="nav-item" @if (Request::segment(2) == 'schedule') active @endif>
-                  <a href="{{ url('admin/schedule') }}" class="nav-link">
+                  <a href="{{ route('admin.schedule') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Schedule</span>
                   </a>
@@ -139,21 +139,21 @@
               <li class="nav-item">
                   <a href="{{ route('countries') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Country</span>
+                      <span class="link-title">Countries</span>
                   </a>
               </li>
 
               <li class="nav-item">
                   <a href="{{ route('states') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">State</span>
+                      <span class="link-title">States</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/city') }}" class="nav-link">
+                  <a href="{{ route('cities') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">City</span>
+                      <span class="link-title">Cities</span>
                   </a>
               </li>
 
