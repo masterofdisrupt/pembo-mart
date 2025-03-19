@@ -20,9 +20,9 @@
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Country Name <span style="color: red;">*</span></label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="countries_name"
-                                        placeholder="Enter Country Name" value="{{ old('countries_name') }}" required>
-                                    @error('countries_name')
+                                    <input type="text" class="form-control" name="country_name"
+                                        placeholder="Enter Country Name" value="{{ old('country_name') }}" required>
+                                    @error('country_name')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -31,9 +31,9 @@
                              <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Country Code <span style="color: red;">*</span></label>
                                 <div class="col-sm-9">
-                                    <input type="number" class="form-control" name="countries_code"
-                                        placeholder="Enter Country Code" value="{{ old('countries_code') }}" required>
-                                    @error('countries_code')
+                                    <input type="number" class="form-control" name="country_code"
+                                        placeholder="Enter Country Code" value="{{ old('country_code') }}" required>
+                                    @error('country_code')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
