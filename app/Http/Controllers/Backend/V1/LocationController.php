@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Backend\V1\CountryModel;
 use App\Models\Backend\V1\StateModel;
 use App\Models\Backend\V1\CityModel;
+use App\Models\Backend\V1\AddressModel;
 use DB;
 
 class LocationController
@@ -288,5 +289,135 @@ public function cities_delete($id)
         return redirect()->route('cities')->with('success', 'City Successfully Deleted!');
     }
 
+    // Address menu start
+    public function admin_address(Request $request)
+    {
+        $getRecord = AddressModel::getRecordAll($request);
+        return view('backend.admin.address.list', compact('getRecord'));
+    }
+
+    public function admin_address_add(Request $request)
+    {
+        $getRecord = CountryModel::get();
+        return view('backend.admin.address.add', compact('getRecord'));
+    }
+
+    public function get_states($id)
+    {
+        $states = StateModel::where('countries_id', $id)->get();
+        return response()->json($states);
+    }
+
+    public function get_cities($id)
+    {
+        $cities = CityModel::where('state_id', $id)->get();
+        return response()->json($cities);
+    }
+
+    public function admin_address_store(Request $request)
+{
+    // Validate the request data
+    $request->validate([
+        'country_id' => 'required|exists:countries,id',
+        'state_id' => 'required|exists:states,id',
+        'city_id' => 'required|exists:cities,id',
+        'address' => 'required|string|max:255|unique:address,address',
+        'zip_code' => 'required|numeric|digits_between:1,10', // To validate the length of a numeric input, use the digits rule.
+    ]);
+
+    // Create and save the address record using mass assignment
+    $save = new AddressModel;
+    $save->fill([
+        'country_id' => trim($request->country_id),
+        'state_id' => trim($request->state_id),
+        'city_id' => trim($request->city_id),
+        'address' => trim($request->address),
+        'zip_code' => trim($request->zip_code),
+    ]);
+
+    if ($save->save()) {
+        return redirect()->route('admin.address')->with('success', 'Address Successfully Added!');
+    }
+
+    return redirect()->back()->with('error', 'Failed to add address. Please try again.');
+}
+
+public function admin_address_edit($id)
+{
+    // Fetch the address record
+    $addressRecord = AddressModel::find($id);
+
+    // Check if the address record exists
+    if (!$addressRecord) {
+        return redirect()->route('admin.address')->with('error', 'Address not found.');
+    }
+
+    // Fetch related data
+    $countries = CountryModel::select('id', 'country_name')->get();
+    $states = StateModel::where('country_id', $addressRecord->country_id)->select('id', 'state_name')->get();
+    $cities = CityModel::where('state_id', $addressRecord->state_id)->select('id', 'city_name')->get();
+
+    // Pass data to the view
+    return view('backend.admin.address.edit', [
+        'getRecord' => $countries,
+        'getRecordAdd' => $addressRecord,
+        'getState' => $states,
+        'getCity' => $cities,
+    ]);
+}
+
+public function admin_address_update($id, Request $request)
+{
+    // Validate the request data
+    $request->validate([
+        'country_id' => 'required|exists:countries,id',
+        'state_id' => 'required|exists:states,id',
+        'city_id' => 'required|exists:cities,id',
+        'address' => 'required|string|max:255|unique:address,address,' . $id,
+        'zip_code' => 'required|numeric|digits_between:1,10',
+    ]);
+
+    // Find the address record
+    $save = AddressModel::find($id);
+
+    // Check if the address record exists
+    if (!$save) {
+        return redirect()->route('admin.address')->with('error', 'Address not found.');
+    }
+
+    // Update the address record using mass assignment
+    $save->fill([
+        'country_id' => trim($request->country_id),
+        'state_id' => trim($request->state_id),
+        'city_id' => trim($request->city_id),
+        'address' => trim($request->address),
+        'zip_code' => trim($request->zip_code),
+    ]);
+
+    // Only save if changes are detected
+    if ($save->isDirty()) {
+        $save->save();
+        return redirect()->route('admin.address')->with('success', 'Address Successfully Updated!');
+    }
+
+    return redirect()->route('admin.address')->with('info', 'No changes were made.');
+}
+
+public function admin_address_delete($id)
+{
+    // Find the address record
+    $addressDelete = AddressModel::find($id);
+
+    // Check if the address record exists
+    if (!$addressDelete) {
+        return redirect()->route('admin.address')->with('error', 'Record not found.');
+    }
+
+    // Delete the address record
+    $addressDelete->is_delete = 1;
+    $addressDelete->save();
+
+    return redirect()->route('admin.address')->with('success', 'Record Successfully Deleted!');
+}
 
 }

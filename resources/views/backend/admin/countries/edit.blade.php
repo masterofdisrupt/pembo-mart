@@ -33,7 +33,7 @@
                                 <label class="col-sm-3 col-form-label">Country Code <span style="color: red;">*</span></label>
                                 <div class="col-sm-9">
                                     <input type="number" class="form-control" name="country_code"
-                                        placeholder="Enter Country Code" value="{{ old('country_code', $getRecord->countries_code) }}" required>
+                                        placeholder="Enter Country Code" value="{{ old('country_code', $getRecord->country_code) }}" required>
                                     @error('country_code')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
