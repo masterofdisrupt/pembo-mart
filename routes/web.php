@@ -155,11 +155,24 @@ Route::group(['middleware' => 'admin'], function () {
 
     Route::get('admin/cities', [LocationController::class, 'cities_index'])->name('cities');
     Route::get('admin/cities/add', [LocationController::class, 'cities_add'])->name('add.cities');
-    Route::get('get-states-record/{countryId}', [LocationController::class, 'get_state_name']);
+    Route::get('get-states-record/{countryId}', [LocationController::class, 'get_state_name'])->name('get.state.name');
     Route::post('admin/cities/add', [LocationController::class, 'cities_store'])->name('store.cities');
     Route::get('admin/cities/edit/{id}', [LocationController::class, 'cities_edit'])->name('edit.cities');
     Route::put('admin/cities/edit/{id}', [LocationController::class, 'cities_update'])->name('update.cities');
     Route::delete('admin/cities/delete/{id}', [LocationController::class, 'cities_delete'])->name('delete.cities');
+
+    // Address End
+
+    // address menu start
+    Route::get('admin/address', [LocationController::class, 'admin_address'])->name('admin.address');
+    Route::get('admin/address/add', [LocationController::class, 'admin_address_add'])->name('admin.address.add');
+    Route::get('get-states/{countryId}', [LocationController::class, 'get_states'])->name('get.states');
+    Route::get('get-cities/{stateId}', [LocationController::class, 'get_cities'])->name('get.cities');
+    Route::post('admin/address/add', [LocationController::class, 'admin_address_store'])->name('admin.address.store');
+    Route::get('admin/address/edit/{id}', [LocationController::class, 'admin_address_edit'])->name('admin.address.edit');
+    Route::put('admin/address/edit/{id}', [LocationController::class, 'admin_address_update'])->name('admin.address.update');
+    Route::delete('admin/address/delete/{id}', [LocationController::class, 'admin_address_delete'])->name('admin.address.delete');
+    // address menu end
 
 
     // Personal profile edit
