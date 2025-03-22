@@ -9,6 +9,26 @@ use PDF;
 
 class ColourController
 {
+    public function change_status(Request $request)
+    {
+        $item = ColourModel::find($request->id);
+
+        if ($item) {
+            $item->status = $request->status;
+            $item->save();
+
+            // Return a proper associative array for success
+            return response()->json([
+                'message' => 'Status Updated Successfully!'
+            ]);
+        } else {
+            // Return a proper associative array for failure
+            return response()->json([
+                'message' => 'Status Not Found.'
+            ], 404);
+        }
+    }
+
     public function colour_list(Request $request)
     {
         $colourRecord = ColourModel::getRecordAll($request);
