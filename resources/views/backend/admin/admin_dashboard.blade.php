@@ -307,6 +307,32 @@
     });
 </script>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(document).on('change', '.statusCheckbox', function() {
+            var status = $(this).is(':checked') ? 1 : 0;
+            var itemId = $(this).data('id');
+
+            $.ajax({
+                url: '{{ route('colour.change_status') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: itemId,
+                    status: status
+                },
+                success: function(response) {
+                    alert(response.message);
+                },
+                error: function(xhr, status, error) {
+                    alert('Error: ' + xhr.status + ' - ' + xhr.statusText + '\n' + error);
+                }
+            });
+        });
+    });
+</script>
+
+
     <script>
         $(document).ready(function() {
             $.ajaxSetup({
