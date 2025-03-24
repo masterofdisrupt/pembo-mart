@@ -13,7 +13,7 @@
          <ul class="nav">
              <li class="nav-item nav-category">Main</li>
              <li class="nav-item">
-                 <a href="" class="nav-link">
+                 <a href="{{ route('agent.dashboard') }}" class="nav-link">
                      <i class="link-icon" data-feather="box"></i>
                      <span class="link-title">Dashboard</span>
                  </a>
@@ -48,8 +48,8 @@
                  </div>
              </li>
 
-             <li class="nav-item">
-                 <a href="{{ url('agent/transactions') }}" class="nav-link">
+             <li class="nav-item" @if (Request::segment(2) == 'transactions') active @endif>
+                 <a href="{{ route('agent.transactions') }}" class="nav-link">
                      <i class="link-icon" data-feather="calendar"></i>
                      <span class="link-title">Transactions</span>
                  </a>
