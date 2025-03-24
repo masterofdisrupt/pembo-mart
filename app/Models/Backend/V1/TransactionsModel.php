@@ -19,12 +19,12 @@ class TransactionsModel extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+   // Fetch transaction records for a specific user (agent) and paginate the results
     public static function getAgentRecord($user_id)
     {
-        return self::select('transactions.*', 'users.name')
-            ->join('users', 'users.id', '=', 'transactions.user_id')
-            ->where('transactions.user_id', '=', $user_id)
-            ->orderBy('transactions.id', 'desc')
+        return self::with('user')
+            ->where('user_id', $user_id)
+            ->orderBy('id', 'desc')
             ->paginate(50);
     }
 }
