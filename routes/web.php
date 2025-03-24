@@ -16,6 +16,7 @@ use App\Http\Controllers\Backend\V1\OrdersController;
 use App\Http\Controllers\Backend\V1\BlogController;
 use App\Http\Controllers\Backend\V1\LocationController;
 use App\Http\Controllers\Backend\V1\SendPDFController;
+use App\Http\Controllers\Backend\V1\TransactionsController;
 
 
 
@@ -136,6 +137,12 @@ Route::group(['middleware' => 'admin'], function () {
     // Blog Delete All
     Route::get('admin/blogs/truncate', [BlogController::class, 'blog_truncate'])->name('blogs.truncate');
 
+    // Transactions Start
+    Route::get('admin/transactions', [TransactionsController::class, 'transactions_index'])->name('transactions');
+    Route::get('admin/transactions/delete/{id}', [TransactionsController::class, 'transactions_delete'])->name('transactions.delete');
+    Route::get('admin/transactions/edit/{id}', [TransactionsController::class, 'transactions_edit'])->name('transactions.edit');
+    Route::post('admin/transactions/update/{id}', [TransactionsController::class, 'transactions_update'])->name('transactions.update');
+    // Transactions End
 
     // PDF Start
     Route::get('admin/pdf', [ColourController::class, 'pdf'])->name('pdf');
@@ -197,6 +204,13 @@ Route::group(['middleware' => 'agent'], function () {
     Route::get('agent/dashboard', [DashboardController::class, 'dashboard'])->name('agent.dashboard');
 
     Route::get('agent/email/inbox', [AgentController::class, 'agent_email_inbox'])->name('agent.email.inbox');
+
+    // Agent Transactions Start
+    Route::get('agent/transactions', [TransactionsController::class, 'agent_transactions_add'])->name('agent.transactions');
+    Route::post('agent/transactions/add', [TransactionsController::class, 'agent_transactions_store'])->name('agent.transactions.store');
+    Route::get('agent/transactions/list', [TransactionsController::class, 'agent_transactions_list'])->name('agent.transactions.list');
+
+    Route::delete('transactions_delete/{id}', [TransactionsController::class, 'destroy'])->name('transactions.destroy');
 
 });
 
