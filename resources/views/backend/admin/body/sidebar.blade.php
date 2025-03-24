@@ -77,7 +77,7 @@
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/transactions') }}" class="nav-link">
+                  <a href="{{ route('transactions') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Transactions</span>
                   </a>
