@@ -42,7 +42,7 @@
               <li class="nav-item">
                   <a href="{{ route('colour') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Colour</span>
+                      <span class="link-title">Colours</span>
                   </a>
               </li>
 
@@ -63,21 +63,21 @@
 
 
              <li class="nav-item">
-                  <a href="{{ route('blog') }}" class="nav-link">
+                  <a href="{{ route('blogs') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Blog</span>
+                      <span class="link-title">Blogs</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/send_pdf') }}" class="nav-link">
+                  <a href="{{ route('send.pdf') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Send PDF</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/transactions') }}" class="nav-link">
+                  <a href="{{ route('transactions') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Transactions</span>
                   </a>

@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Search</button>
-                            <a href="{{ route('blog') }}" class="btn btn-danger">Reset</a>
+                            <a href="{{ route('blogs') }}" class="btn btn-danger">Reset</a>
                         </form>
                     </div>
                 </div>
@@ -62,11 +62,11 @@
                         <div class="d-flex justify-content-between align-items-center flex-wrap">
                             <h4 class="card-title">Blog List</h4>
                             <div class="d-flex align-items-center">
-                                <a href="" class="btn btn-danger">
+                                <a href="{{ route('blogs.truncate') }}" class="btn btn-danger">
                                     Delete All
                                 </a>
                                 &nbsp;&nbsp;
-                                <a href="{{ route('add.blog') }}" class="btn btn-primary">
+                                <a href="{{ route('add.blogs') }}" class="btn btn-primary">
                                     Add Blog
                                 </a>
                             </div>
@@ -97,14 +97,14 @@
 
                                             <td>
                                                 <a class="btn btn-primary"
-                                                    href="{{ route('edit.blog', $value->id) }}"><span
+                                                    href="{{ route('edit.blogs', $value->id) }}"><span
                                                         class="">Edit</span></a>
 
                                                 <a class="btn btn-secondary"
-                                                    href="{{ route('view.blog', $value->id) }}"><span
+                                                    href="{{ route('view.blogs', $value->id) }}"><span
                                                         class="">View</span></a>
 
-                                                 <form action="{{ route('delete.orders', $value->id) }}" 
+                                                 <form action="{{ route('delete.blogs', $value->id) }}" 
                                                     method="POST" onsubmit="return confirm('Are you sure you want to delete?');" 
                                                     style="display:inline;">
                                                     @csrf

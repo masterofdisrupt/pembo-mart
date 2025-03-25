@@ -15,6 +15,8 @@ use App\Http\Controllers\Backend\V1\ColourController;
 use App\Http\Controllers\Backend\V1\OrdersController;
 use App\Http\Controllers\Backend\V1\BlogController;
 use App\Http\Controllers\Backend\V1\LocationController;
+use App\Http\Controllers\Backend\V1\SendPDFController;
+use App\Http\Controllers\Backend\V1\TransactionsController;
 
 
 
@@ -110,7 +112,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/colour/edit/{id}', [ColourController::class, 'edit_colour'])->name('colour.edit');
     Route::put('admin/colour/edit/{id}', [ColourController::class, 'update_colour'])->name('colour.update');
     Route::delete('admin/colour/delete/{id}', [ColourController::class, 'delete_colour'])->name('colour.delete');
-    Route::post('admin/colour/change_status', [ColourController::class, 'change_status'])->name('colour.change.status');
+    Route::post('admin/colour/change_status', [ColourController::class, 'change_status'])->name('colour.change_status');
     // Colour End
 
     // Order Start
@@ -123,20 +125,35 @@ Route::group(['middleware' => 'admin'], function () {
     // Order End
 
     // Blog Start
-    Route::get('admin/blog', [BlogController::class, 'list_blog'])->name('blog');
-    Route::get('admin/blog/add', [BlogController::class, 'add_blog'])->name('add.blog');
-    Route::post('admin/blog/add', [BlogController::class, 'store_blog'])->name('store.blog');
-    Route::get('admin/blog/edit/{id}', [BlogController::class, 'edit_blog'])->name('edit.blog');
-    Route::put('admin/blog/edit/{id}', [BlogController::class, 'update_blog'])->name('update.blog');
-    Route::get('admin/blog/view/{id}', [BlogController::class, 'view_blog'])->name('view.blog');
-    Route::delete('admin/blog/delete/{id}', [BlogController::class, 'delete_blog'])->name('delete.blog');
+    Route::get('admin/blogs', [BlogController::class, 'list_blog'])->name('blogs');
+    Route::get('admin/blog/sadd', [BlogController::class, 'add_blog'])->name('add.blogs');
+    Route::post('admin/blogs/add', [BlogController::class, 'store_blog'])->name('store.blogs');
+    Route::get('admin/blogs/edit/{id}', [BlogController::class, 'edit_blog'])->name('edit.blogs');
+    Route::put('admin/blogs/edit/{id}', [BlogController::class, 'update_blog'])->name('update.blogs');
+    Route::get('admin/blogs/view/{id}', [BlogController::class, 'view_blog'])->name('view.blogs');
+    Route::delete('admin/blogs/delete/{id}', [BlogController::class, 'delete_blog'])->name('delete.blogs');
     // Blog End
+
+    // Blog Delete All
+    Route::get('admin/blogs/truncate', [BlogController::class, 'blog_truncate'])->name('blogs.truncate');
+
+    // Transactions Start
+    Route::get('admin/transactions', [TransactionsController::class, 'transactions_index'])->name('transactions');
+    Route::get('admin/transactions/delete/{id}', [TransactionsController::class, 'transactions_delete'])->name('transactions.delete');
+    Route::get('admin/transactions/edit/{id}', [TransactionsController::class, 'transactions_edit'])->name('transactions.edit');
+    Route::post('admin/transactions/update/{id}', [TransactionsController::class, 'transactions_update'])->name('transactions.update');
+    // Transactions End
 
     // PDF Start
     Route::get('admin/pdf', [ColourController::class, 'pdf'])->name('pdf');
     Route::get('admin/pdf_colour', [ColourController::class, 'pdf_colour'])->name('pdf.colour');
     Route::get('admin/colour/pdf/{id}', [ColourController::class, 'pdf_by_id'])->name('pdf.by.id');
     // PDF End
+
+    // Send PDF
+    Route::get('admin/send_pdf', [SendPDFController::class, 'send_pdf'])->name('send.pdf');
+    Route::post('admin/send_pdf_sent', [SendPDFController::class, 'send_pdf_sent'])->name('send.pdf.sent');
+    // Send PDF End
 
     // Address Start
     Route::get('admin/countries', [LocationController::class, 'countries_index'])->name('countries');
@@ -187,6 +204,13 @@ Route::group(['middleware' => 'agent'], function () {
     Route::get('agent/dashboard', [DashboardController::class, 'dashboard'])->name('agent.dashboard');
 
     Route::get('agent/email/inbox', [AgentController::class, 'agent_email_inbox'])->name('agent.email.inbox');
+
+    // Agent Transactions Start
+    Route::get('agent/transactions', [TransactionsController::class, 'agent_transactions_add'])->name('agent.transactions');
+    Route::post('agent/transactions/add', [TransactionsController::class, 'agent_transactions_store'])->name('agent.transactions.store');
+    Route::get('agent/transactions/list', [TransactionsController::class, 'agent_transactions_list'])->name('agent.transactions.list');
+
+    Route::delete('transactions_delete/{id}', [TransactionsController::class, 'destroy'])->name('transactions.destroy');
 
 });
 
