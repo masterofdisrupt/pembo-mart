@@ -4,7 +4,6 @@
     <div class="page-content">
         @include('_message')
         <nav class="page-breadcrumb">
-
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#">Transactions</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Transactions List</li>
@@ -103,11 +102,10 @@
             <div class="col-lg-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-
                         <div class="d-flex justify-content-between align-items-center flex-wrap">
                             <h4 class="card-title">Transactions List</h4>
                             <div class="d-flex align-items-center">
-                                
+                                <!-- Add any additional buttons or links here -->
                             </div>
                         </div>
 
@@ -132,7 +130,7 @@
                                     @endphp
                                     @forelse ($getRecord as $value)
                                         @php
-                                            $totalPrice = $totalPrice + $value->amount;
+                                            $totalPrice += $value->amount;
                                         @endphp
                                         <tr class="table-info text-dark">
                                             <td>{{ $value->id }}</td>
@@ -149,27 +147,26 @@
                                             </td>
                                             <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
                                             <td>{{ date('d-m-Y', strtotime($value->updated_at)) }}</td>
-
-                                           <td>
-                                            <a class="btn btn-primary me-2" href="{{ route('transactions.edit', $value->id) }}">
-                                                <span>Edit</span>
-                                            </a>
-                                            <form action="{{ route('transactions.delete', $value->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete?');" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">
-                                                    <span>Delete</span>
-                                                </button>
-                                            </form>
-                                        </td>
+                                            <td>
+                                                <a class="btn btn-primary me-2" href="{{ route('transactions.edit', $value->id) }}">
+                                                    <span>Edit</span>
+                                                </a>
+                                                <form action="{{ route('transactions.delete', $value->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete?');" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="100%">No Record Found.</td>
+                                            <td colspan="9">No Record Found.</td>
                                         </tr>
                                     @endforelse
 
-                                    @if (!empty($totalPrice))
+                                    @if ($totalPrice > 0)
                                         <tr>
                                             <th colspan="4">Total Amount</th>
                                             <td>{{ number_format($totalPrice, 2) }}</td>
@@ -181,9 +178,7 @@
                         </div>
                         <div style="padding: 20px; float: right;">
                             {!! $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() !!}
-
                         </div>
-
                     </div>
                 </div>
             </div>
