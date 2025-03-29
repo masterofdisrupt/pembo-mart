@@ -45,6 +45,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tinymce@7.2.1/skins/ui/oxide/content.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.css" rel="stylesheet">
 
     @yield('style')
 
@@ -103,7 +106,9 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
 
     @yield('script')
 
@@ -333,143 +338,189 @@
 </script>
 
 
-    <script>
-        $(document).ready(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                        'content') // Ensure the meta name matches
-                }
-            });
+ <script>
+$(document).ready(function() {
+    // Setup CSRF token for all AJAX requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-            var calendar = $('#calendar').fullCalendar({
-                editable: true,
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
-                },
-                events: '{{ url('admin/full_calendar') }}', // Route for fetching events
-                selectable: true,
-                selectHelper: true,
-                select: function(start, end, allDay) {
-                    var title = prompt('Event Title:');
-                    if (title) {
-                        var startFormatted = $.fullCalendar.formatDate(start, 'Y-MM-DD HH:mm:ss');
-                        var endFormatted = $.fullCalendar.formatDate(end, 'Y-MM-DD HH:mm:ss');
+    // Initialize FullCalendar
+    var calendar = $('#calendar').fullCalendar({
+        editable: true,
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+        },
+        events: '{{ route('fullCalendar') }}',
+        selectable: true,
+        selectHelper: true,
 
-                        $.ajax({
-                            url: "{{ url('admin/full_calendar/action') }}",
-                            type: "POST",
-                            data: {
-                                title: title,
-                                start: startFormatted,
-                                end: endFormatted,
-                                type: 'add'
-                            },
-                            success: function(data) {
-                                calendar.fullCalendar('refetchEvents');
-                                alert("Event Created Successfully");
-                            },
-                            error: function(xhr, status, error) {
-                                // console.error("Error:", error);
-                                alert("Failed to create event. Please try again.");
-                            }
-                        });
+        // Handle event creation
+        select: function(start, end, allDay) {
+            Swal.fire({
+                title: 'Add Event',
+                input: 'text',
+                inputLabel: 'Event Title',
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to provide an event title!'
                     }
-                },
-
-                editable: true,
-                eventResize: function(event, delta) {
-                    var start = $.fullCalendar.formatDate(event.start, 'Y-MM-DD HH:mm:ss');
-                    var end = $.fullCalendar.formatDate(event.end, 'Y-MM-DD HH:mm:ss');
-                    var title = event.title;
-                    var id = event.id;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var startFormatted = $.fullCalendar.formatDate(start, 'Y-MM-DD HH:mm:ss');
+                    var endFormatted = $.fullCalendar.formatDate(end, 'Y-MM-DD HH:mm:ss');
 
                     $.ajax({
-                        url: "{{ url('admin/full_calendar/action') }}",
+                        url: "{{ route('fullCalendar.action') }}",
                         type: "POST",
                         data: {
-                            title: title,
+                            title: result.value,
                             start: startFormatted,
                             end: endFormatted,
-                            id: id,
-                            type: 'update'
+                            type: 'add'
                         },
                         success: function(response) {
                             calendar.fullCalendar('refetchEvents');
-                            alert("Event Updated Successfully");
+                            toastr.success('Event created successfully');
                         },
-                        error: function(xhr, status, error) {
-                            // console.error("Error:", error);
-                            alert("Failed to update event. Please try again.");
+                        error: function(xhr) {
+                            toastr.error(xhr.responseJSON?.message || 'Failed to create event');
                         }
                     });
-                },
-                eventDrop: function(event, delta) {
-                    var start = $.fullCalendar.formatDate(event.start, 'Y-MM-DD HH:mm:ss');
-                    var end = $.fullCalendar.formatDate(event.end, 'Y-MM-DD HH:mm:ss');
-                    var title = event.title;
-                    var id = event.id;
+                }
+            });
+        },
 
+        // Handle event resizing
+        eventResize: function(event, delta) {
+            updateEvent(event, calendar);
+        },
+
+        // Handle event dragging
+        eventDrop: function(event, delta) {
+            updateEvent(event, calendar);
+        },
+
+        // Handle event deletion
+        eventClick: function(event) {
+            Swal.fire({
+                title: 'Delete Event',
+                text: 'Are you sure you want to delete this event?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     $.ajax({
-                        url: "{{ url('admin/full_calendar/action') }}",
+                        url: "{{ route('fullCalendar.action') }}",
                         type: "POST",
                         data: {
-                            title: title,
-                            start: startFormatted,
-                            end: endFormatted,
-                            id: id,
-                            type: 'update'
+                            id: event.id,
+                            type: "delete"
                         },
                         success: function(response) {
                             calendar.fullCalendar('refetchEvents');
-                            alert("Event Updated Successfully");
+                            toastr.success('Event deleted successfully');
                         },
-                        error: function(xhr, status, error) {
-                            // console.error("Error:", error);
-                            alert("Failed to update event. Please try again.");
+                        error: function(xhr) {
+                            toastr.error(xhr.responseJSON?.message || 'Failed to delete event');
                         }
                     });
-                },
-                eventClick: function(event) {
-                    if (confirm("Are you sure you want to remove it?")) {
-                        var id = event.id;
-                        $.ajax({
-                            url: "{{ url('admin/full_calendar/action') }}",
-                            type: "POST",
-                            data: {
-                                id: id,
-                                type: "delete"
-                            },
-                            success: function(response) {
-                                calendar.fullCalendar('refetchEvents');
-                                alert("Event Deleted Successfully");
-                            }
-                        });
-                    }
                 }
             });
-        });
-    </script>
-    <script type="text/javascript">
-        var path = "{{ url('admin/users/typeahead_autocomplete') }}";
+        }
+    });
 
-        $('#user_name').typeahead({
-            source: function(query, process) {
-                return $.get(path, {
-                        query: query
-                    })
-                    .done(function(data) {
-                        return process(data);
-                    })
-                    .fail(function(xhr, status, error) {
-                        console.error("Error fetching data: ", error);
-                        alert("Failed to load suggestions. Please try again.");
-                    });
+    // Helper function to update events
+    function updateEvent(event, calendar) {
+        var startFormatted = $.fullCalendar.formatDate(event.start, 'Y-MM-DD HH:mm:ss');
+        var endFormatted = $.fullCalendar.formatDate(event.end, 'Y-MM-DD HH:mm:ss');
+
+        $.ajax({
+            url: "{{ route('fullCalendar.action') }}",
+            type: "POST",
+            data: {
+                id: event.id,
+                title: event.title,
+                start: startFormatted,
+                end: endFormatted,
+                type: 'update'
+            },
+            success: function(response) {
+                calendar.fullCalendar('refetchEvents');
+                toastr.success('Event updated successfully');
+            },
+            error: function(xhr) {
+                calendar.fullCalendar('refetchEvents'); // Revert changes
+                toastr.error(xhr.responseJSON?.message || 'Failed to update event');
             }
         });
-    </script>
+    }
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    var path = "{{ route('typeahead.autocomplete') }}";
+    
+    $('#user_name').typeahead({
+        minLength: 2,
+        items: 10,
+        source: function(query, process) {
+            return $.ajax({
+                url: path,
+                type: 'GET',
+                data: { query: query },
+                dataType: 'JSON',
+                success: function(response) {
+                    if (response.success) {
+                        return process(response.data.map(function(item) {
+                            return {
+                                id: item.id,
+                                name: item.name,
+                                email: item.email,
+                                display: item.name + ' (' + item.email + ')'
+                            };
+                        }));
+                    } else {
+                        toastr.error(response.message || 'Failed to fetch suggestions');
+                        return process([]);
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('Failed to load suggestions');
+                    return process([]);
+                }
+            });
+        },
+        displayText: function(item) {
+            return item.display;
+        },
+        afterSelect: function(item) {
+            // Handle selection
+            $('#user_id').val(item.id);
+            console.log('Selected user:', item);
+        }
+    });
+});
+</script>
+
+<style>
+.loading {
+    background-image: url('{{ asset("public/assets/images/loading.gif") }}');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+}
+</style>
 
     <script type="text/javascript">
         $('.ChangeSupportStatus').change(function() {
