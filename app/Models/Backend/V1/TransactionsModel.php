@@ -13,6 +13,8 @@ class TransactionsModel extends Model
 
     protected $table = 'transactions';
 
+    protected $fillable = ['order_number', 'transaction_id', 'amount', 'is_payment', 'user_id'];
+
      // Define the relationship with the User model
     public function user()
     {
