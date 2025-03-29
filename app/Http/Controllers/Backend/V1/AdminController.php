@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\V1;
 
 use Illuminate\Http\Request;
+use \Illuminate\Http\JsonResponse;
 use App\Models\User;
 use App\Mail\RegisteredEmailMail;
 use Intervention\Image\ImageManager;
@@ -225,6 +226,54 @@ class AdminController
         $json['success'] = 'Data Updated Successfully';
         echo json_encode($json);
     }
+
+   /**
+ * Handle typeahead autocomplete requests for user names
+ *
+ * @param \Illuminate\Http\Request $request
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function typeahead_autocomplete(Request $request)
+{
+    try {
+        // Validate the request
+        $validated = $request->validate([
+            'query' => 'required|string|min:2|max:50',
+        ]);
+
+        // Perform the search with limit for performance
+        $filter_data = User::where('name', 'LIKE', '%' . $validated['query'] . '%')
+            ->where('is_delete', 0) // Only active users
+            ->where('status', 'active')
+            ->select('id', 'name', 'email') // Select only needed fields
+            ->limit(10) // Limit results for performance
+            ->get()
+            ->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $filter_data
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation error',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Server error occurred'
+        ], 500);
+    }
+}
 
     public function admin_users_changeStatus(Request $request)
     {
