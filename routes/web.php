@@ -17,6 +17,7 @@ use App\Http\Controllers\Backend\V1\BlogController;
 use App\Http\Controllers\Backend\V1\LocationController;
 use App\Http\Controllers\Backend\V1\SendPDFController;
 use App\Http\Controllers\Backend\V1\TransactionsController;
+use App\Http\Controllers\Backend\V1\FullCalendarController;
 
 
 
@@ -81,10 +82,17 @@ Route::group(['middleware' => 'admin'], function () {
     Route::delete('admin/week_time/delete/{id}', [UserTimeController::class, 'week_time_delete'])->name('week.time.delete');
     // User Week Time End
 
-// Schedule Start
+    // Schedule Start
     Route::get('admin/schedule', [UserTimeController::class, 'admin_schedule'])->name('admin.schedule');
     Route::post('admin/schedule', [UserTimeController::class, 'admin_schedule_update'])->name('admin.schedule.update');
     // Schedule End
+
+    // AutoComplete Search
+    Route::get('admin/users/typeahead_autocomplete', [AdminController::class, 'typeahead_autocomplete'])->name('typeahead.autocomplete');
+
+    // Full Calendar Start
+    Route::get('admin/full_calendar', [FullCalendarController::class, 'full_calendar'])->name('fullCalendar');
+    Route::post('admin/full_calendar/action', [FullCalendarController::class, 'action'])->name('fullCalendar.action');
 
     // Notification Start
     Route::get('admin/notification', [NotificationController::class, 'notification_index'])->name('notification');
@@ -139,9 +147,9 @@ Route::group(['middleware' => 'admin'], function () {
 
     // Transactions Start
     Route::get('admin/transactions', [TransactionsController::class, 'transactions_index'])->name('transactions');
-    Route::get('admin/transactions/delete/{id}', [TransactionsController::class, 'transactions_delete'])->name('transactions.delete');
     Route::get('admin/transactions/edit/{id}', [TransactionsController::class, 'transactions_edit'])->name('transactions.edit');
-    Route::post('admin/transactions/update/{id}', [TransactionsController::class, 'transactions_update'])->name('transactions.update');
+    Route::put('admin/transactions/update/{id}', [TransactionsController::class, 'transactions_update'])->name('transactions.update');
+    Route::delete('admin/transactions/delete/{id}', [TransactionsController::class, 'transactions_delete'])->name('transactions.delete');
     // Transactions End
 
     // PDF Start
