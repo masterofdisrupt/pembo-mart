@@ -49,8 +49,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/users/add', [AdminController::class, 'add_users_store'])->name('add.users.store');
     Route::get('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit'])->name('admin.users.edit');
     Route::put('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit_update'])->name('admin.users.edit.update');
-    Route::get('admin/users/delete/{id}', [AdminController::class, 'admin_users_delete'])->name('admin.users.delete');
-    // Single user name update
+    Route::delete('admin/users/delete/{id}', [AdminController::class, 'admin_users_delete'])->name('admin.users.delete');
     Route::post('admin/users/update', [AdminController::class, 'admin_users_update'])->name('admin.users.update');
     Route::get('admin/users/changeStatus', [AdminController::class, 'admin_users_changeStatus'])->name('admin.users.change.status');
     Route::post('checkemail', [AdminController::class, 'checkEmail'])->name('check.email');
