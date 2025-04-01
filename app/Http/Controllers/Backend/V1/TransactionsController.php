@@ -4,11 +4,41 @@ namespace App\Http\Controllers\Backend\V1;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Backend\V1\TransactionsModel;
 use Auth;
 
 class TransactionsController extends Controller
 {
+    /**
+ * Delete the specified transaction
+ *
+ * @param int $id
+ * @return \Illuminate\Http\RedirectResponse
+ */
+public function destroy($id)
+{
+    try {
+        $transaction = TransactionsModel::findOrFail($id);
+        
+        $transaction->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Transaction deleted successfully.');
+            
+    } catch (ModelNotFoundException $e) {
+        return redirect()
+            ->back()
+            ->with('error', 'Transaction not found.');
+            
+    } catch (\Exception $e) {
+        return redirect()
+            ->back()
+            ->with('error', 'Failed to delete transaction.');
+    }
+}
     public function transactions_index(Request $request)
     {
         // Build the base query with the relationship
