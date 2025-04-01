@@ -522,6 +522,46 @@ $(document).ready(function() {
 }
 </style>
 
+<script type="text/javascript">
+$(document).ready(function() {
+    // Handle delete button clicks
+    $('.btn-delete').click(function(e) {
+        e.preventDefault();
+        const form = $(this).closest("form"); // More reliable than parents()
+        const itemName = $(this).data('item-name') || 'item'; // Allow custom item names
+        
+        Swal.fire({
+            title: "Delete Confirmation",
+            text: `Are you sure you want to delete this ${itemName}?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#dc3545", // Bootstrap danger color
+            cancelButtonColor: "#6c757d", // Bootstrap secondary color
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+            focusCancel: true // Focus on cancel button by default
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loading state
+                Swal.fire({
+                    title: 'Deleting...',
+                    html: 'Please wait...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Submit the form
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+
+
     <script type="text/javascript">
         $('.ChangeSupportStatus').change(function() {
             var id = $(this).attr('id');
