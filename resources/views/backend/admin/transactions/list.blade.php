@@ -147,20 +147,24 @@
                                             </td>
                                             <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
                                             <td>{{ date('d-m-Y', strtotime($value->updated_at)) }}</td>
-                                            <td>
-                                                <a class="btn btn-primary me-2" href="{{ route('transactions.edit', $value->id) }}">
+                                            <td class="d-flex gap-2">
+                                                <a class="btn btn-primary" href="{{ route('transactions.edit', $value->id) }}">
                                                     <span>Edit</span>
                                                 </a>
-                                                <form action="{{ route('transactions.delete', $value->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete?');" style="display:inline;">
+                                                
+                                                <form action="{{ route('transactions.delete', $value->id) }}" 
+                                                    method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">
-                                                        <span>Delete</span>
+                                                    <button type="button" 
+                                                        class="btn btn-danger btn-delete"
+                                                        data-item-name="transaction">
+                                                        Delete
                                                     </button>
                                                 </form>
                                             </td>
                                         </tr>
-                                    @empty
+                                        @empty
                                         <tr>
                                             <td colspan="9">No Record Found.</td>
                                         </tr>
