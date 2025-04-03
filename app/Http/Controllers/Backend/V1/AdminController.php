@@ -203,18 +203,23 @@ class AdminController
     return redirect(route('admin.users'))->with('success', "Record Successfully Updated.");
 }
 
-    public function admin_users_delete($id, Request $request)
-    {
-        $userDelete = User::find($id);
+    public function admin_users_delete(Request $request, $id)
+{
+    $user = User::findOrFail($id);
 
-        if ($userDelete) {
-            $userDelete->is_delete = 1; // Soft delete by setting is_delete to 1
-            $userDelete->save();
-        }
-        // Check out soft delete using Ajax. To be worked on future date
-        return redirect(route('admin.users'))->with('success', "User Record successfully Moved to Trash!");
+    // Prevent self-deletion
+    if ($user->id === Auth::id()) {
+        return back()->with('error', 'You cannot delete your own account');
     }
 
+    // Perform soft delete
+    $user->is_delete = 1;
+    $user->save();
+    
+    return redirect()
+        ->route('admin.users')
+        ->with('success', 'User successfully moved to trash');
+}
     public function admin_users_update(Request $request)
     {
         $getRecord = User::find($request->input('edit_id'));

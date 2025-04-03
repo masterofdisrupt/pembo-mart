@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Backend\V1\WeekModel;
 use App\Models\Backend\V1\WeekTimeModel;
 use App\Models\Backend\V1\UserTimeModel;
+use Exception;
 use Auth;
 
 
@@ -62,13 +63,35 @@ class UserTimeController
         return redirect(route('week.list' ))->with('success', "Week Name Updated Successfully.");
     }
 
-     public function week_delete($id, Request $request)
-    {
-        $save = WeekModel::find($id);
-        $save->delete();
+    public function week_delete($id)
+{
+    try {
+        $week = WeekModel::findOrFail($id);
+        
+        // Check if user has any associated times
+        if ($week->userTimes()->exists()) {
+            return redirect()
+                ->route('week.list')
+                ->with('error', 'Cannot delete: This week has associated schedules.');
+        }
 
-        return redirect(route('week.list'))->with('success', "Week Name Deleted Successfully.");
+        $week->delete();
+
+        return redirect()
+            ->route('week.list')
+            ->with('success', 'Week deleted successfully.');
+            
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return redirect()
+            ->route('week.list')
+            ->with('error', 'Week not found.');
+            
+    } catch (\Exception $e) {
+        return redirect()
+            ->route('week.list')
+            ->with('error', 'Failed to delete week: ' . $e->getMessage());
     }
+}
 
     // Week Time Start
     public function week_time_list(Request $request)
@@ -125,14 +148,28 @@ class UserTimeController
         return redirect(route('week.time.list'))->with('success', "Week Time Updated Successfully.");
     }
     
-    public function week_time_delete($id, Request $request)
-    {
-        $save = WeekTimeModel::find($id);
-        $save->delete();
+    public function week_time_delete($id)
+{
+    try {
+        $weekTime = WeekTimeModel::findOrFail($id);
 
-        return redirect(route('week.time.list'))->with('success', "Week Time Deleted Successfully.");
+        $weekTime->delete();
+
+        return redirect()
+            ->route('week.time.list')
+            ->with('success', 'Week time deleted successfully.');
+            
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return redirect()
+            ->route('week.time.list')
+            ->with('error', 'Week time not found.');
+            
+    } catch (\Exception $e) {
+        return redirect()
+            ->route('week.time.list')
+            ->with('error', 'Failed to delete week time: ' . $e->getMessage());
     }
-
+}
      // Schedule Start
     public function admin_schedule(Request $request)
     {

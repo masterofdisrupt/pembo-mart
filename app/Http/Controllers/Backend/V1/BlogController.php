@@ -82,7 +82,7 @@ class BlogController extends Controller // Extend the Controller class
         try {
             // Delete record
             $recordDelete->delete();
-            return redirect()->route('blogs')->with('success', "Record Successfully Deleted!");
+            return redirect()->route('blogs')->with('success', "Blog Successfully Deleted!");
         } catch (\Exception $e) {
             // Handle unexpected errors
             return redirect()->route('blogs')->with('error', "An error occurred while deleting the blog.");

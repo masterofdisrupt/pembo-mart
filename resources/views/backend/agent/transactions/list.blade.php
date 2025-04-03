@@ -70,8 +70,11 @@
                                                     method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit"
-                                                        class="btn btn-danger btn-sm btn btn-delete">Delete</button>
+                                                    <button type="button"
+                                                        class="btn btn-danger btn-sm btn btn-delete"
+                                                        data-item-name="transaction">
+                                                        Delete
+                                                    </button>
                                                 </form>
                                             </td>
                                         </tr>

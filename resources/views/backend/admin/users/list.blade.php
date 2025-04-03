@@ -1,3 +1,54 @@
+<!-- filepath: /opt/lampp/htdocs/pembo-mart/resources/views/backend/admin/admin_dashboard.blade.php -->
+
+<style>
+.typeahead {
+    background-color: #fff;
+}
+.typeahead:focus {
+    border: 2px solid #0097cf;
+}
+.tt-query {
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.tt-hint {
+    color: #999;
+}
+.tt-menu {
+    width: 100%;
+    margin-top: 12px;
+    padding: 8px 0;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+.tt-suggestion {
+    padding: 3px 20px;
+    line-height: 24px;
+}
+.tt-suggestion:hover {
+    cursor: pointer;
+    color: #fff;
+    background-color: #0097cf;
+}
+.tt-suggestion.tt-cursor {
+    color: #fff;
+    background-color: #0097cf;
+}
+
+.form-control.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+
+.btn-sm.submitform {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
+
+</style>
+
 @extends('backend.admin.admin_dashboard')
 @section('admin')
     <div class="page-content">
@@ -149,7 +200,7 @@
                             </div>
                             <div class="d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary">Search</button>
-                                <a href="{{ url('admin/users') }}" class="btn btn-danger ms-2">Reset</a>
+                                <a href="{{ route('admin.users') }}" class="btn btn-danger ms-2">Reset</a>
                             </div>
 
                         </form>
@@ -161,7 +212,15 @@
 
         {{-- Search Box end --}}
 
-        <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Enter Name..." />
+        <div class="form-group">
+    <label for="user_name">Search User</label>
+    <input type="text" 
+           class="form-control" 
+           id="user_name" 
+           name="user_name" 
+           placeholder="Start typing to search users...">
+    <input type="hidden" id="user_id" name="user_id">
+</div>
 
         <br>
 
@@ -202,112 +261,102 @@
                                 <tbody>
 
                                     @forelse ($getRecord as $value)
-                                        <form class="a_form{{ $value->id }}" method="POST">
-
-                                            {{ csrf_field() }}
-
-                                            <tr class="table-info text-dark">
+                                        <tr class="table-info text-dark">
+                                            <form class="a_form{{ $value->id }}" method="POST">
+                                                {{ csrf_field() }}
                                                 <td>{{ $value->id }}</td>
                                                 <td style="min-width: 150px;">
                                                     <input type="hidden" name="edit_id" value="{{ $value->id }}">
-                                                    <input type="text" class="form-control" name="edit_name"
-                                                        value="{{ old('name', $value->name) }}">
-                                                    <br>
-                                                    <button type="button" class="btn btn-success submitform"
-                                                        id="{{ $value->id }}">Save</button>
+                                                    <input type="text" class="form-control mb-2" name="edit_name"
+                                                    value="{{ old('name', $value->name) }}">
+                                                    <button type="button" class="btn btn-success btn-sm submitform" id="{{ $value->id }}">Save</button>
                                                 </td>
                                                 <td style="min-width: 150px;">
                                                     <input type="hidden" name="edit_id" value="{{ $value->id }}">
-                                                    <input type="text" class="form-control" name="edit_middle_name"
-                                                        value="{{ old('middle_name', $value->middle_name) }}">
-                                                    <br>
-                                                    <button type="button" class="btn btn-success submitform"
-                                                        id="{{ $value->id }}">Save</button>
+                                                    <input type="text" class="form-control mb-2" name="edit_middle_name"
+                                                    value="{{ old('middle_name', $value->middle_name) }}">
+                                                    <button type="button" class="btn btn-success btn-sm submitform" id="{{ $value->id }}">Save</button>
                                                 </td>
                                                 <td style="min-width: 150px;">
                                                     <input type="hidden" name="edit_id" value="{{ $value->id }}">
-                                                    <input type="text" class="form-control" name="edit_surname"
-                                                        value="{{ old('surname', $value->surname) }}">
-                                                    <br>
-                                                    <button type="button" class="btn btn-success submitform"
-                                                        id="{{ $value->id }}">Save</button>
-                                                </td>
+                                                    <input type="text" class="form-control mb-2" name="edit_surname"
+                                                    value="{{ old('surname', $value->surname) }}">
+                                                    <button type="button" class="btn btn-success btn-sm submitform" id="{{ $value->id }}">Save</button>
+                                                </td>         
                                                 <td>{{ $value->username }}</td>
                                                 <td>{{ $value->email }}</td>
-                                                <td>
+                                                <td>       
                                                     @if (!empty($value->getProfile()))
-                                                        <a href="{{ $value->getProfile() }}" data-lightbox="example-set">
-                                                            <img src="{{ $value->getProfile() }}"
-                                                                style="width: 100%; height: 100%;">
-                                                        </a>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $value->phone }}</td>
-                                                <td>{{ $value->website }}</td>
-                                                <td>{{ $value->address }}</td>
-                                                <td>
-                                                    @if ($value->role === 'admin')
-                                                        <span class="badge bg-info">Admin</span>
-                                                    @elseif ($value->role === 'agent')
-                                                        <span class="badge bg-primary">Agent</span>
-                                                    @elseif ($value->role === 'user')
-                                                        <span class="badge bg-success">User</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <select name="" class="form-control changeStatus"
-                                                        id="{{ $value->id }}" style="width: 170px;">
-                                                        <option {{ $value->status === 'active' ? 'selected' : '' }}
-                                                            value="active">Active</option>
-                                                        <option {{ $value->status === 'inactive' ? 'selected' : '' }}
-                                                            value="inactive">In Active</option>
-                                                    </select>
-                                                </td>
-                                                <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
-                                                <td>
-                                                    <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('admin.users.view', $value->id) }}"><svg
-                                                            xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="feather feather-eye icon-sm me-2">
-                                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                            <circle cx="12" cy="12" r="3"></circle>
-                                                        </svg> <span class="">View</span></a>
+                                                    <a href="{{ $value->getProfile() }}" data-lightbox="example-set">
+                    <img src="{{ $value->getProfile() }}" style="width: 100%; height: 100%;">
+                </a>
+            @endif
+        </td>
+        <td>{{ $value->phone }}</td>
+        <td>{{ $value->website }}</td>
+        <td>{{ $value->address }}</td>
+        <td>
+            @if ($value->role === 'admin')
+                <span class="badge bg-info">Admin</span>
+            @elseif ($value->role === 'agent')
+                <span class="badge bg-primary">Agent</span>
+            @elseif ($value->role === 'user')
+                <span class="badge bg-success">User</span>
+            @endif
+        </td>
+        <td>
+            <select name="" class="form-control changeStatus" id="{{ $value->id }}" style="width: 170px;">
+                <option {{ $value->status === 'active' ? 'selected' : '' }} value="active">Active</option>
+                <option {{ $value->status === 'inactive' ? 'selected' : '' }} value="inactive">Inactive</option>
+            </select>
+        </td>
+        <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
+        <td>
+            <a class="dropdown-item d-flex align-items-center"
+                href="{{ route('admin.users.view', $value->id) }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-eye icon-sm me-2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span class="">View</span>
+            </a>
 
-                                                    <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('admin.users.edit', $value->id) }}"><svg
-                                                            xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="feather feather-edit-2 icon-sm me-2">
-                                                            <path
-                                                                d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
-                                                            </path>
-                                                        </svg> <span class="">Edit</span></a>
+            <a class="dropdown-item d-flex align-items-center"
+                href="{{ route('admin.users.edit', $value->id) }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-edit-2 icon-sm me-2">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                    </path>
+                </svg>
+                <span class="">Edit</span>
+            </a>
+        </td>
+    </form>
 
-                                                    {{-- Checkout soft delete using Ajax --}}
-                                                    <a id="delete-form-{{ $value->id }}"
-                                                        class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('admin.users.delete', $value->id) }}"
-                                                        onclick="confirmDelete({{ $value->id }})"><svg
-                                                            xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="feather feather-trash icon-sm me-2">
-                                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                                            <path
-                                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                            </path>
-                                                        </svg> <span class="">Delete</span></a>
+    <!-- DELETE FORM (SEPARATED) -->
+    <td>
+        <form action="{{ route('admin.users.delete', $value->id) }}" method="POST" class="d-inline-block delete-form">
+            @csrf
+            @method('DELETE')
+            <button type="button" class="dropdown-item d-flex align-items-center btn-delete" data-item-name="user">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-trash icon-sm me-2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span>Delete</span>
+            </button>
+        </form>
+    </td>
+</tr>
 
-                                                </td>
-
-                                            </tr>
-                                        </form>
                                     @empty
                                         <tr>
                                             <td colspan="100%">No Record Found.</td>
@@ -363,12 +412,5 @@
                 }
             });
         });
-    </script>
-    <script type="text/javascript">
-        function confirmDelete(id) {
-            if (confirm("Are you sure you want to delete this user?")) {
-                document.getElementById("delete-form-" + id).submit();
-            }
-        }
     </script>
 @endsection

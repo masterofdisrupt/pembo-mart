@@ -13,6 +13,10 @@ class WeekTimeModel extends Model
 
     protected $table = 'week_time';
 
+    protected $fillable = [
+        'name',   
+    ];
+
     static public function getRecordAll()
     {
         $return = self::select('week_time.*');

@@ -17,6 +17,7 @@ use App\Http\Controllers\Backend\V1\BlogController;
 use App\Http\Controllers\Backend\V1\LocationController;
 use App\Http\Controllers\Backend\V1\SendPDFController;
 use App\Http\Controllers\Backend\V1\TransactionsController;
+use App\Http\Controllers\Backend\V1\FullCalendarController;
 
 
 
@@ -48,8 +49,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/users/add', [AdminController::class, 'add_users_store'])->name('add.users.store');
     Route::get('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit'])->name('admin.users.edit');
     Route::put('admin/users/edit/{id}', [AdminController::class, 'admin_users_edit_update'])->name('admin.users.edit.update');
-    Route::get('admin/users/delete/{id}', [AdminController::class, 'admin_users_delete'])->name('admin.users.delete');
-    // Single user name update
+    Route::delete('admin/users/delete/{id}', [AdminController::class, 'admin_users_delete'])->name('admin.users.delete');
     Route::post('admin/users/update', [AdminController::class, 'admin_users_update'])->name('admin.users.update');
     Route::get('admin/users/changeStatus', [AdminController::class, 'admin_users_changeStatus'])->name('admin.users.change.status');
     Route::post('checkemail', [AdminController::class, 'checkEmail'])->name('check.email');
@@ -81,10 +81,17 @@ Route::group(['middleware' => 'admin'], function () {
     Route::delete('admin/week_time/delete/{id}', [UserTimeController::class, 'week_time_delete'])->name('week.time.delete');
     // User Week Time End
 
-// Schedule Start
+    // Schedule Start
     Route::get('admin/schedule', [UserTimeController::class, 'admin_schedule'])->name('admin.schedule');
     Route::post('admin/schedule', [UserTimeController::class, 'admin_schedule_update'])->name('admin.schedule.update');
     // Schedule End
+
+    // AutoComplete Search
+    Route::get('admin/users/typeahead_autocomplete', [AdminController::class, 'typeahead_autocomplete'])->name('typeahead.autocomplete');
+
+    // Full Calendar Start
+    Route::get('admin/full_calendar', [FullCalendarController::class, 'full_calendar'])->name('fullCalendar');
+    Route::post('admin/full_calendar/action', [FullCalendarController::class, 'action'])->name('fullCalendar.action');
 
     // Notification Start
     Route::get('admin/notification', [NotificationController::class, 'notification_index'])->name('notification');
@@ -139,9 +146,9 @@ Route::group(['middleware' => 'admin'], function () {
 
     // Transactions Start
     Route::get('admin/transactions', [TransactionsController::class, 'transactions_index'])->name('transactions');
-    Route::get('admin/transactions/delete/{id}', [TransactionsController::class, 'transactions_delete'])->name('transactions.delete');
     Route::get('admin/transactions/edit/{id}', [TransactionsController::class, 'transactions_edit'])->name('transactions.edit');
-    Route::post('admin/transactions/update/{id}', [TransactionsController::class, 'transactions_update'])->name('transactions.update');
+    Route::put('admin/transactions/update/{id}', [TransactionsController::class, 'transactions_update'])->name('transactions.update');
+    Route::delete('admin/transactions/delete/{id}', [TransactionsController::class, 'transactions_delete'])->name('transactions.delete');
     // Transactions End
 
     // PDF Start

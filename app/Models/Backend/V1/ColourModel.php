@@ -4,6 +4,7 @@ namespace App\Models\Backend\V1;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Backend\V1\OrdersDetailsModel;
 use Request;
 
 
@@ -33,4 +34,14 @@ class ColourModel extends Model
         $return = $return->get();
         return $return;
     }
+
+    /**
+     * Get the orders details associated with this colour
+     */
+    public function ordersDetails()
+    {
+        return $this->hasMany(ordersDetailsModel::class, 'colour_id', 'id');
+    }
+
 }
+

@@ -155,33 +155,22 @@
                                             <td>
                                                 <a href="{{ route('pdf.by.id', $value->id) }}"
                                                     class="btn btn-success">PDF</a>
-                                                <a class="dropdown-item"
-                                                    href="{{ route('colour.edit', $value->id) }}"><svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                        class="feather feather-edit-2 icon-sm me-2">
-                                                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
-                                                        </path>
-                                                    </svg> <span class="">Edit</span></a>
 
-                                                <form action="{{ route('colour.delete', $value->id) }}" 
-                                                    method="POST" onsubmit="return confirm('Are you sure you want to delete?');" 
-                                                    style="display:inline;">
-                                                    
+
+                                                    <a class="btn btn-primary"
+                                                    href="{{ route('colour.edit', $value->id) }}"><span
+                                                        class="">Edit</span></a>
+
+                                            <form action="{{ route('colour.delete', $value->id) }}" 
+                                                    method="POST" class="d-inline-block delete-form">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                        class="feather feather-trash icon-sm me-2">
-                                                        <polyline points="3 6 5 6 21 6"></polyline>
-                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                                    </svg>
-                                                    <span>Delete</span>
-                                                </button>
-                                            </form>
+                                                    <button type="submit" class="btn btn-danger d-flex align-items-center btn-delete" 
+                                                    data-item-name="colour">
+                                                        
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </form>
                                             </td>
 
                                         </tr>

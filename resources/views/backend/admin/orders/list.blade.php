@@ -115,11 +115,11 @@
                                                     </svg> <span class="">Edit</span></a>
 
                                                 <form action="{{ route('delete.orders', $value->id) }}" 
-                                                    method="POST" onsubmit="return confirm('Are you sure you want to delete?');" 
-                                                    style="display:inline;">
+                                                    method="POST" class="d-inline-block delete-form">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">
+                                                    <button type="submit" class="dropdown-item d-flex align-items-center btn-delete" 
+                                                    data-item-name="order" style="border: none; background: none; cursor: pointer;">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
