@@ -417,7 +417,7 @@ public function admin_address_delete($id)
     $addressDelete->is_delete = 1;
     $addressDelete->save();
 
-    return redirect()->route('admin.address')->with('success', 'Record Successfully Deleted!');
+    return redirect()->route('admin.address')->with('success', 'Address Successfully Deleted!');
 }
 
 }
