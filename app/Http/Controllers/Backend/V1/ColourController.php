@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Backend\V1;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use App\Models\Backend\V1\ColourModel;
 use Exception;
 use PDF;
 
-class ColourController
+class ColourController extends Controller
 {
     public function change_status(Request $request)
     {
@@ -92,20 +93,27 @@ class ColourController
 
     public function delete_colour($id)
 {
-    $save = ColourModel::find($id);
+    try {
+        $colour = ColourModel::findOrFail($id);
 
-    if (!$save) {
-        return redirect()->route('colour')->with('error', 'Colour not found.');
+        // Check for related products
+        if ($colour->ordersDetails()->count() > 0) {
+            return redirect()
+                ->route('colour')
+                ->with('error', 'Cannot delete: This colour is being used by orders.');
+        }
+
+        $colour->delete();
+
+        return redirect()
+            ->route('colour')
+            ->with('success', 'Colour successfully deleted!');
+
+    } catch (\Exception $e) {
+        return redirect()
+            ->route('colour')
+            ->with('error', 'Failed to delete colour. ' . $e->getMessage());
     }
-
-    // Check for related products before deleting
-    if ($save->product()->exists()) {
-        return redirect()->route('colour')->with('error', 'Cannot delete: Colour is linked to products.');
-    }
-
-    $save->delete();
-
-    return redirect()->route('colour')->with("success", "Colour Successfully Deleted!");
 }
 
 public function pdf()
