@@ -93,8 +93,7 @@
                                 <button type="submit" class="btn btn-primary me-2" style="float: right;">Update</button>
                             </form>
                         </div>
-                        <div style="padding: 20px; float: right;">
-                            {{-- {!! $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() !!} --}}
+                        <div style="padding: 20px; float: right;">                    
 
                         </div>
 
