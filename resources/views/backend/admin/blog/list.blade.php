@@ -105,11 +105,11 @@
                                                         class="">View</span></a>
 
                                                  <form action="{{ route('delete.blogs', $value->id) }}" 
-                                                    method="POST" onsubmit="return confirm('Are you sure you want to delete?');" 
-                                                    style="display:inline;">
+                                                    method="POST" class="d-inline-block delete-form">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">
+                                                    <button type="submit" class="btn btn-danger d-flex align-items-center btn-delete" 
+                                                    data-item-name="blog">
                                                         
                                                         <span>Delete</span>
                                                     </button>
