@@ -54,6 +54,10 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/users/changeStatus', [AdminController::class, 'admin_users_changeStatus'])->name('admin.users.change.status');
     Route::post('checkemail', [AdminController::class, 'checkEmail'])->name('check.email');
 
+    // Change Password
+    Route::get('admin/change_password', [AdminController::class, 'change_password'])->name('change.password');
+    Route::put('admin/change_password/update', [AdminController::class, 'update_password'])->name('update.password');
+
 
     Route::get('admin/email/compose', [EmailController::class, 'email_compose']);
     Route::post('admin/email/post', [EmailController::class, 'email_store']);
