@@ -84,7 +84,7 @@
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/change_password') }}" class="nav-link">
+                  <a href="{{ route('change.password') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Change Password</span>
                   </a>
