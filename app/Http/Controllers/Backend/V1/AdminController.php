@@ -240,6 +240,43 @@ class AdminController
         echo json_encode($json);
     }
 
+    public function change_password(Request $request)
+{
+    return view('backend.admin.change_password.update');
+}
+
+public function update_password(Request $request)
+{
+    try {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => [
+                'required',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/'
+            ]
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->with('error', 'Current password is incorrect');
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return redirect()
+            ->route('admin.profile')
+            ->with('success', 'Password changed successfully');
+
+    } catch (\Exception $e) {
+        return back()
+            ->with('error', 'Failed to update password: ' . $e->getMessage());
+    }
+}
+
     public function checkEmail(Request $request)
     {
         $email = $request->input('email');
