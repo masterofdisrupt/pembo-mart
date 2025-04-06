@@ -91,16 +91,16 @@
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/discount_code') }}" class="nav-link">
+                  <a href="{{ route('discount.code') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Discount Code</span>
+                      <span class="link-title">Discount Codes</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/support') }}" class="nav-link">
+                  <a href="{{ route('supports') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Support</span>
+                      <span class="link-title">Supports</span>
                   </a>
               </li>
 
