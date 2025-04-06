@@ -18,6 +18,8 @@ use App\Http\Controllers\Backend\V1\LocationController;
 use App\Http\Controllers\Backend\V1\SendPDFController;
 use App\Http\Controllers\Backend\V1\TransactionsController;
 use App\Http\Controllers\Backend\V1\FullCalendarController;
+use App\Http\Controllers\Backend\V1\DiscountCodeController;
+use App\Http\Controllers\Backend\V1\SupportsController;
 
 
 
@@ -134,6 +136,23 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/orders/edit/{id}', [OrdersController::class, 'update_orders'])->name('update.orders');
     Route::delete('admin/orders/delete/{id}', [OrdersController::class, 'delete_orders'])->name('delete.orders');
     // Order End
+
+    // Discount Code
+    Route::get('admin/discount_code', [DiscountCodeController::class, 'discount_code'])->name('discount.code');
+    Route::get('admin/discount_code/add', [DiscountCodeController::class, 'discount_code_add'])->name('discount.code.add');
+    Route::post('admin/discount_code/add', [DiscountCodeController::class, 'discount_code_store'])->name('discount.code.store');
+    Route::get('admin/discount_code/edit/{id}', [DiscountCodeController::class, 'discount_code_edit'])->name('discount.code.edit');
+    Route::put('admin/discount_code/edit/{id}', [DiscountCodeController::class, 'discount_code_update'])->name('discount.code.update');
+    Route::delete('admin/discount_code/delete/{id}', [DiscountCodeController::class, 'discount_code_delete'])->name('discount.code.delete');
+
+    // Support Start
+    Route::get('admin/support', [SupportsController::class, 'supports'])->name('supports');
+    Route::get('admin/support/reply/{id}', [SupportsController::class, 'support_replys'])->name('support.replys');
+    Route::post('admin/support/reply/{id}', [SupportsController::class, 'reply_store'])->name('support.reply.store');
+    Route::get('admin/change_support_status', [SupportsController::class, 'change_support_status'])->name('change.support.status');
+    Route::put('admin/support/status_update/{id}', [SupportsController::class, 'status_update'])->name('support.status.update');
+    Route::delete('admin/support/delete_multi_item', [SupportsController::class, 'delete_multi_item'])->name('support.delete.multi.item');
+
 
     // Blog Start
     Route::get('admin/blogs', [BlogController::class, 'list_blog'])->name('blogs');
