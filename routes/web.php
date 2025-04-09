@@ -147,10 +147,10 @@ Route::group(['middleware' => 'admin'], function () {
 
     // Support Start
     Route::get('admin/support', [SupportsController::class, 'supports'])->name('supports');
-    Route::get('admin/support/reply/{id}', [SupportsController::class, 'support_replys'])->name('support.replys');
+    Route::get('admin/support/reply/{id}', [SupportsController::class, 'support_reply'])->name('support.reply');
     Route::post('admin/support/reply/{id}', [SupportsController::class, 'reply_store'])->name('support.reply.store');
     Route::get('admin/change_support_status', [SupportsController::class, 'change_support_status'])->name('change.support.status');
-    Route::put('admin/support/status_update/{id}', [SupportsController::class, 'status_update'])->name('support.status.update');
+    Route::get('admin/support/status_update/{id}', [SupportsController::class, 'status_update'])->name('support.status.update');
     Route::delete('admin/support/delete_multi_item', [SupportsController::class, 'delete_multi_item'])->name('support.delete.multi.item');
 
 
