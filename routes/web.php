@@ -3,6 +3,7 @@
 use App\Http\Controllers\Backend\V1\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Backend\V1\AdminController;
 use App\Http\Controllers\Backend\V1\AgentController;
 use App\Http\Controllers\Backend\V1\EmailController;
@@ -23,7 +24,7 @@ use App\Http\Controllers\Backend\V1\SupportsController;
 
 
 
-
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
 Route::post('/login', [AuthController::class, 'authLogin'])->name('login');
 
