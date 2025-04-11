@@ -21,6 +21,7 @@ use App\Http\Controllers\Backend\V1\TransactionsController;
 use App\Http\Controllers\Backend\V1\FullCalendarController;
 use App\Http\Controllers\Backend\V1\DiscountCodeController;
 use App\Http\Controllers\Backend\V1\SupportsController;
+use App\Http\Controllers\Backend\V1\CategoryController;
 
 
 
@@ -104,6 +105,15 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/notification', [NotificationController::class, 'notification_index'])->name('notification');
     Route::post('admin/notification_send', [NotificationController::class, 'notification_send'])->name('notification.send');
     // Notification End
+
+    // Category Start
+    Route::get('admin/category', [CategoryController::class, 'category_list'])->name('category');
+    Route::get('admin/category/add', [CategoryController::class, 'add_category'])->name('category.add');
+    Route::post('admin/category/add', [CategoryController::class, 'store_category'])->name('category.store');
+    Route::get('admin/category/edit/{id}', [CategoryController::class, 'edit_category'])->name('category.edit');
+    Route::put('admin/category/edit/{id}', [CategoryController::class, 'update_category'])->name('category.update');
+    Route::delete('admin/category/delete/{id}', [CategoryController::class, 'delete_category'])->name('category.delete');
+    // Category End
 
     // Product Start
     Route::get('admin/product', [ProductController::class, 'list'])->name('product');
