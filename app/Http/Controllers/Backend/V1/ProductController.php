@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Backend\V1;
 use Illuminate\Http\Request;
 use App\Models\Backend\V1\ProductModel;
 use Exception;
+use Auth;
+use Str;
+
 
 
 
@@ -30,24 +33,45 @@ class ProductController
         'description' => 'required|string',
     ]);
 
+    $title = trim($request->title);
+    $price = number_format((float) $request->price, 2, '.', '');
+    $description = trim($request->description);
+
     // Generate a random 10-digit number for product code
-    $randNum = str_pad(mt_rand(1000000000, 9999999999), 10, '0', STR_PAD_LEFT);
+    $productCode = mt_rand(1000000000, 9999999999);
+
+    // Generate slug
+    $slug = Str::slug($title, '-');
+
+    // Check if the slug already exists
+    if (ProductModel::where('slug', $slug)->exists()) {
+        $slug .= '-' . uniqid(); // or use $slug .= '-' . Str::random(5);
+    }
 
     // Save product details
-    $save = new ProductModel;
-    $save->title = trim($request->title);
-    $save->price = number_format((float) $request->price, 2, '.', '');
-    $save->product_code = $randNum;
-    $save->description = trim($request->description);
-    $save->save();
+    $product = new ProductModel;
+    $product->title = $title;
+    $product->price = $price;
+    $product->product_code = $productCode;
+    $product->description = $description;
+    $product->created_by = Auth::id();
+    $product->slug = $slug;
+    $product->save();
 
-    return redirect(route('product'))->with('success', "Product Successfully Added");
+    return redirect('admin/product/edit/' . $product->id)
+           ->with('success', "Product Successfully Created");
 }
 
- public function edit_product($id)
+ public function edit_product($product_id)
     {
-        $data['getRecord'] = ProductModel::find($id);
-        return view('backend.admin.product.edit', $data);
+        $product = ProductModel::getSingleRecord($product_id);
+        if(!empty($product)){
+            $data['product'] = $product;
+            return view('backend.admin.product.edit', $data);
+        } else {
+            return redirect()->route('product')->with('error', "Product not found.");
+        }
+        
     }
 
      public function update_product(Request $request, $id)
