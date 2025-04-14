@@ -104,11 +104,18 @@
                   </a>
               </li>
 
-              <li class="nav-item nav-category">Category</li>
-              <li class="nav-item" @if (Request::segment(2) == 'category') active @endif>
+              <li class="nav-item nav-category">Categories</li>
+              <li class="nav-item" @if (Str::startsWith(Request::segment(2), 'category')) active @endif>
                   <a href="{{ route('category') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Category</span>
+                  </a>
+              </li>
+              
+              <li class="nav-item">
+                  <a href="{{ route('sub.category') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Sub Category</span>
                   </a>
               </li>
 
