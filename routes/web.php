@@ -22,10 +22,11 @@ use App\Http\Controllers\Backend\V1\FullCalendarController;
 use App\Http\Controllers\Backend\V1\DiscountCodeController;
 use App\Http\Controllers\Backend\V1\SupportsController;
 use App\Http\Controllers\Backend\V1\CategoryController;
+use App\Http\Controllers\Backend\V1\SubCategoryController;
+use App\Http\Controllers\ProductController as FrontendProductController;
 
 
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('show.login');
 Route::post('/login', [AuthController::class, 'authLogin'])->name('login');
 
@@ -114,6 +115,15 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/category/edit/{id}', [CategoryController::class, 'update_category'])->name('category.update');
     Route::delete('admin/category/delete/{id}', [CategoryController::class, 'delete_category'])->name('category.delete');
     // Category End
+
+    // Sub Category Start
+    Route::get('admin/sub_category', [SubCategoryController::class, 'sub_category'])->name('sub.category');
+    Route::get('admin/sub_category/add', [SubCategoryController::class, 'sub_category_add'])->name('sub.category.add');
+    Route::post('admin/sub_category/add', [SubCategoryController::class, 'sub_category_store'])->name('sub.category.store');
+    Route::get('admin/sub_category/edit/{id}', [SubCategoryController::class, 'sub_category_edit'])->name('sub.category.edit');
+    Route::put('admin/sub_category/edit/{id}', [SubCategoryController::class, 'sub_category_update'])->name('sub.category.update');
+    Route::delete('admin/sub_category/delete/{id}', [SubCategoryController::class, 'sub_category_delete'])->name('sub.category.delete');
+    // Sub Category End
 
     // Product Start
     Route::get('admin/product', [ProductController::class, 'list'])->name('product');
@@ -258,6 +268,19 @@ Route::group(['middleware' => 'agent'], function () {
 Route::group(['middleware' => 'user'], function () {
 
 });
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+
+// Dynamic catch-all routes
+Route::get('{category?}/{subCategory?}', [FrontendProductController::class, 'getCategory'])
+    ->where([
+        'category' => '[A-Za-z0-9\-]+',
+        'subCategory' => '[A-Za-z0-9\-]+',
+    ])
+    ->name('get.category');
+
+
 
 
 
