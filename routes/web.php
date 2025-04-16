@@ -23,6 +23,7 @@ use App\Http\Controllers\Backend\V1\DiscountCodeController;
 use App\Http\Controllers\Backend\V1\SupportsController;
 use App\Http\Controllers\Backend\V1\CategoryController;
 use App\Http\Controllers\Backend\V1\SubCategoryController;
+use App\Http\Controllers\Backend\V1\BrandsController;
 use App\Http\Controllers\ProductController as FrontendProductController;
 
 
@@ -124,6 +125,15 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/sub_category/edit/{id}', [SubCategoryController::class, 'sub_category_update'])->name('sub.category.update');
     Route::delete('admin/sub_category/delete/{id}', [SubCategoryController::class, 'sub_category_delete'])->name('sub.category.delete');
     // Sub Category End
+
+    // Brands Start
+    Route::get('admin/brands', [BrandsController::class, 'index'])->name('brands');
+    Route::get('admin/brands/add', [BrandsController::class, 'create'])->name('brands.add');
+    Route::post('admin/brands/add', [BrandsController::class, 'store'])->name('brands.store');
+    Route::get('admin/brands/edit/{id}', [BrandsController::class, 'edit'])->name('brands.edit');
+    Route::put('admin/brands/edit/{id}', [BrandsController::class, 'update'])->name('brands.update');
+    Route::delete('admin/brands/delete/{id}', [BrandsController::class, 'delete'])->name('brands.delete');
+    // Brands End    
 
     // Product Start
     Route::get('admin/product', [ProductController::class, 'list'])->name('product');
