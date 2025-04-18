@@ -49,7 +49,7 @@ class CategoryController extends Controller
 
     public function edit_category($id)
     {
-        $getRecord = CategoryModel::getSingle($id);
+        $getRecord = CategoryModel::getRecordById($id);
         return view('backend.admin.category.edit', compact('getRecord'));
     }
 
@@ -63,7 +63,7 @@ class CategoryController extends Controller
             'meta_keywords' => 'nullable|string|max:255',
         ]);
 
-        $category = CategoryModel::getSingle($id);
+        $category = CategoryModel::getRecordById($id);
         $category->name = trim($request->name);
         $category->slug = trim($request->slug);
         $category->status = trim($request->status);
@@ -77,7 +77,7 @@ class CategoryController extends Controller
 
     public function delete_category($id)
     {
-        $category = CategoryModel::getSingle($id);
+        $category = CategoryModel::getRecordById($id);
         $category->is_delete = 1;
         $category->save();
 
