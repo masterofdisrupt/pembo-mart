@@ -4,6 +4,7 @@
 /public/hot
 /public/storage
 /public/assets
+/assets
 /public/backend/upload
 /public/backend/upload/profile
 /storage/*.key
