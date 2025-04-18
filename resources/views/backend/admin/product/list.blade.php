@@ -28,30 +28,41 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Title</th>
-                                        <th>Price</th>
-                                        <th>Product Code</th>
-                                        <th>Description</th>
+                                        <th>Created By</th>
+                                        {{-- <th>Product Code</th> --}}
+                                        <th>Status</th>
                                         <th>Created At</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($getRecord as $value)
+                                    @foreach ($getRecord as $product)
                                         <tr class="table-info text-dark">
-                                            <td>{{ $value->id }}</td>
-                                            <td>{{ $value->title }}</td>
-                                            <td>{{ $value->price }}</td>
-                                            <td>
-                                                {!! DNS2D::getBarcodeHTML("$value->product_code", 'QRCODE') !!}
+                                            <td>{{ $product->id }}</td>
+                                            <td>{{ $product->title }}</td>
+                                            <td>{{ $product->created_by_name }}</td>
+                                            {{-- <td>
+                                                {!! DNS2D::getBarcodeHTML("$product->product_code", 'QRCODE') !!}
 
-                                                Product:{{ $value->product_code }}
+                                                Product:{{ $product->product_code }}
 
+                                            </td> --}}
+                                             <td>
+                                                @if ($product->status == 1)
+                                                    <span class="badge bg-success">Active</span>
+                                                @else
+                                                    <span class="badge bg-danger">Inactive</span>
+                                                @endif
                                             </td>
-                                            <td>{{ $value->description }}</td>
-                                            <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
+                                            <td>
+                                        <div data-bs-toggle="tooltip" 
+                                             title="{{ $product->created_at->format('M d, Y H:i') }}">
+                                            {{ $product->created_at->diffForHumans() }}
+                                        </div>
+                                    </td>
                                             <td>
                                                 <a class="dropdown-item"
-                                                    href="{{ route('product.edit', $value->id) }}"><svg
+                                                    href="{{ route('product.edit', $product->id) }}"><svg
                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -60,7 +71,7 @@
                                                         </path>
                                                     </svg> <span class="">Edit</span></a>
 
-                                                <form action="{{ route('product.delete', $value->id) }}" 
+                                                <form action="{{ route('product.delete', $product->id) }}" 
                                                     method="POST" class="d-inline-block delete-form">
                                                     @csrf
                                                     @method('DELETE')
@@ -85,7 +96,7 @@
                         </div>
 
                         <div style="padding: 20px; float: right;">
-
+                            {!! $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() !!}
                         </div>
                     </div>
                 </div>
