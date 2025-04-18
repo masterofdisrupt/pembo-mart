@@ -41,9 +41,11 @@ class CategoryModel extends Model
      * @param int $id
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    static public function getSingle($id)
+    static public function getRecordById($id)
     {
-        return self::where('id', $id)->first();
+        return self::where('id', $id)
+        ->where('is_delete', 0)
+        ->first();
     }
     /**
      * Get the name of the category by ID.
@@ -61,9 +63,52 @@ class CategoryModel extends Model
      * @param int $id
      * @return string|null
      */
-    static public function getCategorySlug($id)
+    static public function findBySlug($slug)
     {
-        return self::where('id', $id)->value('slug');
+        return self::select('categories.*')
+        ->where('categories.slug', $slug)
+        ->where('categories.is_delete', 0)
+        ->where('categories.status', 1)
+        
+        ->first();
+    }
+
+    /**
+     * Get the status of the category by ID.
+     *
+     * @param int $id
+     * @return string|null
+     */
+    static public function getCategoryStatus()
+    {
+        return self::select('categories.*')
+        ->join('users', 'categories.created_by', '=', 'users.id')
+        ->where('categories.is_delete', 0)
+        ->where('categories.status', 1)
+        ->orderBy('categories.name', 'asc')
+        ->get();
+    }
+
+    /**
+     * Get the status of the category menu.
+     *
+     * @param int $id
+     * @return string|null
+     */
+    static public function getCategoryStatusMenu()
+    {
+        return self::select('categories.*')
+        ->join('users', 'categories.created_by', '=', 'users.id')
+        ->where('categories.is_delete', 0)
+        ->where('categories.status', 1)
+        ->get();
+    }
+
+    public function getSubCategories()
+    {
+        return $this->hasMany(SubCategoryModel::class, 'category_id', 'id')
+        ->where('status', 1)
+            ->where('is_delete', 0);
     }
     
 }
