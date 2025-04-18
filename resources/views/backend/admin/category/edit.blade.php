@@ -90,7 +90,7 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary me-2">Submit</button>
+                            <button type="submit" class="btn btn-primary me-2">Update</button>
                             <a href="{{ route('category') }}" class="btn btn-secondary">Back</a>
                         </form>
 
