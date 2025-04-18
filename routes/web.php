@@ -124,6 +124,10 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/sub_category/edit/{id}', [SubCategoryController::class, 'sub_category_edit'])->name('sub.category.edit');
     Route::put('admin/sub_category/edit/{id}', [SubCategoryController::class, 'sub_category_update'])->name('sub.category.update');
     Route::delete('admin/sub_category/delete/{id}', [SubCategoryController::class, 'sub_category_delete'])->name('sub.category.delete');
+
+    Route::post('admin/get_sub_categories', [SubCategoryController::class, 'get_sub_categories'])->name('get.sub.categories');
+
+
     // Sub Category End
 
     // Brands Start
@@ -140,7 +144,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/product/add', [ProductController::class, 'add_product'])->name('product.add');
     Route::post('admin/product/add', [ProductController::class, 'store_product'])->name('product.store');
     Route::get('admin/product/edit/{id}', [ProductController::class, 'edit_product'])->name('product.edit');
-    Route::put('admin/product/edit/{id}', [ProductController::class, 'update_product'])->name('product.update');
+    Route::post('admin/product/edit/{id}', [ProductController::class, 'update_product'])->name('product.update');
     Route::delete('admin/product/delete/{id}', [ProductController::class, 'delete_product'])->name('product.delete');
     // Product End
 
