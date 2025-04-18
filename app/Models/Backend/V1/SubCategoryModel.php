@@ -65,15 +65,15 @@ class SubCategoryModel extends Model
         ->first();
     }
 
-    static public function getRecordSubCategory($category_id) 
-    {
-        return self::select('sub_categories.*', 'categories.name as category_name')
-        ->join('users', 'sub_categories.created_by', '=', 'users.id')
-            ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
-            ->where('sub_categories.id', $id)
-            ->where('sub_categories.is_delete', 0)
-            ->orderBy('sub_categories.created_at', 'asc')
-            ->get();
-        
-    }
+   static public function getRecordSubCategory($category_id)
+{
+    return self::select('sub_categories.*')
+        ->join('users', 'sub_categories.created_by', '=', 'users.id')           
+        ->where('sub_categories.is_delete', 0)
+        ->where('sub_categories.status', 1)
+        ->where('sub_categories.category_id', $category_id)
+        ->orderBy('sub_categories.name', 'asc')
+        ->get();
+}
+
 }
