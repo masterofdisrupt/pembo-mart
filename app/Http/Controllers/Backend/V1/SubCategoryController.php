@@ -85,4 +85,24 @@ class SubCategoryController extends Controller
         return response()->json(['success' => 'Status updated successfully.']);
     }
 
+    public function get_sub_categories(Request $request)
+{
+    $category_id = $request->category_id;
+
+    $subcategories = SubCategoryModel::getRecordSubCategory($category_id);
+    $html = '';
+
+    if ($subcategories->isNotEmpty()) {
+        foreach ($subcategories as $subcategory) {
+            $html .= '<option value="' . $subcategory->id . '">' . $subcategory->name . '</option>';
+        }
+    } else {
+        $html .= '<option value="">No sub categories found</option>';
+    }
+
+    return response()->json(['html' => $html]);
+}
+
+
+
 }
