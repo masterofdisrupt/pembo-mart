@@ -65,7 +65,7 @@
             <div class="col-lg-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">Search Blog</h6>
+                        <h6 class="card-title">Search Colour</h6>
                         <form action="">
                             <div class="row">
                                 <div class="col-sm-2">
