@@ -562,25 +562,6 @@ $(document).ready(function() {
 </script>
 
 
-    <script type="text/javascript">
-        $('.ChangeSupportStatus').change(function() {
-            var id = $(this).attr('id');
-            var status = $(this).val();
-
-            $.ajax({
-                type: 'GET',
-                url: "{{ url('admin/change_support_status') }}",
-                data: {
-                    id: id,
-                    status: status
-                },
-                dataType: 'JSON',
-                success: function(data) {
-                    alert('Status Successfully Changed');
-                }
-            });
-        });
-    </script>
 
 
 </body>
