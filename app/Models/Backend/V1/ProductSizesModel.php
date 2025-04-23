@@ -14,7 +14,7 @@ class ProductSizesModel extends Model
     protected $fillable = [
         'product_id',
         'name',
-        'price',
+        'price'
     ];
 
     static public function getRecords($id)
