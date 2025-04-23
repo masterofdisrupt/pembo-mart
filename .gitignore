@@ -4,9 +4,9 @@
 /public/hot
 /public/storage
 /public/assets
+/public/js
 /assets
-/public/backend/upload
-/public/backend/upload/profile
+/public/backend
 /storage/*.key
 /vendor
 .env
