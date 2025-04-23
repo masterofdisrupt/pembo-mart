@@ -12,13 +12,20 @@ class ProductModel extends Model
     protected $table = 'product';
 
     protected $fillable = [
-        'title',
-        'price',
-        'product_code',
-        'description',
-        'created_by',
-        'slug'
-    ];
+    'title',
+    'sku',
+    'category_id',
+    'sub_category_id',
+    'brand_id',
+    'old_price',
+    'price',
+    'short_description',
+    'description',
+    'additional_info',
+    'ship_and_returns',
+    'status',
+    'images'
+];
 
     static public function getRecords()
     {
@@ -48,4 +55,9 @@ class ProductModel extends Model
     {
         return $this->hasMany(ProductSizesModel::class, 'product_id', 'id');
     }
+
+    public function getImages()
+{
+    return $this->hasMany(ProductImagesModel::class, 'product_id', 'id')->orderBy('order_by', 'asc');
+}
 }
