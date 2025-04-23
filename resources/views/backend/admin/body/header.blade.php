@@ -71,7 +71,7 @@
                         <div class="p-1">
                             <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                                 <div class="me-3">
-                                    <img class="wd-30 ht-30 rounded-circle" src="https://via.placeholder.com/30x30"
+                                    <img class="wd-30 ht-30 rounded-circle" src=""
                                         alt="userr">
                                 </div>
                                 <div class="d-flex justify-content-between flex-grow-1">
@@ -84,7 +84,7 @@
                             </a>
                             <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                                 <div class="me-3">
-                                    <img class="wd-30 ht-30 rounded-circle" src="https://via.placeholder.com/30x30"
+                                    <img class="wd-30 ht-30 rounded-circle" src=""
                                         alt="userr">
                                 </div>
                                 <div class="d-flex justify-content-between flex-grow-1">
@@ -97,7 +97,7 @@
                             </a>
                             <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                                 <div class="me-3">
-                                    <img class="wd-30 ht-30 rounded-circle" src="https://via.placeholder.com/30x30"
+                                    <img class="wd-30 ht-30 rounded-circle" src=""
                                         alt="userr">
                                 </div>
                                 <div class="d-flex justify-content-between flex-grow-1">
@@ -110,7 +110,7 @@
                             </a>
                             <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                                 <div class="me-3">
-                                    <img class="wd-30 ht-30 rounded-circle" src="https://via.placeholder.com/30x30"
+                                    <img class="wd-30 ht-30 rounded-circle" src=""
                                         alt="userr">
                                 </div>
                                 <div class="d-flex justify-content-between flex-grow-1">
@@ -123,7 +123,7 @@
                             </a>
                             <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                                 <div class="me-3">
-                                    <img class="wd-30 ht-30 rounded-circle" src="https://via.placeholder.com/30x30"
+                                    <img class="wd-30 ht-30 rounded-circle" src=""
                                         alt="userr">
                                 </div>
                                 <div class="d-flex justify-content-between flex-grow-1">
@@ -177,7 +177,7 @@
                             <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
                                 <div
                                     class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
-                                    <img class="wd-30 ht-30 rounded-circle" src="https://via.placeholder.com/30x30"
+                                    <img class="wd-30 ht-30 rounded-circle" src=""
                                         alt="userr">
                                 </div>
                                 <div class="flex-grow-1 me-2">
@@ -218,7 +218,7 @@
                             <img src="{{ asset('public/backend/upload/profile/' . Auth::user()->photo) }}"
                                 alt="profile" class="wd-30 ht-30 rounded-circle">
                         @else
-                            <img src="{{ asset('public/backend/upload/profile/user.png') }}" alt="default profile"
+                            <img src="{{ url('public/backend/upload/profile/user.png') }}" alt="default profile"
                                 class="wd-30 ht-30 rounded-circle">
                         @endif
 
@@ -230,7 +230,7 @@
                                     <img src="{{ asset('public/backend/upload/profile/' . Auth::user()->photo) }}"
                                         alt="profile" class="wd-100 ht-100 rounded-circle">
                                 @else
-                                    <img src="{{ asset('public/backend/upload/profile/user.png') }}"
+                                    <img src="{{ url('public/backend/upload/profile/user.png') }}"
                                         alt="default profile" class="wd-100 ht-100 rounded-circle">
                                 @endif
 
