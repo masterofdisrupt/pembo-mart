@@ -22,6 +22,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <!-- End fonts -->
 
     <!-- core:css -->
@@ -44,10 +46,10 @@
     <link rel="shortcut icon" href="{{ asset('public/assets/images/favicon.png') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tinymce@7.2.1/skins/ui/oxide/content.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.css" rel="stylesheet">
+    
 
     @yield('style')
 
@@ -338,180 +340,6 @@
 </script>
 
 
- <script>
-$(document).ready(function() {
-    // Setup CSRF token for all AJAX requests
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    // Initialize FullCalendar
-    var calendar = $('#calendar').fullCalendar({
-        editable: true,
-        header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay'
-        },
-        events: '{{ route('fullCalendar') }}',
-        selectable: true,
-        selectHelper: true,
-
-        // Handle event creation
-        select: function(start, end, allDay) {
-            Swal.fire({
-                title: 'Add Event',
-                input: 'text',
-                inputLabel: 'Event Title',
-                showCancelButton: true,
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'You need to provide an event title!'
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    var startFormatted = $.fullCalendar.formatDate(start, 'Y-MM-DD HH:mm:ss');
-                    var endFormatted = $.fullCalendar.formatDate(end, 'Y-MM-DD HH:mm:ss');
-
-                    $.ajax({
-                        url: "{{ route('fullCalendar.action') }}",
-                        type: "POST",
-                        data: {
-                            title: result.value,
-                            start: startFormatted,
-                            end: endFormatted,
-                            type: 'add'
-                        },
-                        success: function(response) {
-                            calendar.fullCalendar('refetchEvents');
-                            toastr.success('Event created successfully');
-                        },
-                        error: function(xhr) {
-                            toastr.error(xhr.responseJSON?.message || 'Failed to create event');
-                        }
-                    });
-                }
-            });
-        },
-
-        // Handle event resizing
-        eventResize: function(event, delta) {
-            updateEvent(event, calendar);
-        },
-
-        // Handle event dragging
-        eventDrop: function(event, delta) {
-            updateEvent(event, calendar);
-        },
-
-        // Handle event deletion
-        eventClick: function(event) {
-            Swal.fire({
-                title: 'Delete Event',
-                text: 'Are you sure you want to delete this event?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('fullCalendar.action') }}",
-                        type: "POST",
-                        data: {
-                            id: event.id,
-                            type: "delete"
-                        },
-                        success: function(response) {
-                            calendar.fullCalendar('refetchEvents');
-                            toastr.success('Event deleted successfully');
-                        },
-                        error: function(xhr) {
-                            toastr.error(xhr.responseJSON?.message || 'Failed to delete event');
-                        }
-                    });
-                }
-            });
-        }
-    });
-
-    // Helper function to update events
-    function updateEvent(event, calendar) {
-        var startFormatted = $.fullCalendar.formatDate(event.start, 'Y-MM-DD HH:mm:ss');
-        var endFormatted = $.fullCalendar.formatDate(event.end, 'Y-MM-DD HH:mm:ss');
-
-        $.ajax({
-            url: "{{ route('fullCalendar.action') }}",
-            type: "POST",
-            data: {
-                id: event.id,
-                title: event.title,
-                start: startFormatted,
-                end: endFormatted,
-                type: 'update'
-            },
-            success: function(response) {
-                calendar.fullCalendar('refetchEvents');
-                toastr.success('Event updated successfully');
-            },
-            error: function(xhr) {
-                calendar.fullCalendar('refetchEvents'); // Revert changes
-                toastr.error(xhr.responseJSON?.message || 'Failed to update event');
-            }
-        });
-    }
-});
-</script>
-
-<script>
-$(document).ready(function() {
-    var path = "{{ route('typeahead.autocomplete') }}";
-    
-    $('#user_name').typeahead({
-        minLength: 2,
-        items: 10,
-        source: function(query, process) {
-            return $.ajax({
-                url: path,
-                type: 'GET',
-                data: { query: query },
-                dataType: 'JSON',
-                success: function(response) {
-                    if (response.success) {
-                        return process(response.data.map(function(item) {
-                            return {
-                                id: item.id,
-                                name: item.name,
-                                email: item.email,
-                                display: item.name + ' (' + item.email + ')'
-                            };
-                        }));
-                    } else {
-                        toastr.error(response.message || 'Failed to fetch suggestions');
-                        return process([]);
-                    }
-                },
-                error: function(xhr) {
-                    toastr.error('Failed to load suggestions');
-                    return process([]);
-                }
-            });
-        },
-        displayText: function(item) {
-            return item.display;
-        },
-        afterSelect: function(item) {
-            // Handle selection
-            $('#user_id').val(item.id);
-            console.log('Selected user:', item);
-        }
-    });
-});
-</script>
 
 <style>
 .loading {
