@@ -10,6 +10,8 @@ use App\Models\Backend\V1\ColourModel;
 use App\Models\Backend\V1\SubCategoryModel;
 use App\Models\Backend\V1\ProductColoursModel;
 use App\Models\Backend\V1\ProductSizesModel;
+use App\Models\Backend\V1\ProductImagesModel;
+use Illuminate\Http\RedirectResponse;
 use Exception;
 use Auth;
 use Str;
@@ -86,108 +88,140 @@ class ProductController
         
     }
 
-     public function update_product(Request $request, $id)
+
+
+/**
+ * Update the specified product
+ *
+ * @param Request $request
+ * @param int $id
+ * @return \Illuminate\Http\RedirectResponse
+ */
+public function update_product(Request $request, int $id)
 {
-    // dd($request->all());
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'price' => 'required|numeric|min:0',
-        'description' => 'nullable|string',
-    ]);
+    try {
+        
 
-    // Find the product by ID
-    $product = ProductModel::getSingleRecord($id);
+        // Validate request
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'sku' => 'required|string|unique:product,sku,' . $id,
+            'price' => 'required|numeric|min:0',
+            'old_price' => 'nullable|numeric|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'sub_category_id' => 'required|exists:sub_categories,id',
+            'brand_id' => 'required|exists:brands,id',
+            'description' => 'required|string',
+            'short_description' => 'nullable|string|max:500',
+            'additional_info' => 'nullable|string',
+            'ship_and_returns' => 'nullable|string',
+            'status' => 'required|in:0,1',
+            'image.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'colour_id.*' => 'nullable|exists:colour,id',
+            'size.*.name' => 'nullable|string|max:50',
+            'size.*.price' => 'nullable|numeric|min:0'
+        ]);
 
-    if (!$product) {
-        return redirect()->back()->with('error', "Product not found.");
-    }
+        // Find and update product
+        $product = ProductModel::getSingleRecord($id);
+        
 
-    // Update product details
-    $product->title = trim($request->title);
-    $product->sku = trim($request->sku);
-    $product->category_id = trim($request->category_id);
-    $product->sub_category_id = trim($request->sub_category_id);
-    $product->brand_id = trim($request->brand_id);
-    $product->old_price = number_format($request->old_price, 2, '.', '');
-    $product->price = number_format($request->price, 2, '.', ''); // Ensure valid price format
-    $product->short_description = trim($request->short_description);
-    $product->description = trim($request->description);
-    $product->additional_info = trim($request->additional_info);
-    $product->ship_and_returns = trim($request->ship_and_returns);
-    $product->status = trim($request->status); 
-    
-    // Preserve existing product_code instead of generating a new one
-    $product->save();
+        // Update product details
+        $product->fill([
+            'title' => trim($validated['title']),
+            'sku' => trim($validated['sku']),
+            'category_id' => $validated['category_id'],
+            'sub_category_id' => $validated['sub_category_id'],
+            'brand_id' => $validated['brand_id'],
+            'old_price' => $validated['old_price'] ? number_format($validated['old_price'], 2, '.', '') : null,
+            'price' => number_format($validated['price'], 2, '.', ''),
+            'short_description' => trim($validated['short_description'] ?? ''),
+            'description' => trim($validated['description']),
+            'additional_info' => trim($validated['additional_info'] ?? ''),
+            'ship_and_returns' => trim($validated['ship_and_returns'] ?? ''),
+            'status' => $validated['status']
+        ]);
 
-    ProductColoursModel::where('product_id', $id)->delete();
-    if (!empty($request->colour_id)) {
-        foreach ($request->colour_id as $key => $value) {
-            $productColour = new ProductColoursModel();
-            $productColour->product_id = $id;
-            $productColour->colour_id = $value;
-            $productColour->save();
+        // Save product changes
+        $product->save();
+
+        // Update product colors
+        ProductColoursModel::where('product_id', $id)->delete();
+        if (!empty($request->colour_id)) {
+            $colourData = array_map(function($colourId) use ($id) {
+                return [
+                    'product_id' => $id,
+                    'colour_id' => $colourId,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+            }, $request->colour_id);
+            ProductColoursModel::insert($colourData);
         }
-    }
 
-    ProductSizesModel::where('product_id', $id)->delete();
-    if (!empty($request->size)) {
-        foreach ($request->size as $key => $value) {
-            if(!empty($value['name']))
-            {
-                $productSize = new ProductSizesModel();
-                $productSize->product_id = $id;
-                $productSize->name = $value['name'];
-                $productSize->price = !empty($value['price']) ? number_format($value['price'], 2, '.', '') : 0;
-                $productSize->save();
+        // Update product sizes
+        ProductSizesModel::where('product_id', $id)->delete();
+        if (!empty($request->size)) {
+            $sizeData = [];
+            foreach ($request->size as $size) {
+                if (!empty($size['name'])) {
+                    $sizeData[] = [
+                        'product_id' => $id,
+                        'name' => $size['name'],
+                        'price' => !empty($size['price']) ? number_format($size['price'], 2, '.', '') : 0,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
+                }
             }
-           
+            if (!empty($sizeData)) {
+                ProductSizesModel::insert($sizeData);
+            }
         }
-    }
-    // Handle image upload
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $filename = time() . '.' . $image->getClientOriginalExtension();
-        $path = public_path('uploads/product/' . $filename);
-        Image::make($image)->resize(300, 300)->save($path);
-        $product->image = 'uploads/product/' . $filename;
-    }
-    if ($request->hasFile('image1')) {
-        $image1 = $request->file('image1');
-        $filename1 = time() . '.' . $image1->getClientOriginalExtension();
-        $path1 = public_path('uploads/product/' . $filename1);
-        Image::make($image1)->resize(300, 300)->save($path1);
-        $product->image1 = 'uploads/product/' . $filename1;
-    }
-    if ($request->hasFile('image2')) {
-        $image2 = $request->file('image2');
-        $filename2 = time() . '.' . $image2->getClientOriginalExtension();
-        $path2 = public_path('uploads/product/' . $filename2);
-        Image::make($image2)->resize(300, 300)->save($path2);
-        $product->image2 = 'uploads/product/' . $filename2;
-    }
-    if ($request->hasFile('image3')) {
-        $image3 = $request->file('image3');
-        $filename3 = time() . '.' . $image3->getClientOriginalExtension();
-        $path3 = public_path('uploads/product/' . $filename3);
-        Image::make($image3)->resize(300, 300)->save($path3);
-        $product->image3 = 'uploads/product/' . $filename3;
-    }
-    if ($request->hasFile('image4')) {
-        $image4 = $request->file('image4');
-        $filename4 = time() . '.' . $image4->getClientOriginalExtension();
-        $path4 = public_path('uploads/product/' . $filename4);
-        Image::make($image4)->resize(300, 300)->save($path4);
-        $product->image4 = 'uploads/product/' . $filename4;
-    }
-    if ($request->hasFile('image5')) {
-        $image5 = $request->file('image5');
-        $filename5 = time() . '.' . $image5->getClientOriginalExtension();
-        $path5 = public_path('uploads/product/' . $filename5);
-        Image::make($image5)->resize(300, 300)->save($path5);
-        $product->image5 = 'uploads/product/' . $filename5;
-    }   
 
-    return redirect()->back()->with('success', "Product Successfully Updated");
+        // Handle image uploads
+
+if ($request->hasFile('image')) {
+    
+        foreach ($request->file('image') as $image) {
+            if ($image->isValid()) {
+                // Generate unique filename
+                $ext = $image->getClientOriginalExtension();
+                $randomStr = $product->id . '_' . time() . '_' . Str::random(10);
+                $filename = strtolower($randomStr) . '.' . $ext;
+                $path = 'backend/upload/products/';
+
+                // Ensure directory exists
+                $uploadPath = public_path($path);
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+
+                // Move the file
+                if ($image->move($uploadPath, $filename)) {
+                    // Save image record to database
+                    ProductImagesModel::create([
+                        'product_id' => $id,
+                        'image_name' => $filename,
+                        'image_extension' => $ext,
+                        'order_by' => ProductImagesModel::where('product_id', $id)->count() + 1
+                    ]);
+                } else {
+                    throw new \Exception("Failed to move uploaded file: $filename");
+                }
+            }
+        }
+    
+}
+
+        return redirect()->back()->with('success', 'Product updated successfully');
+
+    } catch (\Exception $e) {
+        \Log::error('Product update error: ' . $e->getMessage());
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Failed to update product. Please try again.');
+    }
 }
 
 public function delete_product($id, Request $request)
@@ -203,6 +237,45 @@ public function delete_product($id, Request $request)
         return redirect()->route('product')->with('success', "Product Deleted Successfully.");
     } catch (\Exception $e) {
         return redirect()->route('product')->with('error', "An error occurred while deleting the Product.");
+    }
+}
+
+public function deleteImage(int $id)
+{
+    try {
+        $image = ProductImagesModel::getImageById($id);
+
+        if (!empty($image->image_name)) {
+            $path = public_path('backend/upload/products/' . $image->image_name);
+            if (file_exists($path)) {
+                unlink($path);
+            }
+        }
+
+        $image->delete();
+
+        return response()->json(['success' => true]);
+
+    } catch (\Exception $e) {
+        \Log::error('Error deleting product image: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to delete image'
+        ], 500);
+    }
+}
+
+public function product_image_sort(Request $request)
+{
+    if ($request->has('sortedIDs') && is_array($request->sortedIDs)) {
+        foreach ($request->sortedIDs as $key => $val) {
+            $id = str_replace('image-', '', $val); // remove 'image-' prefix
+            ProductImagesModel::where('id', $id)->update(['order_by' => $key]);
+        }
+        return response()->json(['success' => true]);
+    } else {
+        return response()->json(['success' => false]);
     }
 }
 
