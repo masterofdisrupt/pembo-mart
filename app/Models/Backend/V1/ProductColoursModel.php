@@ -12,6 +12,6 @@ class ProductColoursModel extends Model
     protected $table = 'product_colours';
     protected $fillable = [
         'product_id',
-        'colour_id',
+        'colour_id'
     ];
 }
