@@ -21,7 +21,7 @@
                     <form method="POST" action="{{ route('product.update', $product->id) }}" class="forms-sample" 
                         enctype="multipart/form-data">
                         @csrf
-                        
+                        @method('PUT')
 
                         {{-- ROW 1: Title, Category, Brand --}}
                         <div class="row">
@@ -123,46 +123,166 @@
                         </div>
 
                         {{-- SIZE TABLE --}}
-                        <div class="mb-4">
-                            <label>Size <span class="text-danger">*</span></label>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Price (₦)</th>
-                                        <th style="width: 120px;">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="size-rows">
-                                    @php $i = 0; @endphp
-                                    @foreach ($product->getSizes as $size)                    
-                                        <tr id="delete-row{{ $i }}">
-                                            <td><input type="text" class="form-control" value="{{ $size->name }}" name="size[{{ $i }}][name]" placeholder="Enter Size Name"></td>
-                                            <td><input type="number" class="form-control" value="{{ $size->price }}" name="size[{{ $i }}][price]" placeholder="Enter Size Price" step="0.01"></td>
-                                            <td><button type="button" class="btn btn-danger delete-row" data-row="delete-row{{ $i }}">Delete</button></td>
-                                        </tr>
-                                        @php $i++; @endphp
-                                    @endforeach
+                        
+                            {{-- <div class="col-md-12">
+                                <label>Size<span class="text-danger">*</span></label>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Price</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                            <tr>
+                                                <td>
+                                                    <input type="text" name="size[]" class="form-control" value="" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="quantity[]" class="form-control" value="" required>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn primary mt-2 AddSize">Add Size</button>
+                                                </td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                            </div> --}}
 
-                                    <!-- Initial empty row for adding new sizes -->
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="size[{{ $i }}][name]" placeholder="Enter Size Name"></td>
-                                        <td><input type="number" class="form-control" name="size[{{ $i }}][price]" placeholder="Enter Size Price" step="0.01"></td>
-                                        <td><button type="button" class="btn btn-success add-row">Add</button></td>
-                                    </tr>
-                                </tbody>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Product Sizes <span class="text-danger">*</span></label>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Size Name</th>
+                                                <th>Price (₦)</th>
+                                                <th style="width: 100px;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="size-rows">
+                                            @php $i = 0; @endphp
+                                            @foreach ($product->getSizes as $size)                    
+                                                <tr id="delete-row{{ $i }}" class="align-middle">
+                                                    <td>
+                                                        <input type="text" 
+                                                            class="form-control" 
+                                                            value="{{ $size->name }}" 
+                                                            name="size[{{ $i }}][name]" 
+                                                            placeholder="Enter Size Name"
+                                                            required
+                                                            pattern="[A-Za-z0-9\s\-]+"
+                                                            title="Only letters, numbers, spaces and hyphens allowed">
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" 
+                                                            class="form-control" 
+                                                            value="{{ number_format($size->price, 2) }}" 
+                                                            name="size[{{ $i }}][price]" 
+                                                            placeholder="0.00" 
+                                                            step="0.01"
+                                                            min="0"
+                                                            required>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" 
+                                                                class="btn btn-danger btn-sm delete-row" 
+                                                                data-row="delete-row{{ $i }}"
+                                                                title="Delete Size">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                @php $i++; @endphp
+                                            @endforeach
 
-                            </table>
-                        </div>
-
+                                            <!-- Empty row template for new sizes -->
+                                            <tr class="align-middle" id="new-size-row">
+                                                <td>
+                                                    <input type="text" 
+                                                        class="form-control" 
+                                                        name="size[{{ $i }}][name]" 
+                                                        placeholder="Enter Size Name"
+                                                        pattern="[A-Za-z0-9\s\-]+"
+                                                        title="Only letters, numbers, spaces and hyphens allowed">
+                                                </td>
+                                                <td>
+                                                    <input type="number" 
+                                                        class="form-control" 
+                                                        name="size[{{ $i }}][price]" 
+                                                        placeholder="0.00" 
+                                                        step="0.01"
+                                                        min="0">
+                                                </td>
+                                                <td>
+                                                    <button type="button" 
+                                                            class="btn btn-success btn-sm add-row"
+                                                            title="Add Size">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <small class="text-muted">Maximum 10 sizes allowed</small>
+                                @error('size')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                            </div>
+                      
                         {{-- IMAGE --}}
                         <div class="mb-4">
-                            <label>Image</label>
-                            <input type="file" class="form-control" name="image[]" multiple accept="image/*" style="padding: 6px;">
+                            <label class="form-label">Product Images <span class="text-muted">(Max 5 images, 2MB each)</span></label>
+                                <input type="file" 
+                                    class="form-control" 
+                                    name="image[]" 
+                                    multiple 
+                                    accept="image/jpeg,image/png,image/jpg"
+                                    data-max-files="5"
+                                    data-max-size="2048"
+                                    >
+                            <div class="invalid-feedback">
+                                Please select valid image files (JPG, JPEG, PNG) less than 2MB each.
+                            </div>
+                            {{-- <div id="imagePreview" class="mt-2 d-flex flex-wrap gap-2"></div> --}}
+                            @error('image')<span class="text-danger">{{ $message }}</span>@enderror 
+
+                             {{-- Show existing images --}}
+                            @if($product->getImages->count())
+                            <div class="mt-3" id="sortable">
+                                <label class="form-label">Current Images</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach($product->getImages as $image)
+                                    @if(!empty($image->getProductImages()))
+                                    <div class="position-relative sortable-image" id="image-{{ $image->id }}">
+                                            <img src="{{ $image->getProductImages() ?? url('public/backend/upload/no-product-image.png') }}" 
+                                                class="img-thumbnail" 
+                                                style="height: 100px; width: 100px; object-fit: cover;">
+                                            <button type="button" 
+                                                    class="btn-sm position-absolute top-0 end-0 btn-delete-image" 
+                                                    data-id="{{ $image->id }}"
+                                                    style="border: none; background: none; cursor: pointer;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="feather feather-trash icon-sm me-2">
+                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
                         </div>
 
                         {{-- DESCRIPTIONS --}}
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label>Short Description <span class="text-danger">*</span></label>
                             <textarea class="form-control" name="short_description" rows="3" required>{{ old('short_description', $product->short_description) }}</textarea>
                             @error('short_description')<span class="text-danger">{{ $message }}</span>@enderror
@@ -210,72 +330,133 @@
 
 @section('script')
 <script src="{{ url('public/assets/js/jquery-3.6.0.min.js') }}"></script>
-<script src="{{ url('public/assets/js/tinymce-jquery.min.js') }}"></script>
+<script src="{{ url('public/assets/js/jquery-ui.js') }}"></script>
+<script src="{{ url('public/js/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ url('public/assets/js/axios.min.js') }}"></script>
+<script src="{{ url('public/js/tinymce/tinymce.js') }}" referrerpolicy="origin"></script>
+<script src="{{ url('public/js/tinymce/tinymce-jquery.min.js') }}" referrerpolicy="origin"></script>
+
+
 
 <script type="text/javascript">
 
-      $('.editor').tinymce({
-        height: 500,
-        menubar: false,
-        plugins: [
-          'a11ychecker', 'accordion', 'advlist', 'anchor', 'autolink', 'autosave',
-          'charmap', 'code', 'codesample', 'directionality', 'emoticons', 'exportpdf',
-          'exportword', 'fullscreen', 'help', 'image', 'importcss', 'importword',
-          'insertdatetime', 'link', 'lists', 'markdown', 'math', 'media', 'nonbreaking',
-          'pagebreak', 'preview', 'quickbars', 'save', 'searchreplace', 'table',
-          'visualblocks', 'visualchars', 'wordcount'
-        ],
-        toolbar: 'undo redo | accordion accordionremove | ' +
-          'importword exportword exportpdf | math | ' +
-          'blocks fontfamily fontsize | bold italic underline strikethrough | ' +
-          'align numlist bullist | link image | table media | ' +
-          'lineheight outdent indent | forecolor backcolor removeformat | ' +
-          'charmap emoticons | code fullscreen preview | save print | ' +
-          'pagebreak anchor codesample | ltr rtl',
-        menubar: 'file edit view insert format tools table help'
-      });
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+    document.querySelectorAll('.btn-delete-image').forEach(button => {
+        button.addEventListener('click', function () {
+            const imageId = this.getAttribute('data-id');
+            if (!confirm('Are you sure you want to delete this image?')) return;
 
-  
-    let i = {{ $i + 1 }}; // Continue index from PHP
-    const maxRows = 10; // Change this to your desired limit
-
-    $('body').on('click', '.add-row', function () {
-        const lastRow = $('#size-rows tr').last();
-        const lastName = lastRow.find('input[name*="[name]"]').val();
-        const lastPrice = lastRow.find('input[name*="[price]"]').val();
-
-        // Simple validation: Don't add if last row is empty
-        if (!lastName || !lastPrice) {
-            alert('Please fill in the current size name and price before adding another.');
-            return;
-        }
-
-        // Limit check
-        const totalRows = $('#size-rows tr').length - 1; // exclude the Add row
-        if (totalRows >= maxRows) {
-            alert(`You can only add up to ${maxRows} size options.`);
-            return;
-        }
-
-        const html = `
-            <tr id="delete-row${i}">
-                <td><input type="text" class="form-control" name="size[${i}][name]" placeholder="Enter Size Name" required></td>
-                <td><input type="number" class="form-control" name="size[${i}][price]" placeholder="Enter Size Price" step="0.01" required></td>
-                <td><button type="button" class="btn btn-danger delete-row" data-row="delete-row${i}">Delete</button></td>
-            </tr>`;
-        $('#size-rows').append(html);
-        i++;
+            const baseUrl = '{{ url('/') }}'; 
+            axios.delete(`${baseUrl}/admin/product/image/${imageId}`
+            )
+            .then(response => {
+                if (response.data.success) {
+                    const imageElement = document.getElementById(`image-${imageId}`);
+                    if (imageElement) imageElement.remove();
+                    toastr.success('Image deleted successfully');
+                } else {
+                    toastr.error(response.data.message || 'Failed to delete image');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                toastr.error(error.response?.data?.message || 'Failed to delete image');
+            });
+        });
     });
 
-    $('body').on('click', '.delete-row', function () {
-        const rowId = $(this).data('row');
-        $('#' + rowId).remove();
-    });
+     $(document).ready(function () {
+        $('#sortable').sortable({
+            items: '.sortable-image',
+            placeholder: 'ui-state-highlight',
+            update: function (event, ui) {
+                // Handle the order change if needed
+                const sortedIDs = $(this).sortable('toArray');
+                console.log('Sorted IDs:', sortedIDs);
+                // You can send the sorted IDs to the server if needed
+                const baseUrl = '{{ url('/') }}'; 
+                axios.post(`${baseUrl}/admin/product_image_sort`, { sortedIDs })
+                    .then(response => {
+                        console.log('Order updated successfully');
+                    })
+                    .catch(error => {
+                        console.error('Error updating order:', error);
+                    }); 
+            }
+        });
 
+let i = {{ $i + 1 }}; 
+const maxRows = 10;
 
-    $(document).ready(function () {
-        $('#category_id').on('change', function () {
+$('body').on('click', '.add-row', function() {
+    const lastRow = $('#new-size-row');
+    const nameInput = lastRow.find('input[name*="[name]"]');
+    const priceInput = lastRow.find('input[name*="[price]"]');
+    
+    // Validate inputs
+    if (!nameInput.val() || !priceInput.val()) {
+        toastr.error('Please fill in both size name and price');
+        return;
+    }
+    
+    if (!nameInput[0].checkValidity()) {
+        toastr.error('Invalid size name format');
+        return;
+    }
+    
+    // Check row limit
+    const currentRows = $('#size-rows tr').length - 1;
+    if (currentRows >= maxRows) {
+        toastr.error(`Maximum ${maxRows} sizes allowed`);
+        return;
+    }
+    
+    // Create new row
+    const newRow = `<tr id="delete-row${i}" class="align-middle">
+        <td>
+            <input type="text" 
+                   class="form-control" 
+                   name="size[${i}][name]" 
+                   value="${nameInput.val()}"
+                   required
+                   pattern="[A-Za-z0-9\\s\\-]+">
+        </td>
+        <td>
+            <input type="number" 
+                   class="form-control" 
+                   name="size[${i}][price]" 
+                   value="${priceInput.val()}"
+                   step="0.01"
+                   min="0"
+                   required>
+        </td>
+        <td>
+            <button type="button" 
+                    class="btn btn-danger btn-sm delete-row" 
+                    data-row="delete-row${i}"
+                    title="Delete Size">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </td>
+    </tr>`;
+    
+    // Insert new row before template
+    $(newRow).insertBefore('#new-size-row');
+    
+    // Clear template inputs
+    nameInput.val('');
+    priceInput.val('');
+    
+    i++;
+});
+
+// Handle size deletion
+$('body').on('click', '.delete-row', function() {
+    $(this).closest('tr').remove();
+});
+
+$('#category_id').on('change', function () {
             var categoryID = $(this).val();
             if (categoryID) {
                 $.ajax({
@@ -295,7 +476,34 @@
                 $('#sub_category_id').empty().append('<option value="">Select Sub Category</option>');
             }
         });
+   
+    
     });
+
+
+
+
+      $('.editor').tinymce({
+        height: 500,
+        menubar: false,
+        plugins: [
+  'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 
+  'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+  'insertdatetime', 'media', 'table', 'help', 'wordcount'
+],
+toolbar: 'undo redo | formatselect | bold italic backcolor | \
+alignleft aligncenter alignright alignjustify | \
+bullist numlist outdent indent | removeformat | help'
+
+      });
+
+     
+    
+ 
+
+   
+        
+    
 </script>
 @endsection
 
