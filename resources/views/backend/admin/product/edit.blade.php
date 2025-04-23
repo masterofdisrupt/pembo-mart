@@ -123,35 +123,6 @@
                         </div>
 
                         {{-- SIZE TABLE --}}
-                        
-                            {{-- <div class="col-md-12">
-                                <label>Size<span class="text-danger">*</span></label>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Price</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            
-                                            <tr>
-                                                <td>
-                                                    <input type="text" name="size[]" class="form-control" value="" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="quantity[]" class="form-control" value="" required>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn primary mt-2 AddSize">Add Size</button>
-                                                </td>
-                                            </tr>
-                                            
-                                        </tbody>
-                                    </table>
-                            </div> --}}
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Product Sizes <span class="text-danger">*</span></label>
@@ -247,7 +218,6 @@
                             <div class="invalid-feedback">
                                 Please select valid image files (JPG, JPEG, PNG) less than 2MB each.
                             </div>
-                            {{-- <div id="imagePreview" class="mt-2 d-flex flex-wrap gap-2"></div> --}}
                             @error('image')<span class="text-danger">{{ $message }}</span>@enderror 
 
                              {{-- Show existing images --}}
