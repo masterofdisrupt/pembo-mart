@@ -144,8 +144,12 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/product/add', [ProductController::class, 'add_product'])->name('product.add');
     Route::post('admin/product/add', [ProductController::class, 'store_product'])->name('product.store');
     Route::get('admin/product/edit/{id}', [ProductController::class, 'edit_product'])->name('product.edit');
-    Route::post('admin/product/edit/{id}', [ProductController::class, 'update_product'])->name('product.update');
+    Route::put('admin/product/edit/{id}', [ProductController::class, 'update_product'])->name('product.update');
     Route::delete('admin/product/delete/{id}', [ProductController::class, 'delete_product'])->name('product.delete');
+
+    Route::delete('/admin/product/image/{id}', [ProductController::class, 'deleteImage']);
+    Route::post('/admin/product_image_sort', [ProductController::class, 'product_image_sort'])->name('product.image.sort');
+
     // Product End
 
     // SMTP Start
