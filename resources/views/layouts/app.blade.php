@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Pembo-Mart</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
+    <title>{{ !empty($meta_title) ? $meta_title : '' }}</title>
+    @if (!empty($meta_description))
+        <meta name="description" content="{{ $meta_description }}">
+    @endif
+    @if (!empty($meta_keywords))
+        <meta name="keywords" content="{{ $meta_keywords }}">
+    @endif
     <link rel="shortcut icon" href="{{ url('assets/images/icons/favicon.ico') }}">
    
     <!-- Plugins CSS File -->
