@@ -288,6 +288,9 @@ Route::group(['middleware' => 'user'], function () {
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::post('products_filter', [FrontendProductController::class, 'products_filter'])->name('products.filter');
+Route::post('products/load-more', [FrontendProductController::class, 'loadMore'])
+    ->name('products.load-more');
 
 
 // Dynamic catch-all routes
