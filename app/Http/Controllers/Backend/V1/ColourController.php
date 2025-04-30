@@ -57,6 +57,7 @@ class ColourController extends Controller
         // Store colour in database
         $save = new ColourModel;
         $save->name = $validatedData['name'];
+        $save->code = trim($request->code);
         $save->save();
 
         return redirect()->route('colour')->with("success", "Colour Successfully Added!");
@@ -68,23 +69,24 @@ class ColourController extends Controller
 
    public function edit_colour($id)
 {
-    $colourRecord = ColourModel::findOrFail($id); // Automatically throws 404 if not found
+    $colourRecord = ColourModel::findOrFail($id); 
     return view('backend.admin.colour.edit', ['getRecord' => $colourRecord]);
 }
 
 
     public function update_colour($id, Request $request)
 {
-    // Validate the request
+    
     $request->validate([
         'name' => 'required|string|max:255',
     ]);
 
-    // Fetch record, automatically throws 404 if not found
+    
     $save = ColourModel::findOrFail($id);
 
-    // Update and save
+    
     $save->name = trim($request->name);
+    $save->code = trim($request->code);
     $save->save();
 
     return redirect()->route('colour')->with("success", "Colour Successfully Updated!");
@@ -96,7 +98,7 @@ class ColourController extends Controller
     try {
         $colour = ColourModel::findOrFail($id);
 
-        // Check for related products
+        
         if ($colour->ordersDetails()->count() > 0) {
             return redirect()
                 ->route('colour')
