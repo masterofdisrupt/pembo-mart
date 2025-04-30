@@ -76,4 +76,12 @@ class SubCategoryModel extends Model
         ->get();
 }
 
+public function TotalProducts()
+{
+    return $this->hasMany(ProductModel::class, 'sub_category_id', 'id')
+        ->where('is_delete', 0)
+        ->where('status', 1)
+        ->count();
+
+}
 }
