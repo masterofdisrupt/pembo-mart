@@ -46,6 +46,11 @@
         input:checked + .slider:before {
             transform: translateX(2rem); /* 26px */
         }
+        .color-preview {
+            border: 1px solid #dee2e6;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            margin-right: 0.5rem;
+        }
     </style>
 @endsection
 
@@ -133,6 +138,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Name</th>
+                                        <th>Code</th>
                                         <th>Status</th>
                                         <th>Created At</th>
                                         <th>Action</th>
@@ -143,6 +149,12 @@
                                         <tr class="table-info text-dark">
                                             <td>{{ $value->id }}</td>
                                             <td>{{ $value->name }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="color-preview mr-2" style="display: inline-block; width: 25px; height: 25px; border-radius: 4px; background-color: {{ $value->code }}"></span>
+                                                    <span>{{ $value->code }}</span>
+                                                </div>
+                                            </td>
                                             <td>
                                                 <label class="switch">
                                                     <input type="checkbox" class="statusCheckbox" 
