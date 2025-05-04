@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
+        "darryldecode/cart": "^4.2",
         "google/apiclient": "^2.18",
         "guzzlehttp/guzzle": "^7.9",
         "intervention/image": "^3.11",
