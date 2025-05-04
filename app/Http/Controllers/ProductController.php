@@ -12,6 +12,52 @@ use App\Models\Backend\V1\BrandsModel;
 
 class ProductController extends Controller
 {
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        
+        $metaData = [
+            'meta_title' => 'Search Results for: ' . $search,
+            'meta_description' => 'Search results for: ' . $search,
+            'meta_keywords' => $search,
+        ];
+
+        $getProduct = ProductModel::getProducts(['search' => $search]);
+        $getColour = ColourModel::getColourStatus();
+        $getBrand = BrandsModel::getBrandStatus();
+
+        $priceMin = ProductModel::min('price') ?? 0;
+        $priceMax = ProductModel::max('price') ?? 1000000;
+
+        $selectedPriceMin = $request->input('price_min', $priceMin);
+        $selectedPriceMax = $request->input('price_max', $priceMax);
+
+        $page = null;
+    if ($getProduct->hasMorePages()) {
+        $nextPageUrl = $getProduct->nextPageUrl();
+        if ($nextPageUrl) {
+            parse_str(parse_url($nextPageUrl, PHP_URL_QUERY), $queryParams);
+            $page = $queryParams['page'] ?? null;
+        }
+    }
+
+        return view('products.list', [
+            'getProduct' => $getProduct,
+            'getColour' => $getColour,
+            'getBrand' => $getBrand,
+            'priceMin' => $priceMin,
+            'priceMax' => $priceMax,
+            'selectedPriceMin' => $selectedPriceMin,
+            'selectedPriceMax' => $selectedPriceMax,
+            'meta_title' => $metaData['meta_title'],
+            'meta_description' => $metaData['meta_description'],
+            'meta_keywords' => $metaData['meta_keywords'],
+            'page' => $page,
+        ]);
+
+    }
+
+
    public function getCategory(Request $request, $slug, $subSlug = null)
 {
     $getCategory = CategoryModel::findBySlug($slug);
@@ -56,21 +102,49 @@ class ProductController extends Controller
 
     $subCategoryFilter = SubCategoryModel::getRecordSubCategory($getCategory->id);
 
-    return view('products.list', compact(
-        'getColour', 
-        'getBrand', 
-        'priceMin', 
-        'priceMax', 
-        'selectedPriceMin', 
-        'selectedPriceMax', 
-        'getCategory', 
-        'getSubCategory', 
-        'getProduct', 
-        'subCategoryFilter',
-        'metaData',
-        'page'
-    ));
+    return view('products.list', [
+    'getColour' => $getColour,
+    'getBrand' => $getBrand,
+    'priceMin' => $priceMin,
+    'priceMax' => $priceMax,
+    'selectedPriceMin' => $selectedPriceMin,
+    'selectedPriceMax' => $selectedPriceMax,
+    'getCategory' => $getCategory,
+    'getSubCategory' => $getSubCategory,
+    'getProduct' => $getProduct,
+    'subCategoryFilter' => $subCategoryFilter,
+    'meta_title' => $metaData['meta_title'],
+    'meta_description' => $metaData['meta_description'],
+    'meta_keywords' => $metaData['meta_keywords'],
+    'page' => $page,
+]);
 }
+
+public function productDetails($slug)
+{
+    $product = ProductModel::findBySlug($slug);
+    
+    if (!$product) {
+        abort(404, 'Product not found');
+    }
+
+    $getRelatedProduct = ProductModel::getRelatedProduct($product->id, $product->sub_category_id);
+
+    $metaData = [
+        'meta_title' => $product->title,
+        'meta_description' => $product->short_description,
+        
+    ];
+
+
+    return view('products.detail', [
+    'product' => $product,
+    'meta_title' => $product->title,
+    'meta_description' => $product->short_description,
+    'getRelatedProduct' => $getRelatedProduct,
+]);
+}
+
 
 
 
@@ -82,7 +156,7 @@ public function products_filter(Request $request)
         $subCategoryId = $request->get('sub_category_id');
         $page = $request->get('page', 1);
 
-        $getProduct = ProductModel::getProducts($filters, $categoryId, $subCategoryId, $page);
+        $getProduct = ProductModel::getProducts($filters, $categoryId, $subCategoryId);
 
         $nextPage = null;
         if ($getProduct->hasMorePages()) {
