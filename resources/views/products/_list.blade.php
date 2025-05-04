@@ -30,13 +30,13 @@
                                                 <div class="product-cat">
                                                     <a href="{{ url($product->category_slug. '/' . $product->sub_category_slug) }}">{{ $product->sub_category_name }}</a>
                                                 </div>
-                                                <h3 class="product-title"><a href="{{ url($product->slug) }}">{{ $product->title }}</a></h3><!-- End .product-title -->
+                                                <h3 class="product-title"><a href="{{ route('product.details', $product->slug) }}">{{ $product->title }}</a></h3>
                                                 <div class="product-price">
-                                                ₦{{ number_format($product->price, 2) }}
+                                                    ₦{{ number_format($product->price, 2) }}
                                                 </div>
                                                 <div class="ratings-container">
                                                     <div class="ratings">
-                                                        <div class="ratings-val" style="width: 20%;"></div><!-- End .ratings-val -->
+                                                        <div class="ratings-val" style="width: 20%;"></div>
                                                     </div>
                                                     <span class="ratings-text">( 2 Reviews )</span>
                                                 </div>
