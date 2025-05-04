@@ -19,10 +19,10 @@
                     @foreach ($getCategoryMobile as $categoryMobile)
                         @if (!empty($categoryMobile->getSubcategories->count()))
                             <li>
-                                <a href="{{ $categoryMobile->slug }}">{{ $categoryMobile->name }}</a>
+                                <a href="{{ route('get.category', [$categoryMobile->slug]) }}">{{ $categoryMobile->name }}</a>
                                 <ul>
                                     @foreach ($categoryMobile->getSubcategories as $subCategoryMobile)
-                                        <li><a href="{{ $categoryMobile->slug.'/'.$subCategoryMobile->slug }}">{{ $subCategoryMobile->name }}</a></li>
+                                        <li><a href="{{ route('get.category', [$categoryMobile->slug, $subCategoryMobile->slug]) }}">{{ $subCategoryMobile->name }}</a></li>
                                     @endforeach
                             
                                 </ul>
