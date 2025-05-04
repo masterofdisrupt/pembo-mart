@@ -36,11 +36,16 @@
          <main class="main">
         	<div class="page-header text-center" style="background-image: url('{{ url('') }}/assets/images/page-header-bg.jpg')">
         		<div class="container">
-                    @if (!empty($getSubCategory))
+                   @if (isset($getSubCategory) && !empty($getSubCategory))
                         <h1 class="page-title">{{ $getSubCategory->name }}</h1>
-                        @else
-        			<h1 class="page-title">{{ $getCategory->name }}</h1>
+                    @elseif (isset($getCategory) && !empty($getCategory))
+                        <h1 class="page-title">{{ $getCategory->name }}</h1>
+                    @elseif (Request::has('search'))
+                        <h1 class="page-title">Search Results for: {{ Request::get('search') }}</h1>
+                    @else
+                        <h1 class="page-title">Products</h1>
                     @endif
+
         		</div><!-- End .container -->
         	</div><!-- End .page-header -->
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
@@ -52,7 +57,7 @@
                         <li class="breadcrumb-item" aria-current="page"><a href="{{ url($getCategory->slug) }}">{{ $getCategory->name }}</a> </li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $getSubCategory->name }}</li>
 
-                        @else    
+                        @elseif (!empty($getCategory))   
                             <li class="breadcrumb-item active" aria-current="page">{{ $getCategory->name }}</li>
 
                         @endif
@@ -106,6 +111,7 @@
                 		<aside class="col-lg-3 order-lg-first">
                            <form id="filter-form" method="POST" action="">
                                 @csrf
+                                <input type="hidden" name="search" value="{{ !empty(request('search'))? request('search') : '' }}">
                                 <input type="hidden" name="old_subcategory_id" value="{{ !empty($getSubCategory) ? $getSubCategory->id : '' }}">
                                 <input type="hidden" name="old_category_id" value="{{ !empty($getCategory) ? $getCategory->id : '' }}">
                                 <input type="hidden" name="sub_category_id" id="get_sub_category_id">
@@ -122,30 +128,33 @@
                 					<a href="#" class="sidebar-filter-clear">Clean All</a>
                 				</div><!-- End .widget widget-clean -->
 
-                				<div class="widget widget-collapsible">
-    								<h3 class="widget-title">
-									    <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true" aria-controls="widget-1">
-									        Category
-									    </a>
-									</h3><!-- End .widget-title -->
+                                @if (!empty($subCategoryFilter))                                   
+                               
+                                    <div class="widget widget-collapsible">
+                                        <h3 class="widget-title">
+                                            <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true" aria-controls="widget-1">
+                                                Category
+                                            </a>
+                                        </h3><!-- End .widget-title -->
 
-									<div class="collapse show" id="widget-1">
-										<div class="widget-body">
-											<div class="filter-items filter-items-count">
-                                                @foreach ($subCategoryFilter as $filterCategory)
-												<div class="filter-item">
-													<div class="custom-control custom-checkbox">
-														<input type="checkbox" class="custom-control-input changeCategory" 
-                                                        value="{{ $filterCategory->id }}" id="cat-{{ $filterCategory->id }}">
-														<label class="custom-control-label" for="cat-{{ $filterCategory->id }}">{{ $filterCategory->name }}</label>
-													</div>
-													<span class="item-count">{{ $filterCategory->TotalProducts() }}</span>
-												</div>
-                                                @endforeach
-											</div>
-										</div>
-									</div>
-        						</div>
+                                        <div class="collapse show" id="widget-1">
+                                            <div class="widget-body">
+                                                <div class="filter-items filter-items-count">
+                                                    @foreach ($subCategoryFilter as $filterCategory)
+                                                    <div class="filter-item">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input changeCategory" 
+                                                            value="{{ $filterCategory->id }}" id="cat-{{ $filterCategory->id }}">
+                                                            <label class="custom-control-label" for="cat-{{ $filterCategory->id }}">{{ $filterCategory->name }}</label>
+                                                        </div>
+                                                        <span class="item-count">{{ $filterCategory->TotalProducts() }}</span>
+                                                    </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                 @endif
 
         						<div class="widget widget-collapsible">
     								<h3 class="widget-title">
@@ -359,17 +368,15 @@ $(document).ready(function() {
         $.ajax({
             url: "{{ route('products.load-more') }}",
             type: 'POST',
-            data: {
-                page: page,
-                filters: $('#filter-form').serialize()
-            },
+            data: $('#filter-form').serialize() + '&page=' + page,
+
             success: function(response) {
                 if (response.status) {
                     $('#get-product-list').append(response.html);
-                    
+
                     if (response.hasMorePages) {
                         btn.data('page', response.nextPage)
-                           .removeClass('d-none loading');
+                        .removeClass('d-none loading');
                     } else {
                         btn.remove();
                     }
@@ -380,6 +387,7 @@ $(document).ready(function() {
                 btn.removeClass('loading');
             }
         });
+
     });
 
 });
