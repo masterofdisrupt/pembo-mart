@@ -14,4 +14,13 @@ class ProductColoursModel extends Model
         'product_id',
         'colour_id'
     ];
+
+    /**
+     * Get the colour associated with the ProductColoursModel
+     */
+
+    public function getColours()
+    {
+        return $this->belongsTo(ColourModel::class, 'colour_id');
+    }
 }
