@@ -25,6 +25,7 @@ use App\Http\Controllers\Backend\V1\CategoryController;
 use App\Http\Controllers\Backend\V1\SubCategoryController;
 use App\Http\Controllers\Backend\V1\BrandsController;
 use App\Http\Controllers\ProductController as FrontendProductController;
+use App\Http\Controllers\PaymentController;
 
 
 
@@ -288,12 +289,28 @@ Route::group(['middleware' => 'user'], function () {
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('search', [FrontendProductController::class, 'search'])->name('search');
 Route::post('products_filter', [FrontendProductController::class, 'products_filter'])->name('products.filter');
 Route::post('products/load-more', [FrontendProductController::class, 'loadMore'])
     ->name('products.load-more');
 
+// Payment
+Route::get('cart', [PaymentController::class, 'cart'])
+    ->name('cart');
+Route::get('checkout', [PaymentController::class, 'checkout'])
+    ->name('checkout');
+Route::post('update.cart', [PaymentController::class, 'updateCart'])
+    ->name('update.cart');
+Route::delete('delete_cart_item/{rowId}', [PaymentController::class, 'deleteCartItem'])
+    ->name('delete.cart.item');
+Route::post('products/add-to-cart', [PaymentController::class, 'addToCart'])
+    ->name('products.add-to-cart');
+
 
 // Dynamic catch-all routes
+Route::get('/product/{slug}', [FrontendProductController::class, 'productDetails'])
+    ->name('product.details');
+
 Route::get('{category?}/{subCategory?}', [FrontendProductController::class, 'getCategory'])
     ->where([
         'category' => '[A-Za-z0-9\-]+',
