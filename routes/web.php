@@ -24,6 +24,7 @@ use App\Http\Controllers\Backend\V1\SupportsController;
 use App\Http\Controllers\Backend\V1\CategoryController;
 use App\Http\Controllers\Backend\V1\SubCategoryController;
 use App\Http\Controllers\Backend\V1\BrandsController;
+use App\Http\Controllers\Backend\V1\ShippingChargesController;
 use App\Http\Controllers\ProductController as FrontendProductController;
 use App\Http\Controllers\PaymentController;
 
@@ -185,6 +186,14 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/discount_code/edit/{id}', [DiscountCodeController::class, 'discount_code_update'])->name('discount.code.update');
     Route::delete('admin/discount_code/delete/{id}', [DiscountCodeController::class, 'discount_code_delete'])->name('discount.code.delete');
 
+    // Shipping Charge
+    Route::get('admin/shipping_charge', [ShippingChargesController::class, 'shipping_charges'])->name('shipping.charge');
+    Route::get('admin/shipping_charge/add', [ShippingChargesController::class, 'add_shipping_charges'])->name('shipping.charge.add');
+    Route::post('admin/shipping_charge/add', [ShippingChargesController::class, 'store_shipping_charges'])->name('shipping.charge.store');
+    Route::get('admin/shipping_charge/edit/{id}', [ShippingChargesController::class, 'edit_shipping_charges'])->name('shipping.charge.edit');
+    Route::put('admin/shipping_charge/edit/{id}', [ShippingChargesController::class, 'update_shipping_charges'])->name('shipping.charge.update');
+    Route::delete('admin/shipping_charge/delete/{id}', [ShippingChargesController::class, 'delete_shipping_charges'])->name('shipping.charge.delete');
+
     // Support Start
     Route::get('admin/support', [SupportsController::class, 'supports'])->name('supports');
     Route::get('admin/support/reply/{id}', [SupportsController::class, 'support_reply'])->name('support.reply');
@@ -299,6 +308,8 @@ Route::get('cart', [PaymentController::class, 'cart'])
     ->name('cart');
 Route::get('checkout', [PaymentController::class, 'checkout'])
     ->name('checkout');
+Route::post('apply-discount', [PaymentController::class, 'applyDiscount'])
+    ->name('apply.discount');
 Route::post('update.cart', [PaymentController::class, 'updateCart'])
     ->name('update.cart');
 Route::delete('delete_cart_item/{rowId}', [PaymentController::class, 'deleteCartItem'])
