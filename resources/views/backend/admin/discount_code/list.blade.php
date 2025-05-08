@@ -4,7 +4,6 @@
 <div class="page-content">
     @include('_message')
     
-    <!-- Breadcrumb & Stats -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
@@ -20,7 +19,6 @@
         </div>
     </div>
 
-    <!-- Search Form -->
     <div class="card mb-3">
         <div class="card-body">
             <form action="{{ route('discount.code') }}" method="GET" id="search-form">
@@ -95,7 +93,6 @@
         </div>
     </div>
 
-    <!-- Data Table -->
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -125,8 +122,8 @@
                             <tr>
                                 <td>{{ $value->id }}</td>
                                 <td>{{ $value->username }}</td>
-                                <td><code>{{ $value->discount_code }}</code></td>
-                                <td>{{ $value->type == 0 ? $value->discount_price . '%' : '₱' . number_format($value->discount_price, 2) }}</td>
+                                <td><code>{{ $value->code }}</code></td>
+                                <td>{{ $value->type == 0 ? $value->discount_price . '%' : '₦' . number_format($value->discount_price, 2) }}</td>
                                 <td>{{ $value->type == 0 ? 'Percentage' : 'Fixed Amount' }}</td>
                                 <td>{{ $value->usages == 1 ? 'Unlimited' : 'One-time' }}</td>
                                 <td>
@@ -175,7 +172,6 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
             <div class="d-flex justify-content-end mt-3">
                 {{ $getRecord->withQueryString()->links() }}
             </div>
@@ -186,16 +182,15 @@
 
 @push('scripts')
 <script>
-    // Initialize Feather Icons
+    
     feather.replace();
     
-    // Enable tooltips
+    
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     });
 
-    // Add debounce to search
     let searchTimeout;
     const searchForm = document.getElementById('search-form');
     const searchInputs = searchForm.querySelectorAll('input');
