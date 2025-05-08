@@ -22,11 +22,11 @@
                         @csrf
                         @method('PUT')
 
-                        <div class="row mb-3">
+                        <div class="mb-4">
                             <label for="user_id" class="col-sm-3 col-form-label">
                                 User <span class="text-danger">*</span>
                             </label>
-                            <div class="col-sm-9">
+                            
                                 <select name="user_id" id="user_id" 
                                         class="form-select @error('user_id') is-invalid @enderror" required>
                                     @foreach ($users as $user)
@@ -39,32 +39,32 @@
                                 @error('user_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            
                         </div>
 
-                        <div class="row mb-3">
-                            <label for="discount_code" class="col-sm-3 col-form-label">
+                        <div class="mb-4">
+                            <label for="code" class="col-sm-3 col-form-label">
                                 Discount Code <span class="text-danger">*</span>
                             </label>
-                            <div class="col-sm-9">
+                            
                                 <input type="text" 
-                                       id="discount_code"
-                                       name="discount_code" 
-                                       class="form-control @error('discount_code') is-invalid @enderror"
-                                       value="{{ old('discount_code', $discountCode->discount_code) }}"
+                                      
+                                       name="code" 
+                                       class="form-control @error('code') is-invalid @enderror"
+                                       value="{{ old('code', $discountCode->code) }}"
                                        placeholder="Enter discount code"
                                        required>
-                                @error('discount_code')
+                                @error('code')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            
                         </div>
 
-                        <div class="row mb-3">
+                        <div class="mb-4">
                             <label for="discount_price" class="col-sm-3 col-form-label">
                                 Value <span class="text-danger">*</span>
                             </label>
-                            <div class="col-sm-9">
+                            
                                 <div class="input-group">
                                     <input type="number" 
                                            id="discount_price"
@@ -80,14 +80,14 @@
                                 @error('discount_price')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                          
                         </div>
 
-                        <div class="row mb-3">
+                        <div class="mb-4">
                             <label for="expiry_date" class="col-sm-3 col-form-label">
                                 Expiry Date <span class="text-danger">*</span>
                             </label>
-                            <div class="col-sm-9">
+                            
                                 <input type="date" 
                                 id="expiry_date"
                                 name="expiry_date" 
@@ -98,14 +98,14 @@
                                 @error('expiry_date')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            
                         </div>
 
-                        <div class="row mb-3">
+                        <div class="mb-4">
                             <label for="type" class="col-sm-3 col-form-label">
                                 Type <span class="text-danger">*</span>
                             </label>
-                            <div class="col-sm-9">
+                            
                                 <select name="type" id="type" 
                                         class="form-select @error('type') is-invalid @enderror" required>
                                     @foreach ($types as $value => $label)
@@ -118,14 +118,14 @@
                                 @error('type')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                           
                         </div>
 
-                        <div class="row mb-3">
+                        <div class="mb-4">
                             <label for="usages" class="col-sm-3 col-form-label">
                                 Usage <span class="text-danger">*</span>
                             </label>
-                            <div class="col-sm-9">
+                            
                                 <select name="usages" id="usages" 
                                         class="form-select @error('usages') is-invalid @enderror" required>
                                     @foreach ($usages as $value => $label)
@@ -138,7 +138,7 @@
                                 @error('usages')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            
                         </div>
 
                         <div class="text-end">
