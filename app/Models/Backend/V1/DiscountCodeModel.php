@@ -14,26 +14,23 @@ class DiscountCodeModel extends Model
     use HasFactory;
 
     protected $table = 'discount_code';
+
     protected $fillable = [
-        'discount_code',
+        'user_id',
+        'code',
         'discount_price',
         'expiry_date',
         'type',
         'usages',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'expiry_date' => 'datetime',
-        'type' => 'integer',
-        'usages' => 'integer',
-        'discount_price' => 'float',
-    ];
 
+    static public function getSingleRecord($id)
+    {
+        return self::where('id', $id)
+            ->where('is_delete', 0)
+            ->first();
+    }
 
 /**
  * Get all discount codes with filters
@@ -41,72 +38,72 @@ class DiscountCodeModel extends Model
  * @param \Illuminate\Http\Request $request
  * @return \Illuminate\Pagination\LengthAwarePaginator
  */
-public static function getAllRecord($request): LengthAwarePaginator
-{
-    try {
-        $query = self::select([
-                'discount_code.*',
-                'users.username',
-                DB::raw('CASE 
-                    WHEN expiry_date <= NOW() THEN "expired"
-                    WHEN expiry_date <= DATE_ADD(NOW(), INTERVAL 7 DAY) THEN "expiring"
-                    ELSE "active"
-                    END as status')
-            ])
-            ->join('users', 'users.id', '=', 'discount_code.user_id')
-            ->where('discount_code.is_delete', '=', 0);
+    static public function getAllRecord($request): LengthAwarePaginator
+    {
+        try {
+            $query = self::select([
+                    'discount_code.*',
+                    'users.username',
+                    DB::raw('CASE 
+                        WHEN expiry_date <= NOW() THEN "expired"
+                        WHEN expiry_date <= DATE_ADD(NOW(), INTERVAL 7 DAY) THEN "expiring"
+                        ELSE "active"
+                        END as status')
+                ])
+                ->join('users', 'users.id', '=', 'discount_code.user_id')
+                ->where('discount_code.is_delete', '=', 0);
 
-        // Apply filters
-        if ($request->filled('id')) {
-            $query->where('discount_code.id', $request->id);
-        }
-
-        if ($request->filled('username')) {
-            $query->where('users.username', 'like', "%{$request->username}%");
-        }
-
-        if ($request->filled('discount_code')) {
-            $query->where('discount_code.discount_code', 'like', "%{$request->discount_code}%");
-        }
-
-        // Price range filter
-        if ($request->filled('price_min') || $request->filled('price_max')) {
-            $query->whereBetween('discount_code.discount_price', [
-                $request->input('price_min', 0),
-                $request->input('price_max', PHP_FLOAT_MAX)
-            ]);
-        }
-
-        // Status filter with optimization
-        if ($request->filled('status')) {
-            $now = Carbon::now();
-            switch ($request->status) {
-                case 'active':
-                    $query->where('expiry_date', '>', $now);
-                    break;
-                case 'expired':
-                    $query->where('expiry_date', '<=', $now);
-                    break;
-                case 'expiring':
-                    $query->whereBetween('expiry_date', [
-                        $now,
-                        $now->copy()->addDays(7)
-                    ]);
-                    break;
+            // Apply filters
+            if ($request->filled('id')) {
+                $query->where('discount_code.id', $request->id);
             }
+
+            if ($request->filled('username')) {
+                $query->where('users.username', 'like', "%{$request->username}%");
+            }
+
+            if ($request->filled('code')) {
+                $query->where('discount_code.code', 'like', "%{$request->code}%");
+            }
+
+            // Price range filter
+            if ($request->filled('price_min') || $request->filled('price_max')) {
+                $query->whereBetween('discount_code.discount_price', [
+                    $request->input('price_min', 0),
+                    $request->input('price_max', PHP_FLOAT_MAX)
+                ]);
+            }
+
+            // Status filter with optimization
+            if ($request->filled('status')) {
+                $now = Carbon::now();
+                switch ($request->status) {
+                    case 'active':
+                        $query->where('expiry_date', '>', $now);
+                        break;
+                    case 'expired':
+                        $query->where('expiry_date', '<=', $now);
+                        break;
+                    case 'expiring':
+                        $query->whereBetween('expiry_date', [
+                            $now,
+                            $now->copy()->addDays(7)
+                        ]);
+                        break;
+                }
+            }
+
+            // Add sorting
+            $query->orderBy($request->input('sort_by', 'discount_code.id'), 
+                        $request->input('sort_order', 'desc'));
+
+            return $query->paginate($request->input('per_page', 40));
+
+        } catch (\Exception $e) {
+            \Log::error('Error fetching discount codes: ' . $e->getMessage());
+            return new LengthAwarePaginator([], 0, 40);
         }
-
-        // Add sorting
-        $query->orderBy($request->input('sort_by', 'discount_code.id'), 
-                       $request->input('sort_order', 'desc'));
-
-        return $query->paginate($request->input('per_page', 40));
-
-    } catch (\Exception $e) {
-        \Log::error('Error fetching discount codes: ' . $e->getMessage());
-        return new LengthAwarePaginator([], 0, 40);
     }
-}
 
 
     /**
@@ -134,8 +131,24 @@ public static function getAllRecord($request): LengthAwarePaginator
         return '<span class="badge bg-success">Active</span>';
     }
 
+    /**
+     * Get the type of discount code
+     *
+     * @return string
+     */
+     static public function CheckDiscountCode($code)
+    {
+        return self::select('discount_code.*')
+            ->where('code', $code)
+            ->where('is_delete', 0)
+            ->where('expiry_date', '>=', date('Y-m-d H:i:s'))
+            ->where('usages', '>', 0)
+            ->first();
+
 }
-    
+
+}
+ 
 
 
    
