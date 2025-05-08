@@ -55,14 +55,27 @@ class DiscountCodeController extends Controller
  */
 public function discount_code_store(Request $request): RedirectResponse
 {
-    try {
+
         // Validate request data
         $validator = Validator::make($request->all(), [
-            'discount_code' => 'required|unique:discount_code|max:50',
-            'discount_price' => 'required|numeric|min:0|max:100',
+            'code' => 'required|unique:discount_code,code|max:50',
+            'discount_price' => [
+                'required',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->type == 0 && $value > 100) {
+                        $fail('The percentage discount cannot be greater than 100.');
+                    }
+                },
+            ],
             'expiry_date' => 'required|date|after:today',
             'type' => 'required|in:0,1',
             'usages' => 'required|in:0,1'
+        ], [
+            'code.unique' => 'This discount code already exists.',
+            'discount_price.max' => 'Percentage discount cannot exceed 100%.',
+            'expiry_date.after' => 'Expiry date must be after today.'
         ]);
 
         if ($validator->fails()) {
@@ -73,29 +86,27 @@ public function discount_code_store(Request $request): RedirectResponse
         }
 
         // Create new discount code
-        $discountCode = new DiscountCodeModel();
-        $discountCode->user_id = Auth::id();
-        $discountCode->discount_code = strtoupper(trim($request->discount_code));
-        $discountCode->discount_price = trim($request->discount_price);
-        $discountCode->expiry_date = Carbon::parse($request->expiry_date);
-        $discountCode->type = $request->type;
-        $discountCode->usages = $request->usages;
-        $discountCode->save();
+        $discountCode = DiscountCodeModel::create([
+            'user_id' => Auth::id(),
+            'code' => strtoupper(trim($request->code)),
+            'discount_price' => trim($request->discount_price),
+            'expiry_date' => Carbon::parse($request->expiry_date),
+            'type' => $request->type,
+            'usages' => $request->usages,
+            'is_delete' => 0
+        ]);
+
+        Log::info('Discount code created', [
+            'code' => $discountCode->code,
+            'created_by' => Auth::id()
+        ]);
 
         return redirect()
             ->route('discount.code')
             ->with('success', 'Discount code created successfully!');
 
-    } catch (\Exception $e) {
-        \Log::error('Failed to create discount code: ' . $e->getMessage());
-        
-        return redirect()
-            ->back()
-            ->with('error', 'Failed to create discount code. Please try again.')
-            ->withInput();
-    }
+    
 }
-
 
 /**
  * Show the form for editing the specified discount code.
@@ -105,10 +116,10 @@ public function discount_code_store(Request $request): RedirectResponse
  */
 public function discount_code_edit($id)
 {
-    try {
+    
         $discountCode = DiscountCodeModel::findOrFail($id);
         
-        // Ensure expiry_date is a Carbon instance
+        
         $expiryDate = $discountCode->expiry_date instanceof Carbon 
             ? $discountCode->expiry_date->format('Y-m-d')
             : Carbon::parse($discountCode->expiry_date)->format('Y-m-d');
@@ -127,13 +138,6 @@ public function discount_code_edit($id)
             ]
         ]);
 
-    } catch (\Exception $e) {
-        Log::error('Error loading discount code: ' . $e->getMessage());
-        
-        return redirect()
-            ->route('discount.code')
-            ->with('error', 'Discount code not found.');
-    }
 }
 
 /**
@@ -143,13 +147,13 @@ public function discount_code_edit($id)
  * @param Request $request
  * @return RedirectResponse
  */
-public function discount_code_update($id, Request $request): RedirectResponse
-{
-    try {
-        // Validate request data
+
+    public function discount_code_update($id, Request $request): RedirectResponse
+    {
+   
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
-            'discount_code' => "required|unique:discount_code,discount_code,{$id}|max:50",
+            'code' => "required|unique:discount_code,code,{$id}|max:50",
             'discount_price' => [
                 'required',
                 'numeric',
@@ -175,7 +179,7 @@ public function discount_code_update($id, Request $request): RedirectResponse
         // Find and update discount code
         $discountCode = DiscountCodeModel::findOrFail($id);
         $discountCode->user_id = $request->user_id;
-        $discountCode->discount_code = strtoupper(trim($request->discount_code));
+        $discountCode->code = strtoupper(trim($request->code));
         $discountCode->discount_price = trim($request->discount_price);
         $discountCode->expiry_date = Carbon::parse($request->expiry_date);
         $discountCode->type = $request->type;
@@ -185,16 +189,7 @@ public function discount_code_update($id, Request $request): RedirectResponse
         return redirect()
             ->route('discount.code')
             ->with('success', 'Discount code updated successfully!');
-
-    } catch (\Exception $e) {
-        \Log::error('Failed to update discount code: ' . $e->getMessage());
-        
-        return redirect()
-            ->back()
-            ->with('error', 'Failed to update discount code. Please try again.')
-            ->withInput();
-    }
-}
+        }
 
 
 /**
@@ -203,9 +198,10 @@ public function discount_code_update($id, Request $request): RedirectResponse
  * @param int $id
  * @return RedirectResponse
  */
-public function discount_code_delete($id): RedirectResponse
-{
-    try {
+
+    public function discount_code_delete($id): RedirectResponse
+    {
+    
         $discountCode = DiscountCodeModel::findOrFail($id);
         
         // Check if already deleted
@@ -228,17 +224,6 @@ public function discount_code_delete($id): RedirectResponse
 
         return redirect()
             ->route('discount.code')
-            ->with('success', 'Discount code deleted successfully.');
-
-    } catch (\Exception $e) {
-        Log::error('Failed to delete discount code', [
-            'id' => $id,
-            'error' => $e->getMessage()
-        ]);
-
-        return redirect()
-            ->back()
-            ->with('error', 'Failed to delete discount code. Please try again.');
-    }
-}
+            ->with('success', 'Discount code deleted successfully.');   
+        }
 }
