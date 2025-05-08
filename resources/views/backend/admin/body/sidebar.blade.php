@@ -98,6 +98,13 @@
               </li>
 
               <li class="nav-item">
+                  <a href="{{ route('shipping.charge') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Shipping Charges</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
                   <a href="{{ route('supports') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Supports</span>
