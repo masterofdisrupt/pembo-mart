@@ -27,26 +27,24 @@ class AdminController
 
     public function profile_update(Request $request)
     {
-        // Validate input
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
-            'middle_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
-            'surname' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
-            'username' => 'required|string|min:3|max:20|alpha_dash|unique:users,username,' . Auth::id(), // Alphanumeric, dashes, underscores
-            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(), // Valid email format
-            'phone' => 'nullable|string|regex:/^\+?[0-9]{7,15}$/', // Optional, international phone number format
-            'password' => 'nullable|string|min:8|max:255|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).+$/', // At least one uppercase, lowercase, number, and special character
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Only specific image formats allowed, size <= 2MB
-            'address' => 'nullable|string|max:255', // Address string with max length
-            'about' => 'nullable|string|max:255', // About section with max 255 characters
-            'website' => 'nullable|url|max:255', // Valid URL format
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', 
+            'middle_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
+            'surname' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', 
+            'username' => 'required|string|min:3|max:20|alpha_dash|unique:users,username,' . Auth::id(),
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(), 
+            'phone' => 'nullable|string|regex:/^\+?[0-9]{7,15}$/', 
+            'password' => 'nullable|string|min:8|max:255|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).+$/', 
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
+            'about' => 'nullable|string|max:255', 
+            'website' => 'nullable|url|max:255', 
         ]);
 
 
-        // Find user
+        
         $user = User::findOrFail(Auth::id());
 
-        // Update basic fields
+        
         $user->fill([
             'name' => $validatedData['name'],
             'middle_name' => $validatedData['middle_name'],
@@ -59,12 +57,10 @@ class AdminController
             'website' => $validatedData['website'] ?? null,
         ]);
 
-        // Update password if provided
         if (!empty($validatedData['password'])) {
             $user->password = Hash::make($validatedData['password']);
         }
 
-        // Handle file upload
         if ($request->hasFile('photo')) {
             if (!empty($user->getProfile())) {
                 unlink(public_path('backend/upload/profile/') . $user->photo);
@@ -73,12 +69,10 @@ class AdminController
             $file = $request->file('photo');
             $filename = Str::random(30) . '.' . $file->getClientOriginalExtension();
 
-            // Store file securely
             $file->move(public_path('backend/upload/profile/'), $filename);
             $user->photo = $filename;
         }
-
-        // Save user
+  
         $user->save();
 
         return redirect()->route('admin.profile')->with('success', 'Profile Updated Successfully!');
@@ -111,9 +105,9 @@ class AdminController
     public function add_users_store(Request $request)
     {
         $user = request()->validate([
-            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
-            'username' => 'required|string|min:3|max:20|alpha_dash|unique:users,username', // Alphanumeric, dashes, underscores
-            'email' => 'required|email|max:255|unique:users,email', // Valid email format
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', 
+            'username' => 'required|string|min:3|max:20|alpha_dash|unique:users,username',
+            'email' => 'required|email|max:255|unique:users,email',
             'role' => 'required',
             'status' => 'required',
         ]);
@@ -133,7 +127,7 @@ class AdminController
             $file = $request->file('photo');
             $randomStr = Str::random(30);
             $filename = $randomStr . '.' . $file->getClientOriginalExtension();
-            // Store file securely
+    
             $manager = new ImageManager(new Driver());
             $image = $manager->read($file)->resize(300, 300); // Resize to prevent distortion
             $image->save(public_path('backend/upload/profile/' . $filename));
@@ -165,7 +159,6 @@ class AdminController
         'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
     ]);
 
-    // Check if user exists
     $user = User::find($id);
     if (!$user) {
         return back()->with('error', 'User not found.');
@@ -181,18 +174,16 @@ class AdminController
     $user->status = trim($request->status);
 
     if ($request->hasFile('photo')) {
-        // Delete old photo if it exists
         if (!empty($user->photo) && file_exists(public_path('backend/upload/profile/' . $user->photo))) {
             unlink(public_path('backend/upload/profile/' . $user->photo));
         }
 
-        // Use Intervention ImageManager for resizing
         $file = $request->file('photo');
         $randomStr = Str::random(30);
         $filename = $randomStr . '.' . $file->getClientOriginalExtension();
 
         $manager = new ImageManager(new Driver());
-        $image = $manager->read($file)->resize(300, 300); // Resize to prevent distortion
+        $image = $manager->read($file)->resize(300, 300); 
         $image->save(public_path('backend/upload/profile/' . $filename));
 
         $user->photo = $filename;
@@ -207,12 +198,10 @@ class AdminController
 {
     $user = User::findOrFail($id);
 
-    // Prevent self-deletion
     if ($user->id === Auth::id()) {
         return back()->with('error', 'You cannot delete your own account');
     }
 
-    // Perform soft delete
     $user->is_delete = 1;
     $user->save();
     
@@ -298,7 +287,6 @@ public function update_password(Request $request)
 
     public function my_profile_update(Request $request)
     {
-        // dd($request->all());
         $user = request()->validate([
             'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
             'middle_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/', // Name can only contain letters and spaces
