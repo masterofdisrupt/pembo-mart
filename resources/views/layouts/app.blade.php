@@ -60,17 +60,19 @@
                                     <a class="nav-link" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">Register</a>
                                 </li>
                             </ul>
+                            
                             <div class="tab-content" id="tab-content-5">
                                 <div class="tab-pane fade show active" id="signin" role="tabpanel" aria-labelledby="signin-tab">
-                                    <form action="#">
+                                    <form action="{{ route('signin') }}" method="POST" id="signin-form">
+                                        @csrf
                                         <div class="form-group">
-                                            <label for="singin-email">Username or email address *</label>
-                                            <input type="text" class="form-control" id="singin-email" name="singin-email" required>
+                                            <label for="singin-email">Email *</label>
+                                            <input type="text" class="form-control" id="singin-email" name="email" required>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="singin-password">Password *</label>
-                                            <input type="password" class="form-control" id="singin-password" name="singin-password" required>
+                                            <input type="password" class="form-control" id="singin-password" name="password" required>
                                         </div>
 
                                         <div class="form-footer">
@@ -80,25 +82,64 @@
                                             </button>
 
                                             <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="signin-remember">
+                                                <input type="checkbox" class="custom-control-input" name="is_remember" id="signin-remember">
                                                 <label class="custom-control-label" for="signin-remember">Remember Me</label>
                                             </div>
 
-                                            <a href="#" class="forgot-link">Forgot Your Password?</a>
+                                            <a href="{{ route('forgot.password') }}" class="forgot-link">Forgot Your Password?</a>
                                         </div>
                                     </form>
                                    
                                 </div>
                                 <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                                    <form action="#">
+                                    <form action="{{ route('register') }}" id="register-form" method="POST">
+                                        @csrf
                                         <div class="form-group">
-                                            <label for="register-email">Your email address *</label>
-                                            <input type="email" class="form-control" id="register-email" name="register-email" required>
+                                            <label for="register-name">Name <span style="color: red;"> *</span></label>
+                                            <input type="text" class="form-control" id="register-name" name="name" required>
+                                            <span class="invalid-feedback" id="error-name"></span>
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="register-password">Password *</label>
-                                            <input type="password" class="form-control" id="register-password" name="register-password" required>
+                                            <label for="register-middle-name">Middle Name <span style="color: red;"> *</span></label>
+                                            <input type="text" class="form-control" id="register-middle-name" name="middle_name" required>
+                                            <span class="invalid-feedback" id="error-middle_name"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="register-surname">Surname <span style="color: red;"> *</span></label>
+                                            <input type="text" class="form-control" id="register-surname" name="surname" required>
+                                            <span class="invalid-feedback" id="error-surname"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="register-email">Email <span style="color: red;"> *</span></label>
+                                            <input type="email" class="form-control" id="register-email" name="email" required>
+                                            <span class="invalid-feedback" id="error-email"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="register-password">Password <span style="color: red;">*</span></label>
+                                            <input 
+                                                type="password" 
+                                                class="form-control" 
+                                                id="register-password" 
+                                                name="password" 
+                                                required
+                                            >
+                                            <span class="invalid-feedback d-block" id="error-password"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="register-password-confirmation">Confirm Password <span style="color: red;">*</span></label>
+                                            <input 
+                                                type="password" 
+                                                class="form-control" 
+                                                id="register-password-confirmation" 
+                                                name="password_confirmation" 
+                                                required
+                                            >
+                                            <span class="invalid-feedback d-block" id="error-password-confirmation"></span>
                                         </div>
 
                                         <div class="form-footer">
@@ -162,10 +203,119 @@
     <script src="{{ url('assets/js/superfish.min.js') }}"></script>
     <script src="{{ url('assets/js/owl.carousel.min.js') }}"></script>
     <script src="{{ url('assets/js/jquery.magnific-popup.min.js') }}"></script>
+    @yield('script')
     <!-- Main JS File -->
     <script src="{{ url('assets/js/main.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    @yield('script')
+    <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.getElementById('register-password');
+        const confirmInput = document.getElementById('register-password-confirmation');
+        const errorPassword = document.getElementById('error-password');
+        const errorConfirm = document.getElementById('error-password-confirmation');
+
+        function validatePassword() {
+            const password = passwordInput.value;
+            const errors = [];
+
+            if (!/[A-Z]/.test(password)) errors.push("One uppercase letter");
+            if (!/[a-z]/.test(password)) errors.push("One lowercase letter");
+            if (!/[0-9]/.test(password)) errors.push("One number");
+            if (!/[^A-Za-z0-9]/.test(password)) errors.push("One special character");
+
+            if (errors.length > 0) {
+                errorPassword.innerHTML = "Password must include at least:<ul><li>" + errors.join("</li><li>") + "</li></ul>";
+                passwordInput.classList.add("is-invalid");
+            } else {
+                errorPassword.innerHTML = "";
+                passwordInput.classList.remove("is-invalid");
+            }
+
+            validateConfirmation(); 
+        }
+
+        function validateConfirmation() {
+            if (confirmInput.value !== passwordInput.value || !confirmInput.value) {
+                errorConfirm.textContent = "Passwords do not match.";
+                confirmInput.classList.add("is-invalid");
+            } else {
+                errorConfirm.textContent = "";
+                confirmInput.classList.remove("is-invalid");
+            }
+        }
+
+        passwordInput.addEventListener('input', validatePassword);
+        confirmInput.addEventListener('input', validateConfirmation);
+    });
+    
+        $(document).ready(function() {
+            $('#signin-form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('signin') }}',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            toastr.success(response.message);
+                            setTimeout(function() {
+                                window.location.href = response.redirect_url;
+                            }, 2000);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }, 
+                    error: function(xhr) {
+                        
+                       let res = xhr.responseJSON;
+                       let message = res?.message || 'An unexpected error occurred.';
+
+                       toastr.error(message);
+                    }
+                });
+            });
+
+
+            $('#register-form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('register') }}',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            toastr.success(response.message);
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        $('#register-form .form-control').removeClass('is-invalid');
+                        $('#register-form .invalid-feedback').text('');
+
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON.errors;
+                            $.each(errors, function(field, messages) {
+                                const input = $('#register-form').find(`[name="${field}"]`);
+                                input.addClass('is-invalid');
+
+                                $(`#error-${field}`).text(messages[0]);
+                            });
+                        } else {
+                            toastr.error(xhr.responseJSON.message || 'An unexpected error occurred.');
+                        }
+                    }
+
+                });
+            });
+        });
+
+        </script>
+
 </body>
 
 
