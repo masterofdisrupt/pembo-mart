@@ -298,6 +298,17 @@ Route::group(['middleware' => 'user'], function () {
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::post('register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('signin', [AuthController::class, 'showSignin'])->name('signin');
+
+Route::get('forgot-password', [AuthController::class, 'forgot_password'])->name('forgot.password');
+Route::post('forgot-password', [AuthController::class, 'forgot_password_post'])->name('forgot.password.post');
+
+Route::get('reset_password/{token}', [AuthController::class, 'reset_password'])->name('reset.password');
+Route::post('reset_password/{token}', [AuthController::class, 'reset_password_post'])->name('reset.password.post');
+Route::get('activate_email/{id}', [AuthController::class, 'activateEmail'])->where('id', '.*')->name('activate');
+
 Route::get('search', [FrontendProductController::class, 'search'])->name('search');
 Route::post('products_filter', [FrontendProductController::class, 'products_filter'])->name('products.filter');
 Route::post('products/load-more', [FrontendProductController::class, 'loadMore'])
