@@ -76,28 +76,33 @@
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                                         <input type="hidden" name="product_price" value="{{ $product->price }}">
-                                        @if ($product->getColours->count() > 0)
+                                       @if ($product->productColours->count() > 0)
                                             <div class="details-filter-row details-row-size">
                                                 <label for="color">Colour:</label>
                                                 <div class="select-custom">
                                                     <select name="color_id" id="color-id" class="form-control" required>
                                                         <option value="">Select a colour</option>
-                                                        @foreach ($product->getColours as $colour)
-                                                            <option value="{{ $colour->getColours->id }}">{{ $colour->getColours->name }}</option>
+                                                        @foreach ($product->productColours as $productColour)
+                                                            @if ($productColour->getColours) <!-- Check if 'getColours' is not null -->
+                                                                <option value="{{ $productColour->colour_id }}">
+                                                                    {{ $productColour->getColours->name }}
+                                                                </option>
+                                                            @else
+                                                                <option value="">No Colour Available</option>
+                                                            @endif
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
-                                            
-                                        @endif                                        
+                                        @endif                                      
 
-                                        @if ($product->getSizes->count() > 0)
+                                        @if ($product->productSizes->count() > 0)
                                             <div class="details-filter-row details-row-size">
                                                 <label for="size">Size:</label>
                                                 <div class="select-custom">
                                                     <select name="size_id" id="size" class="form-control get-size-price" required>
                                                         <option data-price="0" value="">Select a size</option>
-                                                        @foreach ($product->getSizes as $size)
+                                                        @foreach ($product->productSizes as $size)
                                                             <option data-price="{{ !empty($size->price) ? $size->price : 0 }}" value="{{ $size->id }}">{{ $size->name }} 
                                                                 @if (!empty($size->price)) (₦{{ number_format($size->price, 2) }}) @endif</option>
                                                                 
