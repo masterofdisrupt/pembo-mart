@@ -44,6 +44,11 @@ class ColourModel extends Model
         ->get();
 }
 
+    static public function getSingleRecord($id)
+    {
+        return self::select('colour.*')->where('colour.id', $id)->first();
+    }
+
 
     /**
      * Get the orders details associated with this colour
