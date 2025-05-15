@@ -14,7 +14,7 @@
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
         <div class="container">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="#">Shop</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
             </ol>
@@ -25,6 +25,7 @@
         <div class="cart">
 	        <div class="container">
 
+                @include('_message')
                 @if(!empty(Cart::getContent()->count()))
 
                     <div class="row">
@@ -124,11 +125,14 @@
                             </div>
                         @else
                             <div class="row">
-                                <div class="col-sm-12">
-                                    <h3 class="text-center">Your cart is empty</h3>
-                                    <a href="{{ route('home') }}" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
+                                <div class="col-sm-12 text-center">
+                                    <h3>Your cart is empty</h3>
+                                    <a href="{{ route('home') }}" class="btn btn-outline-dark-2 mb-3" style="min-width: 200px;">
+                                        <span>CONTINUE SHOPPING</span><i class="icon-refresh"></i>
+                                    </a>
                                 </div>
                             </div>
+
                         @endif
 	                </div>
                 </div>
