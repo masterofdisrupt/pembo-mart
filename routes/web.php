@@ -317,16 +317,28 @@ Route::post('products/load-more', [FrontendProductController::class, 'loadMore']
 // Payment
 Route::get('cart', [PaymentController::class, 'cart'])
     ->name('cart');
-Route::get('checkout', [PaymentController::class, 'checkout'])
-    ->name('checkout');
-Route::post('apply-discount', [PaymentController::class, 'applyDiscount'])
-    ->name('apply.discount');
-Route::post('update.cart', [PaymentController::class, 'updateCart'])
-    ->name('update.cart');
 Route::delete('delete_cart_item/{rowId}', [PaymentController::class, 'deleteCartItem'])
-    ->name('delete.cart.item');
+    ->name('delete.cart.item');   
 Route::post('products/add-to-cart', [PaymentController::class, 'addToCart'])
     ->name('products.add-to-cart');
+Route::post('update.cart', [PaymentController::class, 'updateCart'])
+    ->name('update.cart');
+
+
+Route::get('checkout', [PaymentController::class, 'checkout'])
+    ->name('checkout');
+Route::post('checkout/place_order', [PaymentController::class, 'placeOrder'])
+    ->name('checkout.place.order');
+Route::get('checkout/success/{encoded}', [PaymentController::class, 'orderSuccess'])->name('order.success');
+
+
+Route::post('apply-discount', [PaymentController::class, 'applyDiscount'])
+    ->name('apply.discount');
+
+
+
+
+
 
 
 // Dynamic catch-all routes
