@@ -122,7 +122,11 @@ class ProductController extends Controller
 
 public function productDetails($slug)
 {
-    $product = ProductModel::findBySlug($slug);
+    $product = ProductModel::with(['productColours.getColours', 'productSizes'])
+        ->where('slug', $slug)
+        ->where('is_delete', 0)
+        ->where('status', 1)
+        ->first();
     
     if (!$product) {
         abort(404, 'Product not found');
