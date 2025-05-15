@@ -12,7 +12,27 @@ class OrdersModel extends Model
 
     protected $table = 'orders';
 
-    protected $fillable = ['product_id', 'qtys'];
+    protected $fillable = [
+         'user_id',
+    'first_name',
+    'last_name',
+    'company_name',
+    'email',
+    'phone',
+    'address_one',
+    'address_two',
+    'city',
+    'state',
+    'country',
+    'postcode',
+    'notes',
+    'shipping_id',
+    'payment_method',
+    'discount_code',
+    'discount_amount',
+    'shipping_amount',
+    'total_amount',
+    ];
 
 
     static public function getRecord($request)
@@ -27,6 +47,10 @@ class OrdersModel extends Model
         ->paginate(40);
 }
 
+    static public function getSingleRecord($id)
+    {
+        return self::where('id', $id)->first();
+    }
 
     public function getColour()
     {
@@ -34,5 +58,6 @@ class OrdersModel extends Model
             ->select('orders_details.*', 'colour.name')
             ->join('colour', 'colour.id', '=', 'orders_details.colour_id');
     }
+
 
 }
