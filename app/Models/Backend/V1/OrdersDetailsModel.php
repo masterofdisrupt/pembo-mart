@@ -12,5 +12,11 @@ class OrdersDetailsModel extends Model
     protected $table = 'orders_details';
 
     protected $fillable = ['orders_id', 'colour_id'];
+
+    public function getProduct()
+    {
+        return $this->belongsTo(ProductModel::class, 'product_id')
+            ->select('id', 'title', 'price', 'slug');
+    }
     
 }
