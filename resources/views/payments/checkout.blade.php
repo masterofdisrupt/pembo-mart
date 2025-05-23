@@ -1,7 +1,4 @@
 @extends('layouts.app')
-@section('style')
-
-@endsection
 
 @section('content')
 
@@ -9,12 +6,12 @@
         	<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
         		<div class="container">
         			<h1 class="page-title">Checkout<span>Shop</span></h1>
-        		</div><!-- End .container -->
-        	</div><!-- End .page-header -->
+        		</div>
+        	</div>
             <nav aria-label="breadcrumb" class="breadcrumb-nav">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                         <li class="breadcrumb-item"><a href="#">Shop</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Checkout</li>
                     </ol>
@@ -50,7 +47,7 @@
 
 	            						<label for="street-address">Street address *</label>
 	            						<input type="text" name="address_one"  id="address-one" class="form-control" placeholder="House number and Street name" required>
-	            						<input type="text" name="address_two" id="address-two" class="form-control" placeholder="Appartments, suite, unit etc ..." required>
+	            						<input type="text" name="address_two" id="address-two" class="form-control" placeholder="Appartments, suite, unit etc ...(Optional)">
 
 	            						<div class="row">
 		                					<div class="col-sm-6">
@@ -68,13 +65,13 @@
 		                					<div class="col-sm-6">
 		                						<label for="post-code">Postcode / ZIP *</label>
 		                						<input type="text" name="postcode" id="post-code" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
+		                					</div>
 
 		                					<div class="col-sm-6">
 		                						<label for="phone">Phone *</label>
 		                						<input type="tel" name="phone" id="phone" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
-		                				</div><!-- End .row -->
+		                					</div>
+		                				</div>
 
 	                					<label for="email">Email *</label>
 	        							<input type="email" name="email" id="email" class="form-control" required>
@@ -83,7 +80,7 @@
 	        							<div class="custom-control custom-checkbox">
 											<input type="checkbox" name="is_create" class="custom-control-input checkout-create-account" id="checkout-create-acc">
 											<label class="custom-control-label" for="checkout-create-acc">Create an account?</label>
-										</div><!-- End .custom-checkbox -->
+										</div>
 
 										<div id="checkout-password" style="display: none;">
 											<p>Your password must be at least 8 characters long.</p>
@@ -95,7 +92,7 @@
 										
 	                					<label>Order notes (optional)</label>
 	        							<textarea class="form-control" name="notes" cols="30" rows="4" placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
-		                		</div><!-- End .col-lg-9 -->
+		                		</div>
 		                		<aside class="col-lg-3">
 		                			<div class="summary">
 		                				<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
@@ -121,25 +118,28 @@
 		                							<td>Subtotal:</td>
 		                							<td>₦{{ number_format(Cart::getSubTotal(), 2) }}</td>
 		                						</tr>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <div class="cart-discount">
-                                                            <div class="input-group">
-                                                                <input type="text" name="discount_code" class="form-control" placeholder="Discount code" id="get-discount-code">
-                                                                <div class="input-group-append">
-                                                                    <button type="button" id="apply-discount" style="height: 39px;" class="btn btn-outline-primary-2"><i class="icon-long-arrow-right"></i></button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Discount</td>
-                                                    <td>₦<span id="discount-amount">0.00</span></td>
+                                                <tr id="discount-code-group" style="display: none;">
+													<td colspan="2">
+														<div class="cart-discount">
+															<div class="input-group">
+																<input type="text" name="discount_code" class="form-control" placeholder="Discount code" id="get-discount-code">
+																<div class="input-group-append">
+																	<button type="button" id="apply-discount" style="height: 39px;" class="btn btn-outline-primary-2">
+																		<i class="icon-long-arrow-right"></i>
+																	</button>
+																</div>
+															</div>
+														</div>
+													</td>
 												</tr>
 												<tr>
-													<td colspan="2" id="discount-code-status"></td>
+													<td>Discount</td>
+													<td>₦<span id="discount-amount">0.00</span></td>
 												</tr>
+												<tr>
+													<td colspan="2" id="discount-code-status" class="text-success"></td>
+												</tr>
+
 
 		                						<tr class="summary-shipping">
 													<td>Shipping:</td>
@@ -180,12 +180,12 @@
 		                				<div class="accordion-summary" id="accordion-payment">
 
 											<div class="custom-control custom-radio">
-												<input type="radio" id="payment-1" value="wallet" name="payment_method" class="custom-control-input" value="1" checked>
+												<input type="radio" id="payment-1" value="wallet" name="payment_method" class="custom-control-input" checked>
 												<label class="custom-control-label" for="payment-1">Wallet</label>
 											</div>
 
 											<div class="custom-control custom-radio" style="margin-top: 0.5px;">
-												<input type="radio" id="payment-2" value="cash" name="payment_method" class="custom-control-input" value="1" checked>
+												<input type="radio" id="payment-2" value="cash" name="payment_method" class="custom-control-input" checked>
 												<label class="custom-control-label" for="payment-2">Cash on delivery</label>
 											</div>
 										        										                
@@ -223,65 +223,64 @@
 			}
 		});
 
-		$('#submit-form').on('submit', function(e) {
-    e.preventDefault();
+	$('#submit-form').on('submit', function(e) {
+		e.preventDefault();
 
-    // Clear previous error states
-    $('.is-invalid').removeClass('is-invalid');
-    $('.invalid-feedback').remove();
+		$('.is-invalid').removeClass('is-invalid');
+		$('.invalid-feedback').remove();
 
-    $.ajax({
-        type: 'POST',
-        url: "{{ route('checkout.place.order') }}",
-        data: new FormData(this),
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-            if (response.success) {
-                toastr.success(response.message || 'Order placed successfully!');
-                window.location.href = response.redirect_url || '{{ route('home') }}';
-            } else {
-                toastr.error(response.message || 'Failed to place order. Please try again.');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        },
-        error: function(xhr) {
-            if (xhr.status === 422) {
-                const errors = xhr.responseJSON.errors;
-                let firstErrorField = null;
+		$.ajax({
+			type: 'POST',
+			url: "{{ route('checkout.place.order') }}",
+			data: new FormData(this),
+			contentType: false,
+			processData: false,
+			dataType: 'json',
+			success: function(response) {
+				if (response.success) {
+					toastr.success(response.message || 'Order placed successfully!');
+					window.location.href = response.redirect_url || '{{ route('home') }}';
+				} else {
+					toastr.error(response.message || 'Failed to place order. Please try again.');
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				}
+			},
+			error: function(xhr) {
+				if (xhr.status === 422) {
+					const errors = xhr.responseJSON.errors;
+					let firstErrorField = null;
 
-                for (const field in errors) {
-                    if (errors.hasOwnProperty(field)) {
-                        const input = $(`[name="${field}"]`);
+					for (const field in errors) {
+						if (errors.hasOwnProperty(field)) {
+							const input = $(`[name="${field}"]`);
 
-                        toastr.error(errors[field][0]);
-                        input.addClass('is-invalid');
+							toastr.error(errors[field][0]);
+							input.addClass('is-invalid');
 
-                        if (input.length && input.next('.invalid-feedback').length === 0) {
-                            input.after(`<div class="invalid-feedback d-block">${errors[field][0]}</div>`);
-                        }
+							if (input.length && input.next('.invalid-feedback').length === 0) {
+								input.after(`<div class="invalid-feedback d-block">${errors[field][0]}</div>`);
+							}
 
-                        if (!firstErrorField) {
-                            firstErrorField = input;
-                        }
-                    }
-                }
+							if (!firstErrorField) {
+								firstErrorField = input;
+							}
+						}
+					}
 
-                if (firstErrorField && firstErrorField.offset()) {
-                    $('html, body').animate({
-                        scrollTop: firstErrorField.offset().top - 100
-                    }, 500, function() {
-                        firstErrorField.focus();
-                    });
-                }
-            } else {
-                toastr.error(xhr.responseJSON?.message || 'Something went wrong. Please try again.');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-    });
-});
+					if (firstErrorField && firstErrorField.offset()) {
+						$('html, body').animate({
+							scrollTop: firstErrorField.offset().top - 100
+						}, 500, function() {
+							firstErrorField.focus();
+						});
+					}
+				} else {
+					toastr.error(xhr.responseJSON?.message || 'Something went wrong. Please try again.');
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				}
+			}
+		});
+	});
 
 	$('.shipping-charge').on('change', function() {
     const shippingCharge = parseFloat($(this).data('price')) || 0;
@@ -293,10 +292,25 @@
     $('#get-payable-total').val(total.toFixed(2));
 });
 
+$('input[name="payment_method"]').on('change', function () {
+    const selected = $('input[name="payment_method"]:checked').val();
+
+    if (selected === 'wallet') {
+        $('#discount-code-group').show();
+    } else {
+        $('#discount-code-group').hide();
+        $('#get-discount-code').val('');
+        $('#discount-amount').text('0.00');
+        $('#discount-code-status').text('');
+    }
+}).trigger('change');
+
+
         $('#apply-discount').on('click', function() {
-            const discountCode = $('#get-discount-code').val();
+            const discountCode = $('#get-discount-code').val().trim();
 
             if (!discountCode) {
+				$('#discount-code-status').text('');
                 toastr.warning('Please enter a discount code');
                 return;
             }
