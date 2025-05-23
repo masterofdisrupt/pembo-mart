@@ -21,6 +21,23 @@
                                 </ul>
                             </div>
                         </div>
+
+                        @php
+                            $walletBalance = auth()->user()->wallet ?? 0;
+                        @endphp
+
+                        <div class="wallet-info" style="margin-left: 20px;">
+                            <i class="fas fa-wallet" style="color: #28a745;"></i>
+                            <span style="margin-left: 5px; font-weight: 500;">
+                                ₦{{ number_format($walletBalance, 2) }}
+                            </span>
+
+                            @if ($walletBalance < 500)
+                                <span style="color: #dc3545; font-size: 13px; margin-left: 10px;">
+                                    <i class="fas fa-exclamation-triangle"></i> Low Wallet Balance
+                                </span>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="header-right">
@@ -32,18 +49,16 @@
                                     <li><a href="{{ url('wishlist') }}"><i class="icon-heart-o"></i>My Wishlist <span>(3)</span></a></li>
                                     <li><a href="{{ url('about') }}">About Us</a></li>
                                     <li><a href="{{ url('contact') }}">Contact Us</a></li>
-                                    @if (Auth::check())
-                                        <li>
-                                            <form id="logout-form" action="{{ url('logout') }}" method="POST" style="display: none;">
-                                                @csrf
-                                            </form>
-                                            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                                <i class="icon-user"></i>Logout
+                                   @if (Auth::check())
+                                        <li class="dropdown">
+                                            <a href="{{ route('user.dashboard') }}">
+                                                <i class="icon-user"></i> {{ Auth::user()->name }}
                                             </a>
                                         </li>
                                     @else
                                         <li><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a></li>
                                     @endif
+
 
                                 </ul>
                             </li>
