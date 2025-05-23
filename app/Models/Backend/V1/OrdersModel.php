@@ -4,7 +4,8 @@ namespace App\Models\Backend\V1;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Request;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class OrdersModel extends Model
 {
@@ -35,21 +36,38 @@ class OrdersModel extends Model
     ];
 
 
-    static public function getRecord($request)
+  public static function getRecord(Request $request)
 {
-    return self::select('orders.*', 'product.title')
-        ->join('product', 'product.id', '=', 'orders.product_id')
+    return self::with(['getShipping', 'product', 'ordersDetails.getProduct']) 
+        ->select('orders.*')
+        ->where('orders.is_payment', 1)
+        ->where('orders.is_delete', 0)
         ->when($request->id, fn($query, $id) => $query->where('orders.id', $id))
-        ->when($request->title, fn($query, $title) => $query->where('product.title', 'like', "%$title%"))
-        ->when($request->created_at, fn($query, $date) => $query->whereDate('orders.created_at', $date))
-        ->when($request->updated_at, fn($query, $date) => $query->whereDate('orders.updated_at', $date))
-        ->orderBy('orders.id', 'desc')
+        ->when($request->first_name, fn($query, $name) => $query->where('orders.first_name', 'LIKE', "%{$name}%"))
+        ->when($request->last_name, fn($query, $name) => $query->where('orders.last_name', 'LIKE', "%{$name}%"))
+        ->when($request->email, fn($query, $email) => $query->where('orders.email', 'LIKE', "%{$email}%"))
+        ->when($request->phone, fn($query, $phone) => $query->where('orders.phone', 'LIKE', "%{$phone}%"))
+        ->when($request->address_one, fn($query, $address) => $query->where('orders.address_one', 'LIKE', "%{$address}%"))
+        ->when($request->city, fn($query, $city) => $query->where('orders.city', 'LIKE', "%{$city}%"))
+        ->when($request->state, fn($query, $state) => $query->where('orders.state', 'LIKE', "%{$state}%"))
+        ->when($request->country, fn($query, $country) => $query->where('orders.country', 'LIKE', "%{$country}%"))
+        ->when($request->postcode, fn($query, $postcode) => $query->where('orders.postcode', 'LIKE', "%{$postcode}%"))
+        ->when($request->from_date, function ($query, $fromDate) {
+            $query->where('orders.created_at', '>=', Carbon::createFromFormat('Y-m-d', $fromDate)->startOfDay());
+        })
+        ->when($request->to_date, function ($query, $toDate) {
+            $query->where('orders.created_at', '<=', Carbon::createFromFormat('Y-m-d', $toDate)->endOfDay());
+        })
+
+        ->orderByDesc('orders.id')
         ->paginate(40);
 }
 
+
+
     static public function getSingleRecord($id)
     {
-        return self::where('id', $id)->first();
+        return self::with('ordersDetails.getProduct')->find($id);
     }
 
     public function getColour()
@@ -59,5 +77,20 @@ class OrdersModel extends Model
             ->join('colour', 'colour.id', '=', 'orders_details.colour_id');
     }
 
+    public function getShipping()
+{
+    return $this->belongsTo(ShippingChargesModel::class, 'shipping_id', 'id');
+}
+
+
+public function product()
+{
+    return $this->belongsTo(ProductModel::class, 'product_id', 'id');
+}
+
+public function ordersDetails()
+{
+    return $this->hasMany(OrdersDetailsModel::class, 'orders_id', 'id');
+} 
 
 }
