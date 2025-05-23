@@ -27,6 +27,7 @@ use App\Http\Controllers\Backend\V1\BrandsController;
 use App\Http\Controllers\Backend\V1\ShippingChargesController;
 use App\Http\Controllers\ProductController as FrontendProductController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserController;
 
 
 
@@ -175,6 +176,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/orders/add', [OrdersController::class, 'store_orders'])->name('store.orders');
     Route::get('admin/orders/edit/{id}', [OrdersController::class, 'edit_orders'])->name('edit.orders');
     Route::put('admin/orders/edit/{id}', [OrdersController::class, 'update_orders'])->name('update.orders');
+    Route::get('admin/orders/view/{id}', [OrdersController::class, 'view_orders'])->name('view.orders');
     Route::delete('admin/orders/delete/{id}', [OrdersController::class, 'delete_orders'])->name('delete.orders');
     // Order End
 
@@ -293,8 +295,16 @@ Route::group(['middleware' => 'agent'], function () {
 
 });
 
-Route::group(['middleware' => 'user'], function () {
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('user/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('user/wallet', [UserController::class, 'wallet'])->name('user.wallet');
+    Route::get('wallet.topup', [UserController::class, 'wallet_topup'])->name('user.wallet.topup');
+    Route::post('user/wallet/topup', [UserController::class, 'wallet_topup_post'])->name('user.wallet.topup.post');
+    Route::get('user/wallet/transactions', [UserController::class, 'wallet_transactions'])->name('user.wallet.transactions');
+    Route::get('user.wallet.withdraw', [UserController::class, 'wallet_withdraw'])->name('user.wallet.withdraw');
+    Route::get('user/orders', [UserController::class, 'orders'])->name('user.orders');
+    Route::get('user/edit-profile', [UserController::class, 'profile'])->name('user.edit.profile');
+    Route::get('user/change-password', [UserController::class, 'changePassword'])->name('user.change.password');
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
