@@ -77,22 +77,27 @@
                             <div class="col-md-4 mb-3">
                                 <label>Colour <span class="text-danger">*</span></label>
                                 <div class="row">
-                                   @foreach ($getColour as $colour)
+                                  @if (!empty($getColour) && is_iterable($getColour))
+                                    @foreach ($getColour as $colour)
                                         @php
                                             $isChecked = false;
-                                            foreach ($product->getColours as $productColour) {
-                                                if ($productColour->colour_id == $colour->id) {
-                                                    $isChecked = true;
-                                                    break;
+                                            if (!empty($product->getColours)) {
+                                                foreach ($product->getColours as $productColour) {
+                                                    if ($productColour->colour_id == $colour->id) {
+                                                        $isChecked = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         @endphp
 
-                                        @foreach ($product->getColours as $productColour)
-                                            @if ($productColour->colour_id == $colour->id)
-                                                <input type="hidden" name="old_colour_id[]" value="{{ $colour->id }}">
-                                            @endif
-                                        @endforeach
+                                        @if (!empty($product->getColours))
+                                            @foreach ($product->getColours as $productColour)
+                                                @if ($productColour->colour_id == $colour->id)
+                                                    <input type="hidden" name="old_colour_id[]" value="{{ $colour->id }}">
+                                                @endif
+                                            @endforeach
+                                        @endif
 
                                         <div class="col-6 col-sm-4">
                                             <div class="form-check">
@@ -101,6 +106,7 @@
                                             </div>
                                         </div>
                                     @endforeach
+                                @endif
 
                                 </div>
                                 @error('colour_id')<span class="text-danger">{{ $message }}</span>@enderror
@@ -137,39 +143,42 @@
                                         </thead>
                                         <tbody id="size-rows">
                                             @php $i = 0; @endphp
-                                            @foreach ($product->getSizes as $size)                    
-                                                <tr id="delete-row{{ $i }}" class="align-middle">
-                                                    <td>
-                                                        <input type="text" 
-                                                            class="form-control" 
-                                                            value="{{ $size->name }}" 
-                                                            name="size[{{ $i }}][name]" 
-                                                            placeholder="Enter Size Name"
-                                                            required
-                                                            pattern="[A-Za-z0-9\s\-]+"
-                                                            title="Only letters, numbers, spaces and hyphens allowed">
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" 
-                                                            class="form-control" 
-                                                            value="{{ number_format($size->price, 2) }}" 
-                                                            name="size[{{ $i }}][price]" 
-                                                            placeholder="0.00" 
-                                                            step="0.01"
-                                                            min="0"
-                                                            required>
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" 
-                                                                class="btn btn-danger btn-sm delete-row" 
-                                                                data-row="delete-row{{ $i }}"
-                                                                title="Delete Size">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                @php $i++; @endphp
-                                            @endforeach
+                                            @if (!empty($product->getSizes))
+                                                @foreach ($product->getSizes as $size)                    
+                                                    <tr id="delete-row{{ $i }}" class="align-middle">
+                                                        <td>
+                                                            <input type="text" 
+                                                                class="form-control" 
+                                                                value="{{ $size->name }}" 
+                                                                name="size[{{ $i }}][name]" 
+                                                                placeholder="Enter Size Name"
+                                                                required
+                                                                pattern="[A-Za-z0-9\s\-]+"
+                                                                title="Only letters, numbers, spaces and hyphens allowed">
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" 
+                                                                class="form-control" 
+                                                                value="{{ number_format($size->price, 2, '.', '') }}" 
+                                                                name="size[{{ $i }}][price]" 
+                                                                placeholder="0.00" 
+                                                                step="0.01"
+                                                                min="0"
+                                                                required>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button type="button" 
+                                                                    class="btn btn-danger btn-sm delete-row" 
+                                                                    data-row="delete-row{{ $i }}"
+                                                                    title="Delete Size">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    @php $i++; @endphp
+                                                @endforeach
+                                            @endif
+                                            {{-- Add a hidden row for new sizes --}}
 
                                             <!-- Empty row template for new sizes -->
                                             <tr class="align-middle" id="new-size-row">
