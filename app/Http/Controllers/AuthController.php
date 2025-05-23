@@ -129,20 +129,24 @@ class AuthController
         return redirect()->route('login')->with('success', "Password successfully reset");
     }
 
-    public function logout(Request $request)
-    {
-        $user = Auth::user();
+   public function logout(Request $request)
+{
+    $user = Auth::user();
+    $previousUrl = url()->previous();
 
-        Auth::logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
+    $isAdminOrAgent = str_contains($previousUrl, '/admin') || str_contains($previousUrl, '/agent');
 
-        if ($user && $user->role == 'admin'){
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    if ($isAdminOrAgent && $user && in_array($user->role, ['admin', 'agent'])) {
         return redirect()->route('login')->with('success', 'You have been logged out successfully.');
     }
 
-        return redirect(url(''))->with('success', 'You have been logged out successfully.');
-    }
+    return redirect('/')->with('success', 'You have been logged out successfully.');
+}
+
 
     public function set_new_password($token)
     {
