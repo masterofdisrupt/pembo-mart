@@ -71,22 +71,14 @@ class OrderPaymentService
     abort(404, 'Unsupported payment method.');
 }
 
-   protected function sendOrderInvoiceEmail($order)
+  protected function sendOrderInvoiceEmail($order)
 {
     if (!$order || !$order->user || !$order->user->email) {
-        \Log::warning('Cannot send email: Missing order or user email.', ['order_id' => $order->id ?? null]);
         return;
     }
 
     Mail::to($order->user->email)->send(new OrderInvoiceMail($order));
-
-    if (count(Mail::failures()) > 0) {
-        \Log::error('Mail::failures detected for order invoice email.', ['order_id' => $order->id]);
-    } else {
-        \Log::info('Order invoice email sent successfully.', ['order_id' => $order->id]);
-    }
-
-
 }
+
 
 }
