@@ -139,5 +139,20 @@ class User extends Authenticatable
         return User::where('email', '=', $email)->first();
     }
 
+    public static function getCustomer()
+    {
+        $return = self::select('users.*')
+            ->where('is_delete', 0)
+            ->where('role', 'user')
+            ->orderBy('id', 'desc');
+        $return->when(Request::get('first_name'), fn($query) => $query->where('users.name', 'like', "%" . Request::get('name') . "%"));
+        $return->when(Request::get('email'), fn($query) => $query->where('users.email', 'like', "%" . Request::get('email') . "%"));
+        $return->when(Request::get('start_date') && Request::get('end_date'), function ($query) {
+            $query->whereBetween('users.created_at', [Request::get('start_date'), Request::get('end_date')]);
+        });
+        $perPage = is_numeric(Request::get('per_page')) ? (int) Request::get('per_page') : 10;
+        return $return->paginate($perPage);
+    }
+
 }
 
