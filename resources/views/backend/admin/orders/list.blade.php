@@ -134,6 +134,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>Order Number</th>
                                         <th>First Name</th>
                                         <th>Last Name</th>
                                         <th>Email</th>
@@ -158,6 +159,7 @@
                                     @forelse ($getOrders as $value)
                                         <tr class="table-info text-dark">
                                             <td>{{ $value->id }}</td>
+                                            <td>{{ $value->order_number }}</td>
                                             <td>{{ $value->first_name }}</td>
                                             <td>{{ $value->last_name }}</td>
                                             <td>{{ $value->email }}</td>
@@ -173,7 +175,15 @@
                                             <td>{{ number_format($value->total_amount, 2) }}</td>
                                             <td>{{ number_format($value->shipping_amount, 2) }}</td>
                                             <td style="text-transform: capitalize;">{{ $value->payment_method }}</td>
-                                            <td></td>
+                                            <td>
+                                                <select class="form-control change-status" id="{{ $value->id }}" style="width: 100px;">
+                                                    <option {{ ($value->status == 0) ? 'selected' : '' }} value="0">Pending</option>
+                                                    <option {{ ($value->status == 1) ? 'selected' : '' }} value="1">Processing</option>
+                                                    <option {{ ($value->status == 2) ? 'selected' : '' }} value="2">Delivered</option>
+                                                    <option {{ ($value->status == 3) ? 'selected' : '' }} value="3">Completed</option>
+                                                    <option {{ ($value->status == 4) ? 'selected' : '' }} value="4">Cancelled</option>
+                                                </select>
+                                            </td>
                                             <td>{{ date('d-m-Y H:i A', strtotime($value->created_at)) }}</td>
 
                                             <td>
@@ -228,4 +238,34 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('script')
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.change-status').on('change', function() {
+            var orderId = $(this).attr('id');
+            var status = $(this).val();
+            $.ajax({
+                url: "{{ route('update.order.status') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: orderId,
+                    status: status
+                },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('An error occurred while updating the status.');
+                }
+            });
+        });
+    });
+</script>
 @endsection
