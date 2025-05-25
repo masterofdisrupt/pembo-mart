@@ -1,5 +1,3 @@
-<!-- filepath: /opt/lampp/htdocs/pembo-mart/resources/views/backend/admin/admin_dashboard.blade.php -->
-
 <style>
 .typeahead {
     background-color: #fff;
@@ -287,75 +285,74 @@
                                                 <td>{{ $value->email }}</td>
                                                 <td>       
                                                     @if (!empty($value->getProfile()))
-                                                    <a href="{{ $value->getProfile() }}" data-lightbox="example-set">
-                    <img src="{{ $value->getProfile() }}" style="width: 100%; height: 100%;">
-                </a>
-            @endif
-        </td>
-        <td>{{ $value->phone }}</td>
-        <td>{{ $value->website }}</td>
-        <td>{{ $value->address }}</td>
-        <td>
-            @if ($value->role === 'admin')
-                <span class="badge bg-info">Admin</span>
-            @elseif ($value->role === 'agent')
-                <span class="badge bg-primary">Agent</span>
-            @elseif ($value->role === 'user')
-                <span class="badge bg-success">User</span>
-            @endif
-        </td>
-        <td>
-            <select name="" class="form-control changeStatus" id="{{ $value->id }}" style="width: 170px;">
-                <option {{ $value->status === 'active' ? 'selected' : '' }} value="active">Active</option>
-                <option {{ $value->status === 'inactive' ? 'selected' : '' }} value="inactive">Inactive</option>
-            </select>
-        </td>
-        <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
-        <td>
-            <a class="dropdown-item d-flex align-items-center"
-                href="{{ route('admin.users.view', $value->id) }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-eye icon-sm me-2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <span class="">View</span>
-            </a>
+                                                        <a href="{{ $value->getProfile() }}" data-lightbox="example-set">
+                                                            <img src="{{ $value->getProfile() }}" style="width: 100%; height: 100%;">
+                                                        </a>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $value->phone }}</td>
+                                                <td>{{ $value->website }}</td>
+                                                <td>{{ $value->address }}</td>
+                                                <td>
+                                                    @if ($value->role === 'admin')
+                                                        <span class="badge bg-info">Admin</span>
+                                                    @elseif ($value->role === 'agent')
+                                                        <span class="badge bg-primary">Agent</span>
+                                                    @elseif ($value->role === 'user')
+                                                        <span class="badge bg-success">User</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <select name="" class="form-control changeStatus" id="{{ $value->id }}" style="width: 170px;">
+                                                        <option {{ $value->status === 'active' ? 'selected' : '' }} value="active">Active</option>
+                                                        <option {{ $value->status === 'inactive' ? 'selected' : '' }} value="inactive">Inactive</option>
+                                                    </select>
+                                                </td>
+                                                <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
+                                                <td>
+                                                    <a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('admin.users.view', $value->id) }}">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                            class="feather feather-eye icon-sm me-2">
+                                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                                                            <circle cx="12" cy="12" r="3"></circle>
+                                                        </svg>
+                                                        <span class="">View</span>
+                                                    </a>
 
-            <a class="dropdown-item d-flex align-items-center"
-                href="{{ route('admin.users.edit', $value->id) }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-edit-2 icon-sm me-2">
-                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
-                    </path>
-                </svg>
-                <span class="">Edit</span>
-            </a>
-        </td>
-    </form>
+                                                    <a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('admin.users.edit', $value->id) }}">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                            class="feather feather-edit-2 icon-sm me-2">
+                                                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                            </path>
+                                                        </svg>
+                                                        <span class="">Edit</span>
+                                                    </a>
+                                                </td>
+                                            </form>
 
-    <!-- DELETE FORM (SEPARATED) -->
-    <td>
-        <form action="{{ route('admin.users.delete', $value->id) }}" method="POST" class="d-inline-block delete-form">
-            @csrf
-            @method('DELETE')
-            <button type="button" class="dropdown-item d-flex align-items-center btn-delete" data-item-name="user">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-trash icon-sm me-2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-                <span>Delete</span>
-            </button>
-        </form>
-    </td>
-</tr>
+                                            <td>
+                                                <form action="{{ route('admin.users.delete', $value->id) }}" method="POST" class="d-inline-block delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="dropdown-item d-flex align-items-center btn-delete" data-item-name="user">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                            class="feather feather-trash icon-sm me-2">
+                                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                        </svg>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
 
                                     @empty
                                         <tr>
