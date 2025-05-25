@@ -63,6 +63,8 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/users/changeStatus', [AdminController::class, 'admin_users_changeStatus'])->name('admin.users.change.status');
     Route::post('checkemail', [AdminController::class, 'checkEmail'])->name('check.email');
 
+    Route::get('admin/customer/list', [AdminController::class, 'customer_list'])->name('admin.customers');
+
     // Change Password
     Route::get('admin/change_password', [AdminController::class, 'change_password'])->name('change.password');
     Route::put('admin/change_password/update', [AdminController::class, 'update_password'])->name('update.password');
@@ -171,6 +173,7 @@ Route::group(['middleware' => 'admin'], function () {
     // Colour End
 
     // Order Start
+    Route::post('admin/update_order_status', [OrdersController::class, 'update_order_status'])->name('update.order.status');
     Route::get('admin/orders', [OrdersController::class, 'list_orders'])->name('orders');
     Route::get('admin/orders/add', [OrdersController::class, 'add_orders'])->name('add.orders');
     Route::post('admin/orders/add', [OrdersController::class, 'store_orders'])->name('store.orders');
