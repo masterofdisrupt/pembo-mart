@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use App\Models\Backend\V1\OrdersModel;
+use Illuminate\Support\Facades\Auth; 
 
 class UserController extends Controller
 {
@@ -16,22 +18,23 @@ class UserController extends Controller
     ];
 
     
-    $totalOrders = 0; 
-    $todayOrders = 0;
-    $totalAmount = 0;
-    $todayAmount = 0;
-    $pendingOrders = 0;
-    $inProgressOrders = 0;
-    $completedOrders = 0;
-    $canceledOrders = 0;
+    $totalOrders =  OrdersModel::userTotalOrders(Auth::id()); 
+    $todayOrders = OrdersModel::userTodayOrders(Auth::id());
+    $totalAmount = OrdersModel::userTotalAmount(Auth::id());
+    $todayAmount =  OrdersModel::userTodayAmount(Auth::id());
+
+    $pendingOrders = OrdersModel::userPendingOrders(Auth::id(), 0);
+    $processingOrders = OrdersModel::userProcessingOrders(Auth::id(), 1);
+    $completedOrders = OrdersModel::userCompletedOrders(Auth::id(), 3);
+    $canceledOrders = OrdersModel::userCanceledOrders(Auth::id(), 4);
 
     $metrics = [
         ['label' => 'Total Orders',      'value' => $totalOrders],
         ['label' => 'Today Orders',      'value' => $todayOrders],
-        ['label' => 'Total Amount',      'value' => $totalAmount],
-        ['label' => 'Today Amount',      'value' => $todayAmount],
+        ['label' => 'Total Amount',      'value' => $totalAmount, 'formatted' => number_format($totalAmount, 2)],
+        ['label' => 'Today Amount',      'value' => $todayAmount, 'formatted' => number_format($todayAmount, 2)],
         ['label' => 'Pending Orders',    'value' => $pendingOrders],
-        ['label' => 'In Progress Orders','value' => $inProgressOrders],
+        ['label' => 'Processing Orders','value' => $processingOrders],
         ['label' => 'Completed Orders',  'value' => $completedOrders],
         ['label' => 'Canceled Orders',   'value' => $canceledOrders],
     ];
