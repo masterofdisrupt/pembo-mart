@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Backend\V1\ProductModel;
 use App\Models\Backend\V1\ColourModel;
 use App\Models\Backend\V1\OrdersModel;
-use App\Models\Backend\V1\OrdersDetailsModel;
+use App\Models\Backend\V1\OrdersDetailsModel; 
+use App\Mail\OrderStatusMail;
+use Mail;
 
 
 
@@ -15,6 +17,28 @@ use App\Models\Backend\V1\OrdersDetailsModel;
 
 class OrdersController
 {
+    public function update_order_status(Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:0,1,2,3,4',
+            'id' => 'required|exists:orders,id'
+        ]);
+
+
+        $order = OrdersModel::getSingleRecord($request->id);
+        $order->status = $request->status;
+        $order->save();
+
+        
+        Mail::to($order->user->email)->send(new OrderStatusMail($order));
+    
+       return response()->json([
+            'success' => true,
+            'message' => 'Order status updated successfully!',
+        ]);
+
+    }
+
     public function list_orders(Request $request)
     {
         $getOrders = OrdersModel::getRecord($request);
