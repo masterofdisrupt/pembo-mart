@@ -88,6 +88,7 @@ class OrderPlacementService
     $order = new OrdersModel();
     $order->user_id = $user_id;
     $order->fill([
+        'order_number'     => OrdersModel::generateOrderNumber(),
         'first_name'      => trim($request->first_name),
         'last_name'       => trim($request->last_name),
         'company_name'    => trim($request->company_name),
