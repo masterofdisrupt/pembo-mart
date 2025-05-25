@@ -41,8 +41,13 @@
                      <div class="col-md-8 col-lg-9">
 						<div class="row gy-4">
 							@foreach($metrics as $metric)
-								<x-statistic-card :label="$metric['label']" :value="$metric['value']" />
-							@endforeach
+                                <x-statistic-card 
+                                    :label="$metric['label']" 
+                                    :value="$metric['value']" 
+                                    :formatted="$metric['formatted'] ?? $metric['value']"
+                                />
+                            @endforeach
+
 						</div>
 						</div>
                 </div>
