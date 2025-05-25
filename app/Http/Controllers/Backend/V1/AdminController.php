@@ -14,6 +14,12 @@ use Mail;
 
 class AdminController
 {
+    public function customer_list() 
+    {
+        $getRecord = User::getCustomer();
+        return view('backend.admin.customer.list', compact('getRecord'));
+    }
+
     public function AdminDashboard(Request $request)
     {
         return view('backend.admin.index');
@@ -206,8 +212,8 @@ class AdminController
     $user->save();
     
     return redirect()
-        ->route('admin.users')
-        ->with('success', 'User successfully moved to trash');
+        ->back()
+        ->with('success', 'Record successfully moved to trash');
 }
     public function admin_users_update(Request $request)
     {
