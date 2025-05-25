@@ -14,7 +14,8 @@ class OrdersModel extends Model
     protected $table = 'orders';
 
     protected $fillable = [
-         'user_id',
+    'user_id',
+    'order_number',
     'first_name',
     'last_name',
     'company_name',
@@ -65,10 +66,92 @@ class OrdersModel extends Model
 
 
 
-    static public function getSingleRecord($id)
+    public static function getSingleRecord($id)
     {
-        return self::with('ordersDetails.getProduct')->find($id);
+        return self::with('ordersDetails.getProduct', 'user')->find($id);
     }
+
+    public static function generateOrderNumber()
+{
+    $latestOrder = self::orderBy('id', 'desc')->first();
+    $lastOrderNumber = $latestOrder ? (int) substr($latestOrder->order_number, 3) : 0;
+    $newOrderNumber = str_pad($lastOrderNumber + 1, 6, '0', STR_PAD_LEFT);
+    return 'ORD' . $newOrderNumber;
+}
+
+// User part
+public static function userTotalOrders($user_id)
+{
+    return self::where('user_id', $user_id)
+        ->where('is_payment', 1)
+        ->where('is_delete', 0)
+        ->count();
+}
+
+public static function userTodayOrders($user_id)
+{
+    return self::where('user_id', $user_id)
+        ->where('is_payment', 1)
+        ->where('is_delete', 0)
+        ->whereDate('created_at', Carbon::today())
+        ->count();
+}
+
+public static function userTotalAmount($user_id)
+{
+    return self::where('user_id', $user_id)
+        ->where('is_payment', 1)
+        ->where('is_delete', 0)
+        ->sum('total_amount');
+}
+
+public static function userTodayAmount($user_id)
+{
+    return self::where('user_id', $user_id)
+        ->where('is_payment', 1)
+        ->where('is_delete', 0)
+        ->whereDate('created_at', Carbon::today())
+        ->sum('total_amount');
+}
+
+public static function userPendingOrders($user_id, $status)
+{
+    return self::where('user_id', $user_id)
+        ->where('is_payment', 1)
+        ->where('is_delete', 0)
+        ->where('status', 0)
+        ->count();
+}
+
+public static function userProcessingOrders($user_id, $status)
+{
+    return self::where('user_id', $user_id)
+        ->where('is_payment', 1)
+        ->where('is_delete', 0)
+        ->where('status', 1)
+        ->count();
+}
+
+public static function userCompletedOrders($user_id, $status)
+{
+    return self::where('user_id', $user_id)
+        ->where('is_payment', 1)
+        ->where('is_delete', 0)
+        ->where('status', 3)
+        ->count();
+}
+
+public static function userCanceledOrders($user_id, $status)
+{
+    return self::where('user_id', $user_id)
+        ->where('is_payment', 1)
+        ->where('is_delete', 0)
+        ->where('status', 4)
+        ->count();
+}
+   
+
+// End user part
 
     public function getColour()
     {
@@ -92,5 +175,12 @@ public function ordersDetails()
 {
     return $this->hasMany(OrdersDetailsModel::class, 'orders_id', 'id');
 } 
+
+public function user()
+{
+    return $this->belongsTo(\App\Models\User::class, 'user_id', 'id');
+}
+
+
 
 }
