@@ -1,6 +1,12 @@
 <div class="col-md-3">
     <div class="box-btn">
-        <div class="stat-value">₦{{ number_format($value, 2) }}</div>
+        <div class="stat-value">
+            @if(Str::contains(strtolower($label), 'amount'))
+                ₦{{ $formatted }}
+            @else
+                {{ $formatted }}
+            @endif
+        </div>
         <div class="stat-label">{{ $label }}</div>
     </div>
 </div>
