@@ -5,12 +5,15 @@ namespace App\Services;
 use App\Models\Backend\V1\OrdersModel;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Mail\OrderInvoiceMail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Hash;
 use Cart;
 
 class OrderPaymentService
 {
-    public function processOrderSuccess(Request $request, string $encoded)
+    public function processOrderSuccess(\Illuminate\Http\Request $request, string $encoded)
 {
     $decoded = json_decode(base64_decode($encoded), true);
     $order_id = $decoded['order_id'] ?? null;
@@ -37,6 +40,9 @@ class OrderPaymentService
         $order->is_payment = 1;
         $order->save();
 
+        $this->sendOrderInvoiceEmail($order);
+
+
         Cart::clear();
 
         return redirect()->route('cart')->with('success', 'Order placed successfully using Cash!');
@@ -52,6 +58,8 @@ class OrderPaymentService
             $order->is_payment = 1;
             $order->save();
 
+            $this->sendOrderInvoiceEmail($order);
+
             Cart::clear();
 
             return redirect()->route('cart')->with('success', 'Order placed successfully using Wallet!');
@@ -61,6 +69,24 @@ class OrderPaymentService
     }
 
     abort(404, 'Unsupported payment method.');
+}
+
+   protected function sendOrderInvoiceEmail($order)
+{
+    if (!$order || !$order->user || !$order->user->email) {
+        \Log::warning('Cannot send email: Missing order or user email.', ['order_id' => $order->id ?? null]);
+        return;
+    }
+
+    Mail::to($order->user->email)->send(new OrderInvoiceMail($order));
+
+    if (count(Mail::failures()) > 0) {
+        \Log::error('Mail::failures detected for order invoice email.', ['order_id' => $order->id]);
+    } else {
+        \Log::info('Order invoice email sent successfully.', ['order_id' => $order->id]);
+    }
+
+
 }
 
 }
