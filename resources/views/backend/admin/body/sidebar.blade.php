@@ -31,6 +31,13 @@
                   </a>
               </li>
 
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'customers')) active @endif">
+                  <a href="{{ route('admin.customers') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Customers</span>
+                  </a>
+              </li>
+
 
               <li class="nav-item">
                   <a href="{{ url('admin/email_otp') }}" class="nav-link">
@@ -161,21 +168,21 @@
               <li class="nav-item">
                   <a href="{{ route('countries') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Countries</span>
+                      <span class="link-title">Country</span>
                   </a>
               </li>
 
               <li class="nav-item">
                   <a href="{{ route('states') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">States</span>
+                      <span class="link-title">State</span>
                   </a>
               </li>
 
               <li class="nav-item">
                   <a href="{{ route('cities') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Cities</span>
+                      <span class="link-title">City</span>
                   </a>
               </li>
 
