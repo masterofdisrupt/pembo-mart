@@ -300,14 +300,26 @@ Route::group(['middleware' => 'agent'], function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('user/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+
     Route::get('user/wallet', [UserController::class, 'wallet'])->name('user.wallet');
     Route::get('wallet.topup', [UserController::class, 'wallet_topup'])->name('user.wallet.topup');
     Route::post('user/wallet/topup', [UserController::class, 'wallet_topup_post'])->name('user.wallet.topup.post');
     Route::get('user/wallet/transactions', [UserController::class, 'wallet_transactions'])->name('user.wallet.transactions');
     Route::get('user.wallet.withdraw', [UserController::class, 'wallet_withdraw'])->name('user.wallet.withdraw');
+
     Route::get('user/orders', [UserController::class, 'orders'])->name('user.orders');
+    Route::get('user/orders/view/{id}', [UserController::class, 'viewOrder'])->name('user.orders.view');
+
     Route::get('user/edit-profile', [UserController::class, 'profile'])->name('user.edit.profile');
+    Route::post('user/edit-profile', [UserController::class, 'profileUpdate'])->name('user.update.profile');
+
     Route::get('user/change-password', [UserController::class, 'changePassword'])->name('user.change.password');
+    Route::post('user/change-password', [UserController::class, 'updatePassword'])->name('user.update.password');
+
+    Route::post('wishlist/add', [UserController::class, 'addToWishlist'])->name('wishlist.add');
+    Route::post('user/make-review', [UserController::class, 'makeReview'])->name('user.make.review');
+
+    Route::get('my/wishlist', [FrontendProductController::class, 'myWishlist'])->name('my.wishlist');
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
