@@ -46,8 +46,8 @@
                         <h1 class="page-title">Products</h1>
                     @endif
 
-        		</div><!-- End .container -->
-        	</div><!-- End .page-header -->
+        		</div>
+        	</div>
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
                 <div class="container">
                     <ol class="breadcrumb">
@@ -62,8 +62,8 @@
 
                         @endif
                     </ol>
-                </div><!-- End .container -->
-            </nav><!-- End .breadcrumb-nav -->
+                </div>
+            </nav>
 
             <div class="page-content">
                 <div class="container">
