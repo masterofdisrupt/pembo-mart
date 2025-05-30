@@ -18,14 +18,13 @@
                 <li class="breadcrumb-item"><a href="#">Shop</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
             </ol>
-        </div><!-- End .container -->
-    </nav><!-- End .breadcrumb-nav -->
+        </div>
+    </nav>
 
     <div class="page-content">
         <div class="cart">
 	        <div class="container">
 
-                @include('_message')
                 @if(!empty(Cart::getContent()->count()))
 
                     <div class="row">
@@ -55,7 +54,7 @@
                                                     <div class="product">
                                                         <figure class="product-media">
                                                             <a href="{{ url($getCartProduct->slug) }}">
-                                                                <img src="{{ $productImage->getProductImages() }}" alt="Product image">
+                                                                <img src="{{ $productImage->getProductImages() }}" alt="Product image" loading="lazy">
                                                             </a>
                                                         </figure>
                                                         <h3 class="product-title">
@@ -142,5 +141,24 @@
 @endsection
 
 @section('script')
+<script type="text/javascript">
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "timeOut": "6000"
+    };
 
+    window.onload = function () {
+        @if(session('success'))
+            toastr.success(@json(session('success')));
+        @endif
+
+        @if($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error(@json($error));
+            @endforeach
+        @endif
+    };
+</script>
 @endsection
