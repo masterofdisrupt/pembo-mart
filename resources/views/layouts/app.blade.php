@@ -24,6 +24,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     @yield('style')
+    <style type="text/css">
+    .btn-wishlist-add::before {
+        content: '\f233' !important;
+    }
+    </style>
 </head>
 
 <body>
@@ -35,7 +40,7 @@
 
         @include('layouts._footer')
 
-     </div><
+     </div>
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
     <!-- Mobile Menu -->
@@ -48,6 +53,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-body">
+
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true"><i class="icon-close"></i></span>
                     </button>
@@ -67,6 +73,8 @@
                                 <div class="tab-pane fade show active" id="signin" role="tabpanel" aria-labelledby="signin-tab">
                                     <form action="{{ route('signin') }}" method="POST" id="signin-form">
                                         @csrf
+
+                                        <input type="hidden" name="redirect_url" value="{{ url()->full() }}">
                                         <div class="form-group">
                                             <label for="singin-email">Email *</label>
                                             <input type="text" class="form-control" id="singin-email" name="email" required>
@@ -78,7 +86,7 @@
                                         </div>
 
                                         <div class="form-footer">
-                                            <button type="submit" class="btn btn-outline-primary-2">
+                                            <button type="submit" class="btn btn-outline-primary-2" id="signin-submit">
                                                 <span>LOG IN</span>
                                                 <i class="icon-long-arrow-right"></i>
                                             </button>
@@ -145,7 +153,7 @@
                                         </div>
 
                                         <div class="form-footer">
-                                            <button type="submit" class="btn btn-outline-primary-2">
+                                            <button type="submit" class="btn btn-outline-primary-2" id="register-submit">
                                                 <span>SIGN UP</span>
                                                 <i class="icon-long-arrow-right"></i>
                                             </button>
@@ -205,13 +213,31 @@
     <script src="{{ url('assets/js/superfish.min.js') }}"></script>
     <script src="{{ url('assets/js/owl.carousel.min.js') }}"></script>
     <script src="{{ url('assets/js/jquery.magnific-popup.min.js') }}"></script>
-    @yield('script')
     <!-- Main JS File -->
     <script src="{{ url('assets/js/main.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function () {
+    $(document).ready(function () {
+
+        @if(Session::has('success'))
+            toastr.success("{{ Session::get('success') }}");
+        @endif
+
+        @if(Session::has('error'))
+            toastr.error("{{ Session::get('error') }}");
+        @endif
+
+        @if(Session::has('info'))
+            toastr.info("{{ Session::get('info') }}");
+        @endif
+
+        @if(Session::has('warning'))
+            toastr.warning("{{ Session::get('warning') }}");
+        @endif
+
+
+        // ========== Password Strength & Confirmation ==========
         const passwordInput = document.getElementById('register-password');
         const confirmInput = document.getElementById('register-password-confirmation');
         const errorPassword = document.getElementById('error-password');
@@ -234,7 +260,7 @@
                 passwordInput.classList.remove("is-invalid");
             }
 
-            validateConfirmation(); 
+            validateConfirmation();
         }
 
         function validateConfirmation() {
@@ -247,78 +273,114 @@
             }
         }
 
-        passwordInput.addEventListener('input', validatePassword);
-        confirmInput.addEventListener('input', validateConfirmation);
-    });
-    
-        $(document).ready(function() {
-            $('#signin-form').on('submit', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('signin') }}',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.status == 'success') {
-                            toastr.success(response.message);
-                            setTimeout(function() {
-                                window.location.href = response.redirect_url;
-                            }, 2000);
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    }, 
-                    error: function(xhr) {
-                        
-                       let res = xhr.responseJSON;
-                       let message = res?.message || 'An unexpected error occurred.';
+        if (passwordInput && confirmInput) {
+            passwordInput.addEventListener('input', validatePassword);
+            confirmInput.addEventListener('input', validateConfirmation);
+        }
 
-                       toastr.error(message);
+        // ========== Sign-In AJAX ==========
+        $('#signin-form').on('submit', function (e) {
+            e.preventDefault();
+
+            const btn = $('#signin-submit');
+            const originalText = btn.html();
+            btn.prop('disabled', true).html('<span>Loading...</span>');
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('signin') }}',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        setTimeout(function () {
+                            window.location.href = response.redirect_url;
+                        }, 2000);
+                    } else {
+                        toastr.error(response.message);
                     }
-                });
-            });
-
-
-            $('#register-form').on('submit', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('register') }}',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.status == 'success') {
-                            toastr.success(response.message);
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 2000);
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function(xhr) {
-                        $('#register-form .form-control').removeClass('is-invalid');
-                        $('#register-form .invalid-feedback').text('');
-
-                        if (xhr.status === 422) {
-                            const errors = xhr.responseJSON.errors;
-                            $.each(errors, function(field, messages) {
-                                const input = $('#register-form').find(`[name="${field}"]`);
-                                input.addClass('is-invalid');
-
-                                $(`#error-${field}`).text(messages[0]);
-                            });
-                        } else {
-                            toastr.error(xhr.responseJSON.message || 'An unexpected error occurred.');
-                        }
-                    }
-
-                });
+                },
+                error: function (xhr) {
+                    toastr.error(xhr.responseJSON?.message || 'An unexpected error occurred.');
+                },
+                complete: function () {
+                    btn.prop('disabled', false).html(originalText);
+                }
             });
         });
 
-        </script>
+        // ========== Register AJAX ==========
+        $('#register-form').on('submit', function (e) {
+            e.preventDefault();
+
+            const btn = $('#register-submit');
+            const originalText = btn.html();
+            btn.prop('disabled', true).html('<span>Loading...</span>');
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('register') }}',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (xhr) {
+                    $('#register-form .form-control').removeClass('is-invalid');
+                    $('#register-form .invalid-feedback').text('');
+
+                    if (xhr.status === 422) {
+                        const errors = xhr.responseJSON.errors;
+                        $.each(errors, function (field, messages) {
+                            const input = $('#register-form').find(`[name="${field}"]`);
+                            input.addClass('is-invalid');
+                            $(`#error-${field}`).text(messages[0]);
+                        });
+                    } else {
+                        toastr.error(xhr.responseJSON.message || 'An unexpected error occurred.');
+                    }
+                },
+                complete: function () {
+                    btn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
+
+        // ========== Wishlist Click ==========
+        $('body').delegate('.add-to-wishlist', 'click', function (e) {
+    e.preventDefault();
+    const productId = $(this).data('id');
+
+    $.ajax({
+        type: 'POST',
+        url: "{{ route('wishlist.add') }}",
+        data: {
+            product_id: productId,
+            _token: '{{ csrf_token() }}'
+        },
+        success: function (response) {
+            const $button = $(`.add-to-wishlist[data-id="${productId}"]`);
+            $button.toggleClass('btn-wishlist-add');
+
+            if (response.is_wishlist === 0) {
+                toastr.error('Product removed from wishlist.');
+            } else {
+                toastr.success('Product added to wishlist.');
+            }
+        }
+    });
+});
+
+    });
+</script>
+
+@yield('script')
 
 </body>
-
-
 </html>
