@@ -9,9 +9,29 @@ use App\Models\Backend\V1\SubCategoryModel;
 use App\Models\Backend\V1\ProductModel;
 use App\Models\Backend\V1\ColourModel;
 use App\Models\Backend\V1\BrandsModel;
+use App\Models\ProductReviews;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
+    public function myWishlist()
+    {
+         $metaData = [
+            'meta_title' => 'My Wishlist',
+            'meta_description' => '',
+            'meta_keywords' => '',
+        ];
+
+        $getProduct = ProductModel::getWishlistProducts(Auth::id());
+
+        return view('products.my_wishlist', [
+            'meta_title' => $metaData['meta_title'],
+            'meta_description' => $metaData['meta_description'],
+            'meta_keywords' => $metaData['meta_keywords'],
+            'getProduct' => $getProduct,
+        ]);
+    }
+
     public function search(Request $request)
     {
         $search = $request->input('search');
@@ -133,6 +153,7 @@ public function productDetails($slug)
     }
 
     $getRelatedProduct = ProductModel::getRelatedProduct($product->id, $product->sub_category_id);
+    $getProductReviews = ProductReviews::getProductReviews($product->id);
 
     $metaData = [
         'meta_title' => $product->title,
@@ -146,6 +167,7 @@ public function productDetails($slug)
     'meta_title' => $product->title,
     'meta_description' => $product->short_description,
     'getRelatedProduct' => $getRelatedProduct,
+    'getProductReviews' => $getProductReviews,
 ]);
 }
 
