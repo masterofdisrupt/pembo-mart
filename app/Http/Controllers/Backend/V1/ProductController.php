@@ -34,7 +34,6 @@ class ProductController
 
      public function store_product(Request $request)
 {
-    // Validate the request
     $request->validate([
         'title'       => 'required|string|max:255',
         'price'       => 'required|numeric|min:0.01',
@@ -44,19 +43,15 @@ class ProductController
     $title = trim($request->title);
     $price = number_format((float) $request->price, 2, '.', '');
     $description = trim($request->description);
-
-    // Generate a random 10-digit number for product code
+ 
     $productCode = mt_rand(1000000000, 9999999999);
 
-    // Generate slug
     $slug = Str::slug($title, '-');
 
-    // Check if the slug already exists
     if (ProductModel::where('slug', $slug)->exists()) {
-        $slug .= '-' . uniqid(); // or use $slug .= '-' . Str::random(5);
+        $slug .= '-' . uniqid(); 
     }
 
-    // Save product details
     $product = new ProductModel;
     $product->title = $title;
     $product->price = $price;
@@ -97,12 +92,8 @@ class ProductController
  * @param int $id
  * @return \Illuminate\Http\RedirectResponse
  */
-public function update_product(Request $request, int $id)
-{
-    try {
-        
-
-        // Validate request
+    public function update_product(Request $request, int $id)
+    {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'sku' => 'required|string|unique:product,sku,' . $id,
@@ -122,11 +113,8 @@ public function update_product(Request $request, int $id)
             'size.*.price' => 'nullable|numeric|min:0'
         ]);
 
-        // Find and update product
-        $product = ProductModel::getSingleRecord($id);
+       $product = ProductModel::getSingleRecord($id);
         
-
-        // Update product details
         $product->fill([
             'title' => trim($validated['title']),
             'sku' => trim($validated['sku']),
@@ -142,10 +130,8 @@ public function update_product(Request $request, int $id)
             'status' => $validated['status']
         ]);
 
-        // Save product changes
         $product->save();
 
-        // Update product colors
         ProductColoursModel::where('product_id', $id)->delete();
         if (!empty($request->colour_id)) {
             $colourData = array_map(function($colourId) use ($id) {
@@ -159,7 +145,6 @@ public function update_product(Request $request, int $id)
             ProductColoursModel::insert($colourData);
         }
 
-        // Update product sizes
         ProductSizesModel::where('product_id', $id)->delete();
         if (!empty($request->size)) {
             $sizeData = [];
@@ -179,49 +164,41 @@ public function update_product(Request $request, int $id)
             }
         }
 
-        // Handle image uploads
+        if ($request->hasFile('image')) {
+            
+                foreach ($request->file('image') as $image) {
+                    if ($image->isValid()) {
+                        // Generate unique filename
+                        $ext = $image->getClientOriginalExtension();
+                        $randomStr = $product->id . '_' . time() . '_' . Str::random(10);
+                        $filename = strtolower($randomStr) . '.' . $ext;
+                        $path = 'backend/upload/products/';
 
-if ($request->hasFile('image')) {
-    
-        foreach ($request->file('image') as $image) {
-            if ($image->isValid()) {
-                // Generate unique filename
-                $ext = $image->getClientOriginalExtension();
-                $randomStr = $product->id . '_' . time() . '_' . Str::random(10);
-                $filename = strtolower($randomStr) . '.' . $ext;
-                $path = 'backend/upload/products/';
+                        // Ensure directory exists
+                        $uploadPath = public_path($path);
+                        if (!file_exists($uploadPath)) {
+                            mkdir($uploadPath, 0755, true);
+                        }
 
-                // Ensure directory exists
-                $uploadPath = public_path($path);
-                if (!file_exists($uploadPath)) {
-                    mkdir($uploadPath, 0755, true);
+                        // Move the file
+                        if ($image->move($uploadPath, $filename)) {
+                            // Save image record to database
+                            ProductImagesModel::create([
+                                'product_id' => $id,
+                                'image_name' => $filename,
+                                'image_extension' => $ext,
+                                'order_by' => ProductImagesModel::where('product_id', $id)->count() + 1
+                            ]);
+                        } else {
+                            throw new \Exception("Failed to move uploaded file: $filename");
+                        }
+                    }
                 }
-
-                // Move the file
-                if ($image->move($uploadPath, $filename)) {
-                    // Save image record to database
-                    ProductImagesModel::create([
-                        'product_id' => $id,
-                        'image_name' => $filename,
-                        'image_extension' => $ext,
-                        'order_by' => ProductImagesModel::where('product_id', $id)->count() + 1
-                    ]);
-                } else {
-                    throw new \Exception("Failed to move uploaded file: $filename");
-                }
-            }
+            
         }
-    
-}
 
         return redirect()->back()->with('success', 'Product updated successfully');
 
-    } catch (\Exception $e) {
-        \Log::error('Product update error: ' . $e->getMessage());
-        return redirect()->back()
-            ->withInput()
-            ->with('error', 'Failed to update product. Please try again.');
-    }
 }
 
 public function delete_product($id, Request $request)
@@ -240,9 +217,8 @@ public function delete_product($id, Request $request)
     }
 }
 
-public function deleteImage(int $id)
-{
-    try {
+    public function deleteImage(int $id)
+    {
         $image = ProductImagesModel::getImageById($id);
 
         if (!empty($image->image_name)) {
@@ -255,28 +231,19 @@ public function deleteImage(int $id)
         $image->delete();
 
         return response()->json(['success' => true]);
-
-    } catch (\Exception $e) {
-        \Log::error('Error deleting product image: ' . $e->getMessage());
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to delete image'
-        ], 500);
     }
-}
 
-public function product_image_sort(Request $request)
-{
-    if ($request->has('sortedIDs') && is_array($request->sortedIDs)) {
-        foreach ($request->sortedIDs as $key => $val) {
-            $id = str_replace('image-', '', $val); // remove 'image-' prefix
-            ProductImagesModel::where('id', $id)->update(['order_by' => $key]);
+    public function product_image_sort(Request $request)
+    {
+        if ($request->has('sortedIDs') && is_array($request->sortedIDs)) {
+            foreach ($request->sortedIDs as $key => $val) {
+                $id = str_replace('image-', '', $val); // remove 'image-' prefix
+                ProductImagesModel::where('id', $id)->update(['order_by' => $key]);
+            }
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
         }
-        return response()->json(['success' => true]);
-    } else {
-        return response()->json(['success' => false]);
     }
-}
 
 }
