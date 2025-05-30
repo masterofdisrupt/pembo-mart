@@ -1,6 +1,11 @@
 @extends('layouts.app')
 @section('style')
     <link rel="stylesheet" href="{{ url('assets/css/plugins/nouislider/nouislider.css') }}">
+    <style type="text/css">
+    .mt-4 {
+    margin-top: 1rem; 
+}
+</style>
   
 @endsection
 @section('content')  
@@ -59,9 +64,10 @@
 
                                     <div class="ratings-container">
                                         <div class="ratings">
-                                            <div class="ratings-val" style="width: 80%;"></div>
+                                            <div class="ratings-val" style="width: {{ $product->getReviewsAvgRating($product->id) }}%;"></div>
                                         </div>
-                                        <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
+
+                                        <a class="ratings-text" href="#product-review-link" id="review-link">( {{ $product->getTotalReview() }} Reviews )</a>
                                     </div>
 
                                     <div class="product-price">
@@ -119,8 +125,8 @@
                                             <div class="product-details-quantity">
                                                 <input type="number" name="qty" id="qty" class="form-control" value="1" 
                                                 min="1" max="100" step="1" data-decimals="0" required>
-                                            </div><!-- End .product-details-quantity -->
-                                        </div><!-- End .details-filter-row -->
+                                            </div>
+                                        </div>
 
                                         <div class="product-details-action">
                                             <button style="background: #fff;color: #c96;" type="submit" class="btn-product btn-cart" id="add-to-cart" data-id="{{ $product->id }}" data-color="" data-size="">
@@ -128,8 +134,15 @@
                                             </button>
 
                                             <div class="details-action-wrapper">
-                                                <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
-                                                {{-- <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to Compare</span></a> --}}
+                                                @auth
+                                                    <a href="javascript:;" class="add-to-wishlist {{ !empty($product->checkWishlist($product->id)) ? 'btn-wishlist-add' : '' }} btn-product btn-wishlist" title="Wishlist" data-id="{{ $product->id }}">
+                                                        <span>Add to Wishlist</span>
+                                                    </a>
+                                                    @else
+                                                    <a href="#signin-modal" data-toggle="modal" class="btn-product-icon btn-wishlist btn-expendable" title="Wishlist">
+                                                        <span>Add to Wishlist</span>
+                                                    </a>
+                                               @endauth
                                             </div>
                                         </div>
                                     </form>
@@ -170,91 +183,62 @@
                                 <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Shipping & Returns</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab" role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews (2)</a>
+                                <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab" role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews ({{ $product->getTotalReview() }})</a>
                             </li>
                         </ul>
                     </div><!-- End .container -->
 
                     <div class="tab-content">
-                         <div class="product-desc-content">
-                                <div class="container" style="margin-top: 20px;">
-                                    {!! $product->description !!}
-                                </div><!-- End .container -->
+                        @php
+                            $tabs = [
+                                ['id' => 'product-desc-tab', 'label' => 'Description', 'content' => $product->description],
+                                ['id' => 'product-info-tab', 'label' => 'Additional Info', 'content' => $product->additional_info],
+                                ['id' => 'product-shipping-tab', 'label' => 'Shipping & Returns', 'content' => $product->ship_and_returns],
+                            ];
+                        @endphp
+
+                        @foreach ($tabs as $index => $tab)
+                            <div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="{{ $tab['id'] }}" role="tabpanel" aria-labelledby="{{ $tab['id'] }}-link">
+                                <div class="product-desc-content mt-4">
+                                    <div class="container">
+                                        {!! $tab['content'] !!}
+                                    </div>
+                                </div>
                             </div>
-                        <div class="tab-pane fade" id="product-info-tab" role="tabpanel" aria-labelledby="product-info-link">
-                            <div class="product-desc-content">
-                                <div class="container" style="margin-top: 20px;">
-                                    {!! $product->additional_info !!}
-                                </div><!-- End .container -->
-                            </div><!-- End .product-desc-content -->
-                        </div><!-- .End .tab-pane -->
-                        <div class="tab-pane fade" id="product-shipping-tab" role="tabpanel" aria-labelledby="product-shipping-link">
-                            <div class="product-desc-content">
-                                <div class="container" style="margin-top: 20px;">
-                                    {!! $product->ship_and_returns !!}
-                                </div><!-- End .container -->
-                            </div><!-- End .product-desc-content -->
-                        </div><!-- .End .tab-pane -->
+                        @endforeach
+
+
                         <div class="tab-pane fade" id="product-review-tab" role="tabpanel" aria-labelledby="product-review-link">
-                            <div class="reviews">
+                            <div class="reviews mt-4">
                                 <div class="container">
-                                    <h3>Reviews (2)</h3>
-                                    <div class="review">
-                                        <div class="row no-gutters">
-                                            <div class="col-auto">
-                                                <h4><a href="#">Samanta J.</a></h4>
-                                                <div class="ratings-container">
-                                                    <div class="ratings">
-                                                        <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
-                                                    </div><!-- End .ratings -->
-                                                </div><!-- End .rating-container -->
-                                                <span class="review-date">6 days ago</span>
-                                            </div><!-- End .col -->
-                                            <div class="col">
-                                                <h4>Good, perfect size</h4>
+                                    <h3>Reviews ({{ $product->getTotalReview() }})</h3>
 
-                                                <div class="review-content">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus cum dolores assumenda asperiores facilis porro reprehenderit animi culpa atque blanditiis commodi perspiciatis doloremque, possimus, explicabo, autem fugit beatae quae voluptas!</p>
-                                                </div><!-- End .review-content -->
+                                    @foreach ($getProductReviews as $review)
+                                        <div class="review mb-4 pb-3 border-bottom">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <h4 class="mb-1">{{ $review->user_name }}</h4>
+                                                    <div class="ratings-container mb-1">
+                                                        <div class="ratings">
+                                                            <div class="ratings-val" style="width: {{ $review->getReviewsPercentage() }}%;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <span class="text-muted small">{{ $review->created_at->diffForHumans() }}</span>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <p class="mb-0">{{ $review->review }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
 
-                                                <div class="review-action">
-                                                    <a href="#"><i class="icon-thumbs-up"></i>Helpful (2)</a>
-                                                    <a href="#"><i class="icon-thumbs-down"></i>Unhelpful (0)</a>
-                                                </div><!-- End .review-action -->
-                                            </div><!-- End .col-auto -->
-                                        </div><!-- End .row -->
-                                    </div><!-- End .review -->
+                                    {{ $getProductReviews->appends(request()->except('page'))->links() }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                    <div class="review">
-                                        <div class="row no-gutters">
-                                            <div class="col-auto">
-                                                <h4><a href="#">John Doe</a></h4>
-                                                <div class="ratings-container">
-                                                    <div class="ratings">
-                                                        <div class="ratings-val" style="width: 100%;"></div><!-- End .ratings-val -->
-                                                    </div><!-- End .ratings -->
-                                                </div><!-- End .rating-container -->
-                                                <span class="review-date">5 days ago</span>
-                                            </div><!-- End .col -->
-                                            <div class="col">
-                                                <h4>Very good</h4>
-
-                                                <div class="review-content">
-                                                    <p>Sed, molestias, tempore? Ex dolor esse iure hic veniam laborum blanditiis laudantium iste amet. Cum non voluptate eos enim, ab cumque nam, modi, quas iure illum repellendus, blanditiis perspiciatis beatae!</p>
-                                                </div><!-- End .review-content -->
-
-                                                <div class="review-action">
-                                                    <a href="#"><i class="icon-thumbs-up"></i>Helpful (0)</a>
-                                                    <a href="#"><i class="icon-thumbs-down"></i>Unhelpful (0)</a>
-                                                </div><!-- End .review-action -->
-                                            </div><!-- End .col-auto -->
-                                        </div><!-- End .row -->
-                                    </div><!-- End .review -->
-                                </div><!-- End .container -->
-                            </div><!-- End .reviews -->
-                        </div><!-- .End .tab-pane -->
-                    </div><!-- End .tab-content -->
-                </div><!-- End .product-details-tab -->
+                </div>
 
                 <div class="container">
                     <h2 class="title text-center mb-4">You May Also Like</h2><!-- End .title text-center -->
@@ -300,9 +284,22 @@
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                        
-                                    </div><!-- End .product-action-vertical -->
+                                        @auth
+                                            <a href="javascript:;" 
+                                            class="add-to-wishlist {{ $product->checkWishlist($product->id) ? 'btn-wishlist-add' : '' }} btn-product-icon btn-wishlist btn-expandable" 
+                                            title="Wishlist" 
+                                            data-id="{{ $product->id }}">
+                                                <span>Add to Wishlist</span>
+                                            </a>
+                                        @else
+                                            <a href="#signin-modal" 
+                                            data-toggle="modal" 
+                                            class="btn-product-icon btn-wishlist btn-expandable" 
+                                            title="Wishlist">
+                                                <span>Add to Wishlist</span>
+                                            </a>
+                                        @endauth
+                                    </div>
 
                                 </figure>
 
@@ -326,9 +323,9 @@
                             </div>
                         @endforeach
 
-                    </div><!-- End .owl-carousel -->
-                </div><!-- End .container -->
-            </div><!-- End .page-content -->
+                    </div>
+                </div>
+            </div>
         </main>
          
 @endsection
