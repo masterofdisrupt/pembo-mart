@@ -190,7 +190,8 @@ class AuthController
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Login successful.',
-                    'redirect_url' => route('home'),
+                    'redirect_url' => $request->input('redirect_url', route('home')),
+
                 ]);
             } else {
                 if (empty($user->email_verification_sent_at) || $user->email_verification_sent_at->diffInMinutes(now()) >= 5) {
