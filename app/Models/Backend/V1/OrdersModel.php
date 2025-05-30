@@ -36,6 +36,28 @@ class OrdersModel extends Model
     'total_amount',
     ];
 
+    public static function getUserOrders($user_id)
+{
+    return self::with(['getShipping', 'product', 'ordersDetails.getProduct'])
+        ->select('orders.*')
+        ->where('orders.user_id', $user_id)
+        ->where('orders.is_payment', 1)
+        ->where('orders.is_delete', 0)
+        ->orderByDesc('orders.id')
+        ->paginate(10);
+}
+
+public static function getUserOrderById($user_id, $id)  
+{
+    return self::with(['getShipping', 'product', 'ordersDetails.getProduct'])
+        ->select('orders.*')
+        ->where('orders.user_id', $user_id)
+        ->where('orders.id', $id)
+        ->where('orders.is_payment', 1)
+        ->where('orders.is_delete', 0)
+        ->first();
+}
+
 
   public static function getRecord(Request $request)
 {
@@ -63,8 +85,6 @@ class OrdersModel extends Model
         ->orderByDesc('orders.id')
         ->paginate(40);
 }
-
-
 
     public static function getSingleRecord($id)
     {
