@@ -15,8 +15,8 @@
                         <li class="breadcrumb-item"><a href="#">Shop</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Checkout</li>
                     </ol>
-                </div><!-- End .container -->
-            </nav><!-- End .breadcrumb-nav -->
+                </div>
+            </nav>
 
             <div class="page-content">
             	<div class="checkout">
@@ -26,55 +26,55 @@
 							@csrf
 		                	<div class="row">
 		                		<div class="col-lg-9">
-		                			<h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
+		                			<h2 class="checkout-title">Billing Details</h2>
 		                				<div class="row">
 		                					<div class="col-sm-6">
 		                						<label for="first-name">First Name *</label>
-		                						<input type="text" name="first_name" id="first-name" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
+		                						<input type="text" name="first_name" value="{{ !empty(Auth::user()->name) ? Auth::user()->name : '' }}" id="first-name" class="form-control" required>
+		                					</div>
 
 		                					<div class="col-sm-6">
 		                						<label for="last-name">Last Name *</label>
-		                						<input type="text" name="last_name" id="last-name" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
-		                				</div><!-- End .row -->
+		                						<input type="text" name="last_name" value="{{ !empty(Auth::user()->surname) ? Auth::user()->surname : '' }}" id="last-name" class="form-control" required>
+		                					</div>
+		                				</div>
 
 	            						<label for="company-name">Company Name (Optional)</label>
-	            						<input type="text" name="company_name" id="company-name" class="form-control">
+	            						<input type="text" name="company_name" value="{{ !empty(Auth::user()->company_name) ? Auth::user()->company_name : '' }}" id="company-name" class="form-control">
 
 	            						<label for="country">Country *</label>
-	            						<input type="text" name="country"  id="country" class="form-control" required>
+	            						<input type="text" name="country" value="{{ !empty(Auth::user()->country) ? Auth::user()->country : '' }}" id="country" class="form-control" required>
 
 	            						<label for="street-address">Street address *</label>
-	            						<input type="text" name="address_one"  id="address-one" class="form-control" placeholder="House number and Street name" required>
-	            						<input type="text" name="address_two" id="address-two" class="form-control" placeholder="Appartments, suite, unit etc ...(Optional)">
+	            						<input type="text" name="address_one" value="{{ !empty(Auth::user()->address) ? Auth::user()->address : '' }}" id="address-one" class="form-control" placeholder="House number and Street name" required>
+	            						<input type="text" name="address_two" id="address-two" value="{{ !empty(Auth::user()->address_two) ? Auth::user()->address_two : '' }}" class="form-control" placeholder="Appartments, suite, unit etc ...(Optional)">
 
 	            						<div class="row">
 		                					<div class="col-sm-6">
 		                						<label for="town-city">Town / City *</label>
-		                						<input type="text" name="city" id="city" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
+		                						<input type="text" name="city" value="{{ !empty(Auth::user()->city) ? Auth::user()->city : '' }}" id="city" class="form-control" required>
+		                					</div>
 
 		                					<div class="col-sm-6">
 		                						<label for="state">State *</label>
-		                						<input type="text" name="state"  id="state" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
-		                				</div><!-- End .row -->
+		                						<input type="text" name="state" value="{{ !empty(Auth::user()->state) ? Auth::user()->state : '' }}" id="state" class="form-control" required>
+		                					</div>
+		                				</div>
 
 		                				<div class="row">
 		                					<div class="col-sm-6">
 		                						<label for="post-code">Postcode / ZIP *</label>
-		                						<input type="text" name="postcode" id="post-code" class="form-control" required>
+		                						<input type="text" name="postcode" value="{{ !empty(Auth::user()->postcode) ? Auth::user()->postcode : '' }}" id="post-code" class="form-control" required>
 		                					</div>
 
 		                					<div class="col-sm-6">
 		                						<label for="phone">Phone *</label>
-		                						<input type="tel" name="phone" id="phone" class="form-control" required>
+		                						<input type="tel" name="phone" value="{{ !empty(Auth::user()->phone) ? Auth::user()->phone : '' }}" id="phone" class="form-control" required>
 		                					</div>
 		                				</div>
 
 	                					<label for="email">Email *</label>
-	        							<input type="email" name="email" id="email" class="form-control" required>
+	        							<input type="email" name="email" value="{{ !empty(Auth::user()->email) ? Auth::user()->email : '' }}" id="email" class="form-control" required>
 
 										@guest
 	        							<div class="custom-control custom-checkbox">
@@ -95,7 +95,7 @@
 		                		</div>
 		                		<aside class="col-lg-3">
 		                			<div class="summary">
-		                				<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
+		                				<h3 class="summary-title">Your Order</h3>
 
 		                				<table class="table table-summary">
 		                					<thead>
@@ -171,9 +171,9 @@
 														Total:
 													</td>
 		                							<td>₦<span id="payable-total">{{ number_format(Cart::getSubTotal(), 2) }}</span></td>
-		                						</tr><!-- End .summary-total -->
+		                						</tr>
 		                					</tbody>
-		                				</table><!-- End .table table-summary -->
+		                				</table>
 
 										<input type="hidden" name="shipping_charge" id="get-payable-total" value="{{ Cart::getSubTotal() }}">
 
