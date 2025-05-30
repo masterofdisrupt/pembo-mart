@@ -10,7 +10,7 @@
                                         <div class="product product-7 text-center">
                                             <figure class="product-media">
 
-                                                <a href="{{ url($product->slug) }}">
+                                                <a href="{{ route('product.details', $product->slug) }}">
                                                     @if (!empty($productImage) && !empty($productImage->getProductImages()))
                                                         <img 
                                                         src="{{ $productImage->getProductImages() }}" 
@@ -22,7 +22,21 @@
                                                 </a>
 
                                                 <div class="product-action-vertical">
-                                                    <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>                                                   
+                                                    @auth
+                                                        <a href="javascript:;" 
+                                                        class="add-to-wishlist {{ $product->checkWishlist($product->id) ? 'btn-wishlist-add' : '' }} btn-product-icon btn-wishlist btn-expandable" 
+                                                        title="Wishlist" 
+                                                        data-id="{{ $product->id }}">
+                                                            <span>Add to Wishlist</span>
+                                                        </a>
+                                                    @else
+                                                        <a href="#signin-modal" 
+                                                        data-toggle="modal" 
+                                                        class="btn-product-icon btn-wishlist btn-expandable" 
+                                                        title="Wishlist">
+                                                            <span>Add to Wishlist</span>
+                                                        </a>
+                                                    @endauth           
                                                 </div>
                                             </figure>
 
@@ -36,9 +50,9 @@
                                                 </div>
                                                 <div class="ratings-container">
                                                     <div class="ratings">
-                                                        <div class="ratings-val" style="width: 20%;"></div>
+                                                        <div class="ratings-val" style="width: {{ $product->getReviewsAvgRating($product->id) }}%;"></div>
                                                     </div>
-                                                    <span class="ratings-text">( 2 Reviews )</span>
+                                                    <span class="ratings-text">( {{ $product->getTotalReview() }} Reviews )</span>
                                                 </div>
                                             </div>
                                         </div>                                    
