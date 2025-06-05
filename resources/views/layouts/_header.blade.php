@@ -2,15 +2,6 @@
             <div class="header-top">
                 <div class="container">
                     <div class="header-left">
-                        <div class="header-dropdown">
-                            <a href="#">Nra</a>
-                            <div class="header-menu">
-                                <ul>
-                                    
-                                    <li><a href="#">Nra</a></li>
-                                </ul>
-                            </div>
-                        </div>
 
                         <div class="header-dropdown">
                             <a href="#">Eng</a>
@@ -45,7 +36,7 @@
                             <li>
                                 <a href="#">Links</a>
                                 <ul>
-                                    <li><a href="tel:#"><i class="icon-phone"></i>Call: +0123 456 789</a></li>
+                                    <li><a href="tel:{{ $getSystemSettingApp->phone }}"><i class="icon-phone"></i>Call: {{ $getSystemSettingApp->phone }}</a></li>
 
                                     @if (Auth::check())
                                     <li><a href="{{ route('my.wishlist') }}"><i class="icon-heart-o"></i>My Wishlist</a></li>
@@ -81,7 +72,7 @@
                         </button>
 
                         <a href="{{ route('home') }}" class="logo">
-                            <img src="{{ url('assets/images/logo.png') }}" alt="Pembo-Mart Logo" width="105" height="25">
+                            <img src="{{ $getSystemSettingApp->getLogo() }}" alt="Pembo-Mart Logo" width="105" height="25">
                         </a>
 
                         <nav class="main-nav">
