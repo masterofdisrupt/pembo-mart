@@ -25,6 +25,8 @@ use App\Http\Controllers\Backend\V1\CategoryController;
 use App\Http\Controllers\Backend\V1\SubCategoryController;
 use App\Http\Controllers\Backend\V1\BrandsController;
 use App\Http\Controllers\Backend\V1\ShippingChargesController;
+use App\Http\Controllers\Backend\V1\PagesController;
+use App\Http\Controllers\Backend\V1\SliderController;
 use App\Http\Controllers\ProductController as FrontendProductController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
@@ -199,6 +201,14 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/shipping_charge/edit/{id}', [ShippingChargesController::class, 'update_shipping_charges'])->name('shipping.charge.update');
     Route::delete('admin/shipping_charge/delete/{id}', [ShippingChargesController::class, 'delete_shipping_charges'])->name('shipping.charge.delete');
 
+    // Shipping Charge
+    Route::get('admin/slider', [SliderController::class, 'add_slider'])->name('admin.slider');
+    Route::get('admin/shipping_charge/add', [SliderController::class, 'add_shipping_charges'])->name('shipping.charge.add');
+    Route::post('admin/shipping_charge/add', [SliderController::class, 'store_shipping_charges'])->name('shipping.charge.store');
+    Route::get('admin/shipping_charge/edit/{id}', [SliderController::class, 'edit_shipping_charges'])->name('shipping.charge.edit');
+    Route::put('admin/shipping_charge/edit/{id}', [SliderController::class, 'update_shipping_charges'])->name('shipping.charge.update');
+    Route::delete('admin/shipping_charge/delete/{id}', [SliderController::class, 'delete_shipping_charges'])->name('shipping.charge.delete');
+
     // Support Start
     Route::get('admin/support', [SupportsController::class, 'supports'])->name('supports');
     Route::get('admin/support/reply/{id}', [SupportsController::class, 'support_reply'])->name('support.reply');
@@ -275,6 +285,17 @@ Route::group(['middleware' => 'admin'], function () {
     Route::delete('admin/address/delete/{id}', [LocationController::class, 'admin_address_delete'])->name('admin.address.delete');
     // address menu end
 
+    // Pages start 
+    Route::get('admin/pages', [PagesController::class, 'index'])->name('admin.pages');
+    Route::get('admin/pages/edit/{id}', [PagesController::class, 'edit'])->name('pages.edit');
+    Route::put('admin/pages/edit/{id}', [PagesController::class, 'update'])->name('pages.update');
+    Route::get('admin/system-setting', [PagesController::class, 'system_setting'])->name('system.setting');
+    Route::post('admin/system-setting', [PagesController::class, 'update_system_setting'])->name('upadate.system.setting');
+    // Pages end 
+
+    Route::get('admin/contact-us', [PagesController::class, 'contactUs'])->name('admin.contact.us');
+    Route::delete('admin/contact-us/delete/{id}', [PagesController::class, 'contactUsDelete'])->name('contact.us.delete');
+
 
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
@@ -323,6 +344,18 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('contact', [HomeController::class, 'contact'])->name('contact.us');
+Route::post('contact', [HomeController::class, 'submitContact'])->name('submit.contact');
+
+Route::get('about', [HomeController::class, 'about'])->name('about.us');
+Route::get('faq', [HomeController::class, 'faq'])->name('faq');
+Route::get('payment-methods', [HomeController::class, 'paymentMethod'])->name('payment.methods');
+Route::get('money-back-guarantee', [HomeController::class, 'moneyBackGuarantee'])->name('money.back.guarantee');
+Route::get('returns', [HomeController::class, 'return'])->name('returns');
+Route::get('shipping', [HomeController::class, 'shipping'])->name('shipping');
+Route::get('terms-and-conditions', [HomeController::class, 'termsCondition'])->name('terms.and.conditions');
+Route::get('privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
 
 Route::post('register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('signin', [AuthController::class, 'showSignin'])->name('signin');
