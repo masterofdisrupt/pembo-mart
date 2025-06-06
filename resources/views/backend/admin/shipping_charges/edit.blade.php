@@ -16,7 +16,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Edit Discount Charge</h6>
+                    <h6 class="card-title">Edit Shipping Charge</h6>
 
                     <form method="POST" action="{{ route('shipping.charge.update', $shippingCharges->id) }}" class="forms-sample">
                         @csrf
@@ -30,7 +30,7 @@
                                 <input type="text" 
                                       
                                        name="name" 
-                                       class="form-control @error('code') is-invalid @enderror"
+                                       class="form-control @error('name') is-invalid @enderror"
                                        value="{{ old('name', $shippingCharges->name) }}"
                                        required>
                                 @error('name')
