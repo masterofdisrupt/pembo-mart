@@ -350,10 +350,10 @@
             items: '.sortable-image',
             placeholder: 'ui-state-highlight',
             update: function (event, ui) {
-                // Handle the order change if needed
+                
                 const sortedIDs = $(this).sortable('toArray');
                 console.log('Sorted IDs:', sortedIDs);
-                // You can send the sorted IDs to the server if needed
+               
                 const baseUrl = '{{ url('/') }}'; 
                 axios.post(`${baseUrl}/admin/product_image_sort`, { sortedIDs })
                     .then(response => {
@@ -373,7 +373,6 @@ $('body').on('click', '.add-row', function() {
     const nameInput = lastRow.find('input[name*="[name]"]');
     const priceInput = lastRow.find('input[name*="[price]"]');
     
-    // Validate inputs
     if (!nameInput.val() || !priceInput.val()) {
         toastr.error('Please fill in both size name and price');
         return;
@@ -384,14 +383,12 @@ $('body').on('click', '.add-row', function() {
         return;
     }
     
-    // Check row limit
     const currentRows = $('#size-rows tr').length - 1;
     if (currentRows >= maxRows) {
         toastr.error(`Maximum ${maxRows} sizes allowed`);
         return;
     }
     
-    // Create new row
     const newRow = `<tr id="delete-row${i}" class="align-middle">
         <td>
             <input type="text" 
@@ -420,17 +417,14 @@ $('body').on('click', '.add-row', function() {
         </td>
     </tr>`;
     
-    // Insert new row before template
     $(newRow).insertBefore('#new-size-row');
     
-    // Clear template inputs
     nameInput.val('');
     priceInput.val('');
     
     i++;
 });
 
-// Handle size deletion
 $('body').on('click', '.delete-row', function() {
     $(this).closest('tr').remove();
 });
@@ -451,7 +445,7 @@ $('#category_id').on('change', function () {
                     }
                 });
             } else {
-                // If no category selected, reset subcategory dropdown
+                
                 $('#sub_category_id').empty().append('<option value="">Select Sub Category</option>');
             }
         });
@@ -460,29 +454,20 @@ $('#category_id').on('change', function () {
     });
 
 
-
-
-      $('.editor').tinymce({
+    $('.editor').tinymce({
         height: 500,
         menubar: false,
         plugins: [
-  'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 
-  'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-  'insertdatetime', 'media', 'table', 'help', 'wordcount'
-],
-toolbar: 'undo redo | formatselect | bold italic backcolor | \
-alignleft aligncenter alignright alignjustify | \
-bullist numlist outdent indent | removeformat | help'
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | bold italic backcolor | \
+                    alignleft aligncenter alignright alignjustify | \
+                    bullist numlist outdent indent | removeformat | help'
 
-      });
-
-     
-    
- 
-
-   
-        
-    
+    });
+            
 </script>
 @endsection
 
