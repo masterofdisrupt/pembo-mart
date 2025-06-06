@@ -38,6 +38,33 @@
                   </a>
               </li>
 
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'contact-us')) active @endif">
+                  <a href="{{ route('admin.contact.us') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Contact Us</span>
+                  </a>
+              </li>
+
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'pages')) active @endif">
+                  <a href="{{ route('admin.pages') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Pages</span>
+                  </a>
+              </li>
+
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'slider')) active @endif">
+                  <a href="{{ route('admin.slider') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Slider</span>
+                  </a>
+              </li> 
+
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'system-setting')) active @endif">
+                  <a href="{{ route('system.setting') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">System Settings</span>
+                  </a>
+              </li>
 
               <li class="nav-item">
                   <a href="{{ url('admin/email_otp') }}" class="nav-link">
