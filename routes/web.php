@@ -31,6 +31,7 @@ use App\Http\Controllers\Backend\V1\PartnerController;
 use App\Http\Controllers\ProductController as FrontendProductController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -425,3 +426,7 @@ Route::get('{category?}/{subCategory?}', [FrontendProductController::class, 'get
 
 
 
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
