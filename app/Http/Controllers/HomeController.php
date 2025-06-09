@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Pages;
 use App\Models\SystemSetting;
 use App\Models\ContactUs;
+use App\Models\Slider;
+use App\Models\Partner;
+use App\Models\Backend\V1\CategoryModel;
+use App\Models\Backend\V1\ProductModel;
 use App\Mail\ContactUsMail;
 use Session;
 use Auth;
@@ -13,20 +17,45 @@ use Mail;
 
 class HomeController
 {
-    public function index() {
+    public function index()
+{
+    $getPages = Pages::getSlug('home');
+    $getSlider = Slider::getActiveRecords();
+    $getPartners = Partner::getActiveRecords();
+    $getCategory = CategoryModel::getCategoryStatusHome();
+    $getProduct = ProductModel::getRecentArrivals();
+    $getTrendyProduct = ProductModel::getTrendyProducts();
 
-        $metaData = [
-            'meta_title' => 'Pembo-Mart',
-            'meta_description' => '',
-            'meta_keywords' => ''
-        ];
-        
-        return view('home', [
-            'meta_title' => $metaData['meta_title'],
-            'meta_description' => $metaData['meta_description'],
-            'meta_keywords' => $metaData['meta_keywords'],
-        ]);
-    }
+    return view('home', [
+        'getSlider' => $getSlider,
+        'getPages' => $getPages,
+        'meta_title' => $getPages->meta_title ?? '',
+        'meta_description' => $getPages->meta_description ?? '',
+        'meta_keywords' => $getPages->meta_keywords ?? '',
+        'getPartners' => $getPartners,
+        'getCategory' => $getCategory,
+        'getProduct' => $getProduct,
+        'getTrendyProduct' => $getTrendyProduct,
+    ]);
+}
+
+public function recentArrivals(Request $request)
+{
+    $categoryId = $request->category_id; 
+
+    $getProduct = ProductModel::getRecentArrivals($categoryId);
+
+    $getCategory = CategoryModel::getRecordById($categoryId);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Recent arrivals fetched successfully.',
+        'success' => view('products._list_recent_arrivals', [
+            'getProduct' => $getProduct,
+            'getCategory' => $getCategory,
+        ])->render(),
+    ], 200);
+}
 
    public function contact()
 {
