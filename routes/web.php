@@ -27,6 +27,7 @@ use App\Http\Controllers\Backend\V1\BrandsController;
 use App\Http\Controllers\Backend\V1\ShippingChargesController;
 use App\Http\Controllers\Backend\V1\PagesController;
 use App\Http\Controllers\Backend\V1\SliderController;
+use App\Http\Controllers\Backend\V1\PartnerController;
 use App\Http\Controllers\ProductController as FrontendProductController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
@@ -201,13 +202,13 @@ Route::group(['middleware' => 'admin'], function () {
     Route::put('admin/shipping_charge/edit/{id}', [ShippingChargesController::class, 'update_shipping_charges'])->name('shipping.charge.update');
     Route::delete('admin/shipping_charge/delete/{id}', [ShippingChargesController::class, 'delete_shipping_charges'])->name('shipping.charge.delete');
 
-    // Shipping Charge
-    Route::get('admin/slider', [SliderController::class, 'add_slider'])->name('admin.slider');
-    Route::get('admin/shipping_charge/add', [SliderController::class, 'add_shipping_charges'])->name('shipping.charge.add');
-    Route::post('admin/shipping_charge/add', [SliderController::class, 'store_shipping_charges'])->name('shipping.charge.store');
-    Route::get('admin/shipping_charge/edit/{id}', [SliderController::class, 'edit_shipping_charges'])->name('shipping.charge.edit');
-    Route::put('admin/shipping_charge/edit/{id}', [SliderController::class, 'update_shipping_charges'])->name('shipping.charge.update');
-    Route::delete('admin/shipping_charge/delete/{id}', [SliderController::class, 'delete_shipping_charges'])->name('shipping.charge.delete');
+    // Slider
+    Route::get('admin/slider', [SliderController::class, 'index'])->name('admin.slider');
+    Route::get('admin/slider/add', [SliderController::class, 'add'])->name('add.slider');
+    Route::post('admin/slider/add', [SliderController::class, 'store'])->name('slider.store');
+    Route::get('admin/slider/edit/{id}', [SliderController::class, 'edit'])->name('edit.slider');
+    Route::put('admin/slider/edit/{id}', [SliderController::class, 'update'])->name('update.slider');
+    Route::delete('admin/slider/delete/{id}', [SliderController::class, 'delete'])->name('delete.slider');
 
     // Support Start
     Route::get('admin/support', [SupportsController::class, 'supports'])->name('supports');
@@ -293,6 +294,14 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/system-setting', [PagesController::class, 'update_system_setting'])->name('upadate.system.setting');
     // Pages end 
 
+    // Partner Logo
+    Route::get('admin/partner', [PartnerController::class, 'index'])->name('partner');
+    Route::get('admin/partner/add', [PartnerController::class, 'add'])->name('add.partner');
+    Route::post('admin/partner/add', [PartnerController::class, 'store'])->name('store.partner');
+    Route::get('admin/partner/edit/{id}', [PartnerController::class, 'edit'])->name('edit.partner');
+    Route::put('admin/partner/edit/{id}', [PartnerController::class, 'update'])->name('update.partner');
+    Route::delete('admin/partner/delete/{id}', [PartnerController::class, 'delete'])->name('delete.partner');
+
     Route::get('admin/contact-us', [PagesController::class, 'contactUs'])->name('admin.contact.us');
     Route::delete('admin/contact-us/delete/{id}', [PagesController::class, 'contactUsDelete'])->name('contact.us.delete');
 
@@ -344,6 +353,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::post('recent-arrivals', [HomeController::class, 'recentArrivals'])->name('recent.arrivals');
 
 Route::get('contact', [HomeController::class, 'contact'])->name('contact.us');
 Route::post('contact', [HomeController::class, 'submitContact'])->name('submit.contact');
