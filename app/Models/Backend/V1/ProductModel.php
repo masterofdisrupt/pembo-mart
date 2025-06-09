@@ -34,7 +34,8 @@ class ProductModel extends Model
     'additional_info',
     'ship_and_returns',
     'status',
-    'images'
+    'images',
+    'is_trendy'
 ];
 
     static public function getRecords()
@@ -91,6 +92,52 @@ class ProductModel extends Model
         ->groupBy('product.id')
         ->orderBy('product.id', 'desc')
         ->paginate(12);
+}
+
+    public static function getRecentArrivals($categoryId = null)
+{
+    return self::select(
+            'product.*',
+            'users.name as created_by_name',
+            'categories.name as category_name',
+            'categories.slug as category_slug',
+            'sub_categories.name as sub_category_name',
+            'sub_categories.slug as sub_category_slug'
+        )
+        ->join('users', 'product.created_by', '=', 'users.id')
+        ->join('categories', 'product.category_id', '=', 'categories.id')
+        ->leftJoin('sub_categories', 'product.sub_category_id', '=', 'sub_categories.id')
+        ->where('product.is_delete', 0)
+        ->where('product.status', 1)
+        ->when($categoryId, function ($query, $categoryId) {
+            return $query->where('product.category_id', $categoryId);
+        })
+        ->groupBy('product.id')
+        ->orderBy('product.id', 'desc')
+        ->limit(10)
+        ->get();
+}
+
+public static function getTrendyProducts()
+{
+    return self::select(
+            'product.*',
+            'users.name as created_by_name',
+            'categories.name as category_name',
+            'categories.slug as category_slug',
+            'sub_categories.name as sub_category_name',
+            'sub_categories.slug as sub_category_slug'
+        )
+        ->join('users', 'product.created_by', '=', 'users.id')
+        ->join('categories', 'product.category_id', '=', 'categories.id')
+        ->leftJoin('sub_categories', 'product.sub_category_id', '=', 'sub_categories.id')
+        ->where('product.is_delete', 0)
+        ->where('product.is_trendy', 1) 
+        ->where('product.status', 1)
+        ->groupBy('product.id')
+        ->orderBy('product.id', 'desc')
+        ->limit(20)
+        ->get();
 }
 
 
