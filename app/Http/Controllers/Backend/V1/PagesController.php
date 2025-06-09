@@ -29,7 +29,7 @@ class PagesController extends Controller
         $page->name = trim($request->input('name'));
         $page->title = trim($request->input('title'));
         $page->description = trim($request->input('description'));
-        $page->meta_title = trim($request->input('titmeta_titlele'));
+        $page->meta_title = trim($request->input('meta_title'));
         $page->meta_description = trim($request->input('meta_description'));
         $page->meta_keywords = trim($request->input('meta_keywords'));
         $page->save();
