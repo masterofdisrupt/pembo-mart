@@ -81,12 +81,14 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Image</th>
                                         <th>Category Name</th>
                                         <th>Slug</th>
                                         <th>Meta Title</th>
                                         <th>Meta Description</th>
                                         <th>Meta Keywords</th>
                                         <th>Created By</th>
+                                        <th>Home</th>
                                         <th>Status</th>
                                         <th>Created At</th>
                                         <th>Action</th>
@@ -96,12 +98,33 @@
                                     @forelse ($getRecord as $value)
                                         <tr class="table-info text-dark">
                                             <td>{{ $value->id }}</td>
+                                            <td>
+                                                @if (!empty($value->getCategoryImage()))
+                                                    <img src="{{ $value->getCategoryImage() }}" 
+                                                        alt="Partner Image" 
+                                                        class="img-fluid" 
+                                                        style="max-width: 100px;">
+                                                @else
+                                                    <img src="" 
+                                                        alt="No Image" 
+                                                        class="img-fluid" 
+                                                        style="max-width: 100px;">
+                                                    
+                                                @endif
+                                            </td>
                                             <td>{{ $value->name }}</td>
                                             <td>{{ $value->slug }}</td>
                                             <td>{{ $value->meta_title }}</td>
                                             <td>{{ $value->meta_description }}</td>
                                             <td>{{ $value->meta_keywords }}</td>
                                             <td>{{ $value->created_by_name }}</td>
+                                           <td>
+                                                @if ($value->is_home == 1)
+                                                    <span class="badge bg-success">Yes</span>
+                                                @else
+                                                    <span class="badge bg-secondary">No</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 @if ($value->status == 1)
                                                     <span class="badge bg-success">Active</span>
