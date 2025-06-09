@@ -127,7 +127,8 @@ class ProductController
             'description' => trim($validated['description']),
             'additional_info' => trim($validated['additional_info'] ?? ''),
             'ship_and_returns' => trim($validated['ship_and_returns'] ?? ''),
-            'status' => $validated['status']
+            'status' => $validated['status'],
+            'is_trendy' => $request->has('is_trendy') ? 1 : 0
         ]);
 
         $product->save();
