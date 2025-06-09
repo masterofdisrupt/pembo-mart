@@ -89,6 +89,17 @@ class CategoryModel extends Model
         ->get();
     }
 
+    public static function getCategoryStatusHome()
+    {
+        return self::select('categories.*')
+        ->join('users', 'categories.created_by', '=', 'users.id')
+        ->where('categories.is_delete', 0)
+        ->where('categories.status', 1)
+        ->where('categories.is_home', 1)
+        ->orderBy('categories.id', 'asc')
+        ->get();
+    }
+
     /**
      * Get the status of the category menu.
      *
@@ -109,6 +120,15 @@ class CategoryModel extends Model
         return $this->hasMany(SubCategoryModel::class, 'category_id', 'id')
         ->where('status', 1)
             ->where('is_delete', 0);
+    }
+
+    public function getCategoryImage()
+    {
+         if(!empty($this->image_name) && file_exists(public_path('backend/upload/category/' . $this->image_name))) {
+        
+        return url('public/backend/upload/category/' . $this->image_name);
+    }
+    return null;
     }
     
 }
