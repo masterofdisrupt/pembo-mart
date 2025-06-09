@@ -5,13 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{ !empty($meta_title) ? $meta_title : '' }}</title>
-    @if (!empty($meta_description))
-        <meta name="description" content="{{ $meta_description }}">
-    @endif
-    @if (!empty($meta_keywords))
-        <meta name="keywords" content="{{ $meta_keywords }}">
-    @endif
+    <title>@yield('meta_title')</title>
+    <meta name="description" content="@yield('meta_description')">
+    <meta name="keywords" content="@yield('meta_keywords')">
 
     @php
         $getSystemSettingApp = App\Models\SystemSetting::getSingleRecord();
