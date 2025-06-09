@@ -1,96 +1,184 @@
 @extends('backend.admin.admin_dashboard')
 @section('admin')
     <div class="page-content">
+
         <nav class="page-breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('category') }}">Category</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Add Category</li>
+                <li class="breadcrumb-item active">Create</li>
             </ol>
         </nav>
+
         <div class="row">
             <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="card-title mb-0">Create Category</h6>
+                        </div>
 
-                        <h6 class="card-title">Add Category</h6>
-
-
-                        <form class="forms-sample" method="POST" action="{{ route('category.store') }}">
+                        <form class="forms-sample" method="POST" action="{{ route('category.store') }}" enctype="multipart/form-data">
                             @csrf
-                            <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Category Name <span style="color: red;">*</span></label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="name"
-                                        placeholder="Enter Category Name" value="{{ old('name') }}" required>
+
+                            <div class="mb-4">
+                                <label for="name" class="col-sm-3 col-form-label">
+                                    Category Name <span class="text-danger">*</span>
+                                </label>
+                            
+                                    <input type="text" 
+                                        name="name"                            
+                                        class="form-control @error('name') is-invalid @enderror"
+                                        value="{{ old('name') }}"
+                                        placeholder="Enter Category Name"
+                                        required>
                                     @error('name')
-                                        <span class="text-danger">{{ $message }}</span>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                
                             </div>
 
-                             <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Slug <span style="color: red;">*</span></label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="slug"
-                                        placeholder="Enter Slug Example URL" value="{{ old('slug') }}" required>
+                            <div class="mb-4">
+                                <label for="name" class="col-sm-3 col-form-label">
+                                    Slug<span class="text-danger">*</span>
+                                </label>
+                            
+                                    <input type="text" 
+                                        name="slug"                            
+                                        class="form-control @error('slug') is-invalid @enderror"
+                                        value="{{ old('slug') }}"
+                                        placeholder="Enter Slug Example URL"
+                                        required>
                                     @error('slug')
-                                        <span class="text-danger">{{ $message }}</span>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                
                             </div>
 
-                             <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Status <span style="color: red;">*</span></label>
-                                <div class="col-sm-9">
-                                    <select name="status" class="form-control" required>
-                                        <option value="">Select Status</option>
-                                        <option value="1" {{ old('status') == 1 ? 'selected' : '' }}>Active</option>
-                                        <option value="2" {{ old('status') == 2 ? 'selected' : '' }}>Inactive</option>
-                                        
+                            <div class="mb-4">
+                                <label for="status" class="col-sm-3 col-form-label">
+                                    Status <span class="text-danger">*</span>
+                                </label>
+                                
+                                    <select name="status" 
+                                            id="status"
+                                            class="form-select @error('status') is-invalid @enderror" required>
+                                        <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Active</option>
+                                        <option value="2" {{ old('status') == '2' ? 'selected' : '' }}>Inactive</option>
                                     </select>
                                     @error('status')
-                                        <span class="text-danger">{{ $message }}</span>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                
                             </div>
 
                             <hr>
+
+                             <div class="mb-4">
+                                <label for="image_name" class="col-sm-3 col-form-label">
+                                    Image <span class="text-danger"></span>
+                                </label>
+                                    <input type="file" 
+                                        name="image_name" 
+                                        class="form-control"
+                                    >
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="button_name" class="col-sm-3 col-form-label">
+                                    Button Name<span class="text-danger"></span>
+                                </label>
                             
-                            <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Meta Title <span style="color: red;">*</span></label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="meta_title"
-                                        placeholder="Enter Meta Title" value="{{ old('meta_title') }}" required>
+                                    <input type="text" 
+                                        name="button_name"                            
+                                        class="form-control @error('button_name') is-invalid @enderror"
+                                        value="{{ old('button_name') }}"
+                                        placeholder="Enter Button Name"
+                                        required>
+                                    @error('button_name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                
+                            </div>
+
+                            <div class="mb-4 form-check">
+                                <label for="is_home" class="form-check-label">
+                                    Home Screen<span class="text-danger"></span>
+                                </label>
+                            
+                                    <input type="checkbox" 
+                                        name="is_home"                            
+                                        class="form-check-input @error('is_home') is-invalid @enderror"
+                                        {{ old('is_home') ? 'checked' : '' }}
+                                    >
+                                    @error('is_home')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                
+                            </div>
+
+                            <hr>
+
+                            <div class="mb-4">
+                                <label for="meta_title" class="col-sm-3 col-form-label">
+                                    Meta Title<span class="text-danger">*</span>
+                                </label>
+                            
+                                    <input type="text" 
+                                        name="meta_title"                            
+                                        class="form-control @error('meta_title') is-invalid @enderror"
+                                        value="{{ old('meta_title') }}"
+                                        placeholder="Enter Meta Title"
+                                        required>
                                     @error('meta_title')
-                                        <span class="text-danger">{{ $message }}</span>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                
                             </div>
 
-                            <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Meta Description</label>
-                                <div class="col-sm-9">
-                                    <textarea class="form-control" name="meta_description"
-                                        placeholder="Enter Meta Description" value="{{ old('meta_description') }}"></textarea>
-                                    @error('meta_description')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                            <div class="mb-4">
+                                <label for="meta_description" class="col-sm-3 col-form-label">
+                                    Meta Description<span class="text-danger"></span>
+                                </label>
+
+                                <textarea 
+                                    name="meta_description"
+                                    id="meta_description"
+                                    class="form-control @error('meta_description') is-invalid @enderror"
+                                    placeholder="Enter Meta Description"
+                                >{{ old('meta_description') }}</textarea>
+
+                                @error('meta_description')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
-                            <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Meta Keywords</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="meta_keywords"
-                                        placeholder="Enter Meta Keywords" value="{{ old('meta_keywords') }}">
+
+                            <div class="mb-4">
+                                <label for="meta_title" class="col-sm-3 col-form-label">
+                                    Meta Keywords<span class="text-danger"></span>
+                                </label>
+                            
+                                    <input type="text" 
+                                        name="meta_title"                            
+                                        class="form-control @error('meta_keywords') is-invalid @enderror"
+                                        value="{{ old('meta_keywords') }}"
+                                        placeholder="Enter Meta Keywords"
+                                        required>
                                     @error('meta_keywords')
-                                        <span class="text-danger">{{ $message }}</span>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                
                             </div>
 
-                            <button type="submit" class="btn btn-primary me-2">Submit</button>
-                            <a href="{{ route('category') }}" class="btn btn-secondary">Back</a>
+                             <div class="text-end">
+                                <a href="{{ route('category') }}" class="btn btn-secondary me-2">
+                                    <i class="fas fa-arrow-left"></i> Back
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Create Category
+                                </button>
+                            </div>
                         </form>
 
                     </div>
