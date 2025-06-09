@@ -115,13 +115,27 @@
 
                         {{-- ROW 3: Price + Old Price --}}
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+
+                            <div class="col-md-4 mb-3">
+                                <label>Trendy Products <span class="text-danger"></span></label>
+                                <div class="row">
+                                    <div class="col-6 col-sm-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="is_trendy" {{ !empty($product->is_trendy) && $product->is_trendy == 1 ? 'checked' : '' }} id="is_trendy">
+                                            <label class="form-check-label" for="is_trendy"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4 mb-3">
                                 <label>Price (₦) <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" name="price" value="{{ !empty($product->price) ? $product->price : '' }}" step="0.01" required>
                                 @error('price')<span class="text-danger">{{ $message }}</span>@enderror
                             </div>
 
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label>Old Price (₦) <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" name="old_price" value="{{ !empty($product->old_price) ? $product->old_price : '' }}" step="0.01" required>
                                 @error('old_price')<span class="text-danger">{{ $message }}</span>@enderror
