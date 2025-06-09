@@ -52,6 +52,13 @@
                   </a>
               </li>
 
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'partner')) active @endif">
+                  <a href="{{ route('partner') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Partner</span>
+                  </a>
+              </li>
+
               <li class="nav-item @if (Str::startsWith(Request::segment(2), 'slider')) active @endif">
                   <a href="{{ route('admin.slider') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
