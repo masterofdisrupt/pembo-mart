@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Models\Backend\V1\CategoryModel;
 use Auth;
+use Str;
 
 class CategoryController extends Controller
 {
@@ -23,8 +24,6 @@ class CategoryController extends Controller
 
     public function store_category(Request $request)
     {
-        // dd($request->all());
-        // Check if the user is authenticated
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug',
@@ -40,7 +39,17 @@ class CategoryController extends Controller
         $category->status = trim($request->status);
         $category->meta_title = trim($request->meta_title);
         $category->meta_description = trim($request->meta_description);
-        $category->meta_keywords = trim($request->meta_keywords);
+        $category->button_name = trim($request->button_name);
+        $category->is_home = $request->has('is_home') ? 1 : 0;
+
+
+         if ($request->hasFile('image_name')) {
+            $image = $request->file('image_name');
+            $imageName = Str::random(20).'.'.$image->getClientOriginalExtension();
+            $image->move(public_path('backend/upload/category'), $imageName);
+            $category->image_name = trim($imageName);
+        }
+
         $category->created_by = auth()->user()->id;
         $category->save();
 
@@ -70,6 +79,17 @@ class CategoryController extends Controller
         $category->meta_title = trim($request->meta_title);
         $category->meta_description = trim($request->meta_description);
         $category->meta_keywords = trim($request->meta_keywords);
+
+        if ($request->hasFile('image_name')) {
+            $image = $request->file('image_name');
+            $imageName = Str::random(20).'.'.$image->getClientOriginalExtension();
+            $image->move(public_path('backend/upload/category'), $imageName);
+            $category->image_name = trim($imageName);
+        }
+
+        $category->button_name = trim($request->button_name);
+        $category->is_home = $request->has('is_home') ? 1 : 0;
+
         $category->save();
 
         return redirect()->route('category')->with('success', 'Category updated successfully');
