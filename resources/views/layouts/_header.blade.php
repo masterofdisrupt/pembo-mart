@@ -31,7 +31,7 @@
                         </div>
                     </div>
 
-                    <div class="header-right">
+                    <div class="header-right" id="header-auth-section">
                         <ul class="top-menu">
                             <li>
                                 <a href="#">Links</a>
