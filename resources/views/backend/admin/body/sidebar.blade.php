@@ -104,9 +104,16 @@
 
 
              <li class="nav-item">
-                  <a href="{{ route('blogs') }}" class="nav-link">
+                  <a href="{{ route('blog') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Blogs</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a href="{{ route('blog.category') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Blog Category</span>
                   </a>
               </li>
 
