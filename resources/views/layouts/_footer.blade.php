@@ -37,6 +37,7 @@
 	            					{{-- <li><a href="{{ route('how.to.shop') }}">How to shop on Pembo Mart</a></li> --}}
 	            					<li><a href="{{ route('faq') }}">FAQ</a></li>
 	            					<li><a href="{{ route('contact.us') }}">Contact us</a></li>
+	            					<li><a href="{{ route('blogs') }}">Blog</a></li>
 	            					<li><a href="#signin-modal" data-toggle="modal">Log in</a></li>
 	            				</ul>
 	            			</div>
