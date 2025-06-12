@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Search</button>
-                            <a href="{{ route('blogs') }}" class="btn btn-danger">Reset</a>
+                            <a href="{{ route('blog') }}" class="btn btn-danger">Reset</a>
                         </form>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                                     Delete All
                                 </a>
                                 &nbsp;&nbsp;
-                                <a href="{{ route('add.blogs') }}" class="btn btn-primary">
+                                <a href="{{ route('add.blog') }}" class="btn btn-primary">
                                     Add Blog
                                 </a>
                             </div>
@@ -77,8 +77,12 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Image</th>
                                         <th>Title</th>
-                                        <th>Slug</th>
+                                        <th>Meta Title</th> 
+                                        <th>Meta Description</th> 
+                                        <th>Meta Keywords</th> 
+                                        <th>Short Description</th>
                                         <th>Description</th>
                                         <th>Created At</th>
                                         <th>Updated At</th>
@@ -89,22 +93,30 @@
                                     @forelse ($getRecord as $value)
                                         <tr>
                                             <td>{{ $value->id }}</td>
+                                            <td>
+                                                @if($value->getImage())
+                                                    <img src="{{ $value->getImage() }}" alt="Blog Image" class="img-fluid mt-2" style="max-width: 100px;">
+                                                @endif
+                                            </td>
                                             <td>{{ $value->title }}</td>
-                                            <td>{{ $value->slug }}</td>
+                                            <td>{{ $value->meta_title }}</td>
+                                            <td>{{ $value->meta_description }}</td>
+                                            <td>{{ $value->meta_keywords }}</td>
+                                            <td>{!! $value->short_description !!}</td>
                                             <td>{!! $value->description !!}</td>
                                             <td>{{ date('d-m-Y H:s:i', strtotime($value->created_at)) }}</td>
                                             <td>{{ date('d-m-Y H:s A', strtotime($value->updated_at)) }}</td>
 
                                             <td>
                                                 <a class="btn btn-primary"
-                                                    href="{{ route('edit.blogs', $value->id) }}"><span
+                                                    href="{{ route('edit.blog', $value->id) }}"><span
                                                         class="">Edit</span></a>
 
                                                 <a class="btn btn-secondary"
-                                                    href="{{ route('view.blogs', $value->id) }}"><span
+                                                    href="{{ route('view.blog', $value->id) }}"><span
                                                         class="">View</span></a>
 
-                                                 <form action="{{ route('delete.blogs', $value->id) }}" 
+                                                 <form action="{{ route('delete.blog', $value->id) }}" 
                                                     method="POST" class="d-inline-block delete-form">
                                                     @csrf
                                                     @method('DELETE')
