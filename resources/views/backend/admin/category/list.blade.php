@@ -158,7 +158,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item d-flex align-items-center btn-delete" 
-                                                    data-item-name="city" style="border: none; background: none; cursor: pointer;">
+                                                    data-item-name="category" style="border: none; background: none; cursor: pointer;">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
