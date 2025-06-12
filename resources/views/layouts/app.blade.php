@@ -294,8 +294,9 @@
                     if (response.status === 'success') {
                         toastr.success(response.message);
                         setTimeout(function () {
-                            window.location.href = response.redirect_url;
-                        }, 2000);
+                             $('#signin-modal').modal('hide');
+                             $("#header-auth-section").load(window.location.href + " #header-auth-section > *");
+                        }, 1000);
                     } else {
                         toastr.error(response.message);
                     }
