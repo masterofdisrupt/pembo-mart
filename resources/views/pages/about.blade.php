@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('meta_title', $getPages->meta_title)
+@section('meta_description', $getPages->meta_description)
+@section('meta_keywords', $getPages->meta_keywords)
+
 @section('content')
 
 <main class="main">
