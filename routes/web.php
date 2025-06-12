@@ -28,6 +28,7 @@ use App\Http\Controllers\Backend\V1\ShippingChargesController;
 use App\Http\Controllers\Backend\V1\PagesController;
 use App\Http\Controllers\Backend\V1\SliderController;
 use App\Http\Controllers\Backend\V1\PartnerController;
+use App\Http\Controllers\Backend\V1\BlogCategoryController;
 use App\Http\Controllers\ProductController as FrontendProductController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
@@ -221,17 +222,26 @@ Route::group(['middleware' => 'admin'], function () {
 
 
     // Blog Start
-    Route::get('admin/blogs', [BlogController::class, 'list_blog'])->name('blogs');
-    Route::get('admin/blog/sadd', [BlogController::class, 'add_blog'])->name('add.blogs');
-    Route::post('admin/blogs/add', [BlogController::class, 'store_blog'])->name('store.blogs');
-    Route::get('admin/blogs/edit/{id}', [BlogController::class, 'edit_blog'])->name('edit.blogs');
-    Route::put('admin/blogs/edit/{id}', [BlogController::class, 'update_blog'])->name('update.blogs');
-    Route::get('admin/blogs/view/{id}', [BlogController::class, 'view_blog'])->name('view.blogs');
-    Route::delete('admin/blogs/delete/{id}', [BlogController::class, 'delete_blog'])->name('delete.blogs');
+    Route::get('admin/blogs', [BlogController::class, 'index'])->name('blog');
+    Route::get('admin/blog/sadd', [BlogController::class, 'create'])->name('add.blog');
+    Route::post('admin/blogs/add', [BlogController::class, 'store'])->name('store.blog');
+    Route::get('admin/blogs/edit/{id}', [BlogController::class, 'edit'])->name('edit.blog');
+    Route::put('admin/blogs/edit/{id}', [BlogController::class, 'update'])->name('update.blog');
+    Route::get('admin/blogs/view/{id}', [BlogController::class, 'view'])->name('view.blog');
+    Route::delete('admin/blogs/delete/{id}', [BlogController::class, 'delete'])->name('delete.blog');
     // Blog End
 
     // Blog Delete All
-    Route::get('admin/blogs/truncate', [BlogController::class, 'blog_truncate'])->name('blogs.truncate');
+    Route::get('admin/blogs/truncate', [BlogController::class, 'truncate'])->name('blogs.truncate');
+
+    // Blog Category
+    Route::get('admin/blog_category', [BlogCategoryController::class, 'index'])->name('blog.category');
+    Route::get('admin/blog_category/add', [BlogCategoryController::class, 'create'])->name('blog.category.add');
+    Route::post('admin/blog_category/add', [BlogCategoryController::class, 'store'])->name('blog.category.store');
+    Route::get('admin/blog_category/edit/{id}', [BlogCategoryController::class, 'edit'])->name('blog.category.edit');
+    Route::put('admin/blog_category/edit/{id}', [BlogCategoryController::class, 'update'])->name('blog.category.update');
+    Route::delete('admin/blog_category/delete/{id}', [BlogCategoryController::class, 'destroy'])->name('blog.category.delete');
+    // Blog Category End
 
     // Transactions Start
     Route::get('admin/transactions', [TransactionsController::class, 'transactions_index'])->name('transactions');
@@ -351,6 +361,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('user/make-review', [UserController::class, 'makeReview'])->name('user.make.review');
 
     Route::get('my/wishlist', [FrontendProductController::class, 'myWishlist'])->name('my.wishlist');
+
+    Route::post('blogs/submit-comment', [HomeController::class, 'submitComment'])->name('blogs.submit.comment');
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -360,7 +372,11 @@ Route::get('contact', [HomeController::class, 'contact'])->name('contact.us');
 Route::post('contact', [HomeController::class, 'submitContact'])->name('submit.contact');
 
 Route::get('about', [HomeController::class, 'about'])->name('about.us');
+Route::get('blogs', [HomeController::class, 'blogs'])->name('blogs');
+Route::get('blog/category/{slug}', [HomeController::class, 'blogCategory'])->name('blogs.category');
+Route::get('blogs/{slug}', [HomeController::class, 'blogDetail'])->name('blogs.detail');
 Route::get('faq', [HomeController::class, 'faq'])->name('faq');
+
 Route::get('payment-methods', [HomeController::class, 'paymentMethod'])->name('payment.methods');
 Route::get('money-back-guarantee', [HomeController::class, 'moneyBackGuarantee'])->name('money.back.guarantee');
 Route::get('returns', [HomeController::class, 'return'])->name('returns');
@@ -427,6 +443,6 @@ Route::get('{category?}/{subCategory?}', [FrontendProductController::class, 'get
 
 
 
-Auth::routes();
+// Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
