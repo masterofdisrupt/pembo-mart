@@ -180,8 +180,8 @@
         }
 
         $('body').delegate('#ConvertSlug', 'click', function() {
-            var title = $('#getTitle').val();
-            var slug = convertToSlug(title);
+            var name = $('#getName').val();
+            var slug = convertToSlug(name);
             $('#getSlug').val(slug);
         });
     </script>
