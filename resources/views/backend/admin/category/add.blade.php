@@ -117,6 +117,22 @@
                                 
                             </div>
 
+                            <div class="mb-4 form-check">
+                                <label for="is_menu" class="form-check-label">
+                                    Menu<span class="text-danger"></span>
+                                </label>
+                            
+                                    <input type="checkbox" 
+                                        name="is_menu"                            
+                                        class="form-check-input @error('is_menu') is-invalid @enderror"
+                                        {{ old('is_menu') ? 'checked' : '' }}
+                                    >
+                                    @error('is_menu')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                
+                            </div>
+
                             <hr>
 
                             <div class="mb-4">
