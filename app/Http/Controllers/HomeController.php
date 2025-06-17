@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use App\Models\Pages;
 use App\Models\SystemSetting;
 use App\Models\ContactUs;
@@ -10,16 +11,20 @@ use App\Models\Slider;
 use App\Models\Partner;
 use App\Models\Backend\V1\CategoryModel;
 use App\Models\Backend\V1\ProductModel;
+use App\Models\Backend\V1\BlogModel; 
+use App\Models\Backend\V1\BlogCategoryModel;
+use App\Models\BlogComment;
 use App\Mail\ContactUsMail;
 use Session;
 use Auth;
 use Mail;
 
-class HomeController
+class HomeController extends Controller
 {
     public function index()
 {
     $getPages = Pages::getSlug('home');
+    $getBlog = BlogModel::getActiveHomeRecords();
     $getSlider = Slider::getActiveRecords();
     $getPartners = Partner::getActiveRecords();
     $getCategory = CategoryModel::getCategoryStatusHome();
@@ -29,9 +34,7 @@ class HomeController
     return view('home', [
         'getSlider' => $getSlider,
         'getPages' => $getPages,
-        'meta_title' => $getPages->meta_title ?? '',
-        'meta_description' => $getPages->meta_description ?? '',
-        'meta_keywords' => $getPages->meta_keywords ?? '',
+        'getBlog' => $getBlog,
         'getPartners' => $getPartners,
         'getCategory' => $getCategory,
         'getProduct' => $getProduct,
@@ -114,9 +117,10 @@ public function submitContact(Request $request)
 
     public function faq()
     {
-        $getPages = Pages::getSlug('faq');
-
-        return view('pages.faq', compact('getPages'));
+        $getPages = Pages::getSlug('faq'); 
+        return view('pages.faq', [
+            'getPages' => $getPages,
+        ]);
     }
 
     public function paymentMethod()
@@ -159,4 +163,80 @@ public function submitContact(Request $request)
 
         return view('pages.privacy_policy', compact('getPages'));
     }
+
+    public function blogs()
+    {
+        $getPages = Pages::getSlug('blog');
+        $getBlog = BlogModel::getBlog();
+        $getBlogCategory = BlogCategoryModel::getActiveRecords();
+        $getPopular = BlogModel::getPopularBlogs();
+
+        return view('blogs.list', [
+            'getPages' => $getPages,
+            'getBlog' => $getBlog,
+            'getBlogCategory' => $getBlogCategory,
+            'getPopular' => $getPopular,
+        ]);
+    }
+
+    public function blogDetail($slug)
+    {
+        $getBlog = BlogModel::getRecordBySlug($slug);
+        if (empty($getBlog)) {
+            abort(404);
+        }
+
+        $getBlog->increment('total_views');
+
+
+        $getPages = Pages::getSlug('blog');
+        $getBlogCategory = BlogCategoryModel::getActiveRecords();
+        $getPopular = BlogModel::getPopularBlogs();
+        $getRelatedPost = BlogModel::getRelatedPosts($getBlog->blog_category_id, $getBlog->id);
+
+        return view('blogs.detail', [
+            'getPages' => $getPages,
+            'getBlog' => $getBlog,
+            'getBlogCategory' => $getBlogCategory,
+            'getPopular' => $getPopular,
+            'getRelatedPost' => $getRelatedPost,
+        ]);
+    }
+
+    public function blogCategory($slug)
+    {
+        $getCategory = BlogCategoryModel::getRecordBySlug($slug);
+        if (empty($getCategory)) {
+            abort(404);
+        }
+
+        $getBlogCategory = BlogCategoryModel::getActiveRecords();
+        $getBlog = BlogModel::getBlog($getCategory->id);
+        $getPopular = BlogModel::getPopularBlogs();
+
+        return view('blogs.category', [
+            'getBlog' => $getBlog,
+            'getBlogCategory' => $getBlogCategory,
+            'getPopular' => $getPopular,
+            'getCategory' => $getCategory,
+        ]);
+    }
+
+    public function submitComment(Request $request)
+    {
+        $request->validate([
+            'blog_id' => 'required|exists:blog,id',
+            'comment' => 'required|string',
+        ]);
+
+        $comment = new BlogComment();
+        $comment->blog_id = $request->blog_id;
+        $comment->user_id = Auth::check() ? Auth::id() : null; 
+        $comment->comment = trim($request->comment);
+        $comment->save();
+
+        Session::flash('success', 'Your comment has been submitted successfully.');
+        return redirect()->back();
+    }
+
 }
