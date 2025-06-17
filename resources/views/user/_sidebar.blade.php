@@ -15,6 +15,14 @@
         <li class="nav-item">
             <a href="{{ route('user.edit.profile') }}" class="nav-link @if(Request::segment(2) == 'edit-profile') active @endif ">Edit Profile</a>
         </li>
+
+        <li class="nav-item">
+            @php
+                $unreadNotificationsCount = App\Models\Backend\V1\NotificationModel::unreadNotificationsCount();
+            @endphp
+            <a href="{{ route('user.notification') }}" class="nav-link @if(Request::segment(2) == 'notifications') active @endif ">Notification ({{ $unreadNotificationsCount }})</a>
+        </li>
+
         <li class="nav-item">
             <a href="{{ route('user.change.password') }}" class="nav-link @if(Request::segment(2) == 'change-password') active @endif ">Change Password</a>
         </li>
@@ -24,7 +32,7 @@
              <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
-            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link @if(Request::segment(2) == 'logout') active @endif ">
                 Log Out
             </a>
 
