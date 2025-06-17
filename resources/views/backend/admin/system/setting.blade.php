@@ -168,7 +168,7 @@
                                 
 
                             <button type="submit" class="btn btn-primary me-2">Submit</button>
-                            <a href="{{ route('brands') }}" class="btn btn-secondary">Back</a>
+                            <a href="{{ route('system.setting') }}" class="btn btn-secondary">Back</a>
                         </form>
 
                     </div>
