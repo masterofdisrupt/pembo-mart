@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Backend\V1\OrdersModel;
+use App\Models\Backend\V1\NotificationModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Mail\OrderInvoiceMail;
@@ -42,6 +43,11 @@ class OrderPaymentService
 
         $this->sendOrderInvoiceEmail($order);
 
+        $user_id = 1; // Assuming user_id is 1 for admin or system user
+        $url = route('view.orders', ['id' => $order->id]);
+        $message = "New order has been successfully placed #" . $order->order_number;
+        
+        NotificationModel::sendNotification($user_id, $url, $message);
 
         Cart::clear();
 
@@ -59,6 +65,12 @@ class OrderPaymentService
             $order->save();
 
             $this->sendOrderInvoiceEmail($order);
+
+            $user_id = 1;
+            $url = route('view.orders', ['id' => $order->id]);
+            $message = "New order has been successfully placed #" . $order->order_number;
+
+            NotificationModel::sendNotification($user_id, $url, $message);
 
             Cart::clear();
 
