@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Backend\V1\ProductModel;
 use App\Models\Backend\V1\ColourModel;
 use App\Models\Backend\V1\OrdersModel;
+use App\Models\Backend\V1\NotificationModel;
 use App\Models\Backend\V1\OrdersDetailsModel; 
 use App\Mail\OrderStatusMail;
 use Mail;
@@ -28,6 +29,12 @@ class OrdersController
         $order = OrdersModel::getSingleRecord($request->id);
         $order->status = $request->status;
         $order->save();
+
+        $user_id = 1;
+        $url = route('user.orders');
+        $message = "Order status has been updated to " . $order->status . " for order #" . $order->order_number;
+        
+        NotificationModel::sendNotification($user_id, $url, $message);
 
         
         Mail::to($order->user->email)->send(new OrderStatusMail($order));
@@ -150,8 +157,17 @@ class OrdersController
     return redirect()->back()->with('success', "Order Successfully Deleted!");
 }
 
-public function view_orders($id)
+public function view_orders($id, Request $request)
 {
+    if ($request->filled('notif_id')) {
+    $notification = NotificationModel::find($request->notif_id);
+    
+    if ($notification) {
+        $notification->update(['is_read' => 1]);
+    }
+}
+
+
     $getRecord = OrdersModel::getSingleRecord($id);
 
     return view('backend.admin.orders.view', compact('getRecord'));
