@@ -115,6 +115,17 @@ class CategoryModel extends Model
         ->get();
     }
 
+    public static function getCategoryHeaderMenu()
+    {
+        return self::select('categories.*')
+        ->join('users', 'categories.created_by', '=', 'users.id')
+        ->where('categories.is_delete', 0)
+        ->where('categories.status', 1)
+        ->where('categories.is_menu', 1)
+        ->orderBy('categories.name', 'asc')
+        ->get();
+    }
+
     public function getSubCategories()
     {
         return $this->hasMany(SubCategoryModel::class, 'category_id', 'id')
