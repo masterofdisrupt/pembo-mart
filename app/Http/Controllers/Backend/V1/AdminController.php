@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Mail\RegisteredEmailMail;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver; 
+use App\Models\Backend\V1\NotificationModel;
 use Auth;
 use Hash;
 use Str;
@@ -14,8 +15,16 @@ use Mail;
 
 class AdminController
 {
-    public function customer_list() 
+    public function customer_list(Request $request) 
     {
+         if ($request->filled('notif_id')) {
+            $notification = NotificationModel::find($request->notif_id);
+            
+            if ($notification) {
+                $notification->update(['is_read' => 1]);
+            }
+        }
+
         $getRecord = User::getCustomer();
         return view('backend.admin.customer.list', compact('getRecord'));
     }
