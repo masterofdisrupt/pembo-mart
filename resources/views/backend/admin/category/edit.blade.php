@@ -85,11 +85,6 @@
                                              class="img-fluid" 
                                              style="max-width: 100px;">
                                     </div>
-                                @else
-                                    <div class="mt-2">
-                                        <span class="text-danger">No image uploaded</span>
-                                    </div>
-                                   
                                @endif
                           
                         </div>
@@ -122,6 +117,21 @@
                                     Home Screen<span class="text-danger"></span>
                                 </label>
                                 @error('is_home')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-4 form-check">
+                                <input type="checkbox" 
+                                    id="is_menu"
+                                    name="is_menu"                            
+                                    class="form-check-input @error('is_menu') is-invalid @enderror"
+                                    {{ old('is_menu', $getRecord->is_menu) ? 'checked' : '' }}
+                                >
+                                <label for="is_menu" class="form-check-label">
+                                    Menu<span class="text-danger"></span>
+                                </label>
+                                @error('is_menu')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
