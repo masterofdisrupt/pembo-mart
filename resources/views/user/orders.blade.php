@@ -29,7 +29,7 @@
 <main class="main">
     <div class="page-header text-center">
         <div class="container">
-            <h1 class="page-title">My Orders</h1>
+            <h1 class="page-title">Orders</h1>
         </div>
     </div>
 
