@@ -12,7 +12,9 @@
                 </div>
             </form>
             <ul class="navbar-nav">
-
+                @php
+                    $getUnreadNotification = App\Models\Backend\V1\NotificationModel::getUnreadNotification();
+                @endphp
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="appsDropdown" role="button"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -150,64 +152,25 @@
                     </a>
                     <div class="dropdown-menu p-0" aria-labelledby="notificationDropdown">
                         <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
-                            <p>6 New Notifications</p>
+                            <p>{{ $getUnreadNotification->count() }} New Notifications</p>
                             <a href="javascript:;" class="text-muted">Clear all</a>
                         </div>
+                        @foreach ($getUnreadNotification as $notification)  
                         <div class="p-1">
-                            <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
+                            <a href="{{ $notification->url }}?notif_id={{ $notification->id }}" class="dropdown-item d-flex align-items-center py-2">
                                 <div
                                     class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
                                     <i class="icon-sm text-white" data-feather="gift"></i>
                                 </div>
                                 <div class="flex-grow-1 me-2">
-                                    <p>New Order Recieved</p>
-                                    <p class="tx-12 text-muted">30 min ago</p>
+                                    <p>{{ $notification->message }}</p>
+                                    <p class="tx-12 text-muted">{{ date('d-m-Y h:i A', strtotime($notification->created_at)) }}</p>
                                 </div>
                             </a>
-                            <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
-                                <div
-                                    class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
-                                    <i class="icon-sm text-white" data-feather="alert-circle"></i>
-                                </div>
-                                <div class="flex-grow-1 me-2">
-                                    <p>Server Limit Reached!</p>
-                                    <p class="tx-12 text-muted">1 hrs ago</p>
-                                </div>
-                            </a>
-                            <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
-                                <div
-                                    class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
-                                    <img class="wd-30 ht-30 rounded-circle" src=""
-                                        alt="userr">
-                                </div>
-                                <div class="flex-grow-1 me-2">
-                                    <p>New customer registered</p>
-                                    <p class="tx-12 text-muted">2 sec ago</p>
-                                </div>
-                            </a>
-                            <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
-                                <div
-                                    class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
-                                    <i class="icon-sm text-white" data-feather="layers"></i>
-                                </div>
-                                <div class="flex-grow-1 me-2">
-                                    <p>Apps are ready for update</p>
-                                    <p class="tx-12 text-muted">5 hrs ago</p>
-                                </div>
-                            </a>
-                            <a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
-                                <div
-                                    class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
-                                    <i class="icon-sm text-white" data-feather="download"></i>
-                                </div>
-                                <div class="flex-grow-1 me-2">
-                                    <p>Download completed</p>
-                                    <p class="tx-12 text-muted">6 hrs ago</p>
-                                </div>
-                            </a>
+                            @endforeach
                         </div>
                         <div class="px-3 py-2 d-flex align-items-center justify-content-center border-top">
-                            <a href="javascript:;">View all</a>
+                            <a href="{{ route('admin.notification') }}">View all</a>
                         </div>
                     </div>
                 </li>
