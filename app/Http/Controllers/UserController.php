@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\ProductWishlists;
 use App\Models\ProductReviews;
 use App\Models\Backend\V1\ProductModel;
+use App\Models\Backend\V1\NotificationModel;
 use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Facades\Hash;
 
@@ -51,8 +52,16 @@ class UserController extends Controller
 }
 
 
-    public function orders()
+    public function orders(Request $request)
     {
+        if ($request->filled('notif_id')) {
+            $notification = NotificationModel::find($request->notif_id);
+
+            if ($notification) {
+                $notification->update(['is_read' => 1]);
+            }
+        }
+
         $getOrders = OrdersModel::getUserOrders(Auth::id());
         $metaData = [
             'meta_title' => 'Orders',
@@ -114,6 +123,24 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Profile updated successfully.');
     }
 
+    public function notification(Request $request)
+    {
+        $metaData = [
+            'meta_title' => 'Notifications',
+            'meta_description' => '',
+            'meta_keywords' => '',
+        ];
+        $getRecord = NotificationModel::getRecordUser(Auth::id());
+        return view('user.notification', 
+            [
+                'meta_title' => $metaData['meta_title'],
+                'meta_description' => $metaData['meta_description'],
+                'meta_keywords' => $metaData['meta_keywords'],
+                'getRecord' => $getRecord,
+            ]
+        );
+    }
+
 
     public function changePassword()
     {
@@ -153,28 +180,28 @@ class UserController extends Controller
 
 
     public function wallet()
-    {
-        $metaData = [
-            'meta_title' => 'Wallet',
-            'meta_description' => '',
-            'meta_keywords' => '',
-        ];
+{
+    $metaData = [
+        'meta_title' => 'Wallet',
+        'meta_description' => '',
+        'meta_keywords' => '',
+    ];
 
-        return view('user.wallet', 
-            [
-                'meta_title' => $metaData['meta_title'],
-                'meta_description' => $metaData['meta_description'],
-                'meta_keywords' => $metaData['meta_keywords'],
-            ]
-        );
-    }
+    return view('user.wallet', 
+        [
+            'meta_title' => $metaData['meta_title'],
+            'meta_description' => $metaData['meta_description'],
+            'meta_keywords' => $metaData['meta_keywords'],
+        ]
+    );
+}
 
     public function viewOrder($id)
-    {
-         $getRecord = OrdersModel::getUserOrderById(Auth::id(), $id);
-         if (!$getRecord) {
-            abort(404); 
-         }
+{
+        $getRecord = OrdersModel::getUserOrderById(Auth::id(), $id);
+        if (!$getRecord) {
+        abort(404); 
+        }
         $metaData = [
             'meta_title' => 'View Order',
             'meta_description' => '',
@@ -188,7 +215,7 @@ class UserController extends Controller
                 'getRecord' => $getRecord,
             ]
         );
-    }
+}
 
     public function addToWishlist(Request $request)
 {
