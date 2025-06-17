@@ -6,11 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Models\Pages;
 use App\Models\SystemSetting;
+use App\Models\HomeSetting;
 use App\Models\ContactUs;
+use App\Models\Backend\V1\NotificationModel;
 use Str;
 
 class PagesController extends Controller
 {
+    public function notification()
+    {
+        $getRecord = NotificationModel::getRecord();
+        return view('backend.admin.notification.list', compact('getRecord'));
+    }
+
     public function index()
     {
         $getPages = Pages::getRecord();
@@ -48,7 +56,7 @@ class PagesController extends Controller
 
         }
 
-        return redirect()->route('admin.pages')->with('success', 'Pages charge updated successfully.');
+        return redirect()->route('admin.pages')->with('success', 'Page updated successfully.');
     }
 
     public function system_setting()
@@ -112,6 +120,76 @@ class PagesController extends Controller
         $save->save();
 
         return redirect()->back()->with('success', "Setting successfully updated");
+    }
+
+    public function home_setting(){
+        $getRecord = HomeSetting::getSingleRecord();
+        return view('backend.admin.system.home_setting', compact('getRecord'));
+    }
+
+    public function update_home_setting(Request $request)
+    {
+        $save = HomeSetting::getSingleRecord();
+        $save->trendy_product_title = trim($request->trendy_product_title);
+        $save->shop_category_title = trim($request->shop_category_title);
+        $save->recent_arrival_title = trim($request->recent_arrival_title);
+        $save->blog_title = trim($request->blog_title);
+        $save->payment_delivery_title = trim($request->payment_delivery_title);
+        $save->payment_delivery_description = trim($request->payment_delivery_description);
+
+        $save->refund_title = trim($request->refund_title);
+        $save->refund_description = trim($request->refund_description);
+        $save->support_title = trim($request->support_title);
+        $save->support_description = trim($request->support_description);
+        $save->signup_title = trim($request->signup_title);
+        $save->signup_description = trim($request->signup_description);
+
+        if(!empty($request->file('payment_delivery_image')))
+        {
+            $file = $request->file('payment_delivery_image');
+            $ext = $file->getClientOriginalExtension();
+            $randomStr = Str::random(10);
+            $filename = strtolower($randomStr).'.'.$ext;
+            $file->move(public_path('backend/upload/setting/'), $filename);
+
+            $save->payment_delivery_image = trim($filename);
+        }
+        if(!empty($request->file('refund_image')))
+        {
+            $file = $request->file('refund_image');
+            $ext = $file->getClientOriginalExtension();
+            $randomStr = Str::random(10);
+            $filename = strtolower($randomStr).'.'.$ext;
+            $file->move(public_path('backend/upload/setting/'), $filename);
+
+            $save->refund_image = trim($filename);
+        }
+
+        if(!empty($request->file('support_image')))
+        {
+            $file = $request->file('support_image');
+            $ext = $file->getClientOriginalExtension();
+            $randomStr = Str::random(10);
+            $filename = strtolower($randomStr).'.'.$ext;
+            $file->move(public_path('backend/upload/setting/'), $filename);
+
+            $save->support_image = trim($filename);
+        }
+
+        if(!empty($request->file('signup_image')))
+        {
+            $file = $request->file('signup_image');
+            $ext = $file->getClientOriginalExtension();
+            $randomStr = Str::random(10);
+            $filename = strtolower($randomStr).'.'.$ext;
+            $file->move(public_path('backend/upload/setting/'), $filename);
+
+            $save->signup_image = trim($filename);
+        }
+        
+        $save->save();
+
+        return redirect()->back()->with('success', "Home setting successfully updated");
     }
 
     public function contactUs()
