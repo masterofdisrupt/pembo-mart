@@ -41,6 +41,7 @@ class CategoryController extends Controller
         $category->meta_description = trim($request->meta_description);
         $category->button_name = trim($request->button_name);
         $category->is_home = $request->has('is_home') ? 1 : 0;
+        $category->is_menu = $request->has('is_menu') ? 1 : 0;
 
 
          if ($request->hasFile('image_name')) {
@@ -89,6 +90,7 @@ class CategoryController extends Controller
 
         $category->button_name = trim($request->button_name);
         $category->is_home = $request->has('is_home') ? 1 : 0;
+        $category->is_menu = $request->has('is_menu') ? 1 : 0;
 
         $category->save();
 
