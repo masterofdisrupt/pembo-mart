@@ -144,16 +144,17 @@
                             <label for="reply-message" class="sr-only">Comment</label>
                             <textarea name="comment" id="reply-message" cols="30" rows="4" class="form-control" required placeholder="Comment *"></textarea>
                             @if (Auth::check())
-                                <button type="submit" class="btn btn-outline-primary-2">
-                                    <span>POST COMMENT</span>
-                                    <i class="icon-long-arrow-right"></i>
-                                </button>
-                            @else
-                                <a href="#signin-modal" data-toggle="modal" class="btn btn-outline-primary-2">
-                                    <span>POST COMMENT</span>
-                                    <i class="icon-long-arrow-right"></i>
-                                </a>
-                            @endif
+    <button type="submit" class="btn btn-outline-primary-2">
+        <span>POST COMMENT</span>
+        <i class="icon-long-arrow-right"></i>
+    </button>
+@else
+    <a href="#signin-modal" data-toggle="modal" class="btn btn-outline-primary-2" id="trigger-login">
+        <span>POST COMMENT</span>
+        <i class="icon-long-arrow-right"></i>
+    </a>
+@endif
+
                             
                         </form>
                     </div>
@@ -172,13 +173,14 @@
 @section('script')
 
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('#blog-comment-form').on('submit', function (e) {
+    $(document).ready(function () {
+        $(document).on('submit', '#blog-comment-form', function (e) {
             e.preventDefault();
 
             const form = $(this);
             const btn = form.find('button[type="submit"]');
             const originalText = btn.html();
+
             btn.prop('disabled', true).html('<span>Posting...</span>');
 
             $.ajax({
@@ -187,10 +189,8 @@
                 data: form.serialize(),
                 success: function (response) {
                     toastr.success('Your comment has been submitted successfully.');
-
                     form[0].reset();
-
-                    $('#comment-list-wrapper').load(window.location.href + ' #comment-list-wrapper > *');
+                    $('#comment-list-wrapper').load(location.href + ' #comment-list-wrapper > *');
                 },
                 error: function (xhr) {
                     const msg = xhr.responseJSON?.message || 'Comment submission failed.';
@@ -202,7 +202,45 @@
             });
         });
 
+        $(document).on('submit', '#signin-form', function (e) {
+            e.preventDefault();
+
+            const btn = $('#signin-submit');
+            const originalText = btn.html();
+            btn.prop('disabled', true).html('<span>Loading...</span>');
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('signin') }}',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.status === 'success') {
+
+                        setTimeout(function () {
+                            $('#signin-modal').modal('hide');
+
+                            const wrapper = $('.comment-form');
+                            wrapper.find('#trigger-login').replaceWith(`
+                                <button type="submit" class="btn btn-outline-primary-2">
+                                    <span>POST COMMENT</span>
+                                    <i class="icon-long-arrow-right"></i>
+                                </button>
+                            `);
+                        }, 1000);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (xhr) {
+                    toastr.error(xhr.responseJSON?.message || 'Login failed.');
+                },
+                complete: function () {
+                    btn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
     });
 </script>
+
 
 @endsection
