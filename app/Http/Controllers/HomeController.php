@@ -14,6 +14,7 @@ use App\Models\Backend\V1\ProductModel;
 use App\Models\Backend\V1\BlogModel; 
 use App\Models\Backend\V1\BlogCategoryModel;
 use App\Models\BlogComment;
+use App\Models\HomeSetting;
 use App\Mail\ContactUsMail;
 use Session;
 use Auth;
@@ -30,6 +31,7 @@ class HomeController extends Controller
     $getCategory = CategoryModel::getCategoryStatusHome();
     $getProduct = ProductModel::getRecentArrivals();
     $getTrendyProduct = ProductModel::getTrendyProducts();
+    $getHomeSetting = HomeSetting::getSingleRecord();
 
     return view('home', [
         'getSlider' => $getSlider,
@@ -39,6 +41,7 @@ class HomeController extends Controller
         'getCategory' => $getCategory,
         'getProduct' => $getProduct,
         'getTrendyProduct' => $getTrendyProduct,
+        'getHomeSetting' => $getHomeSetting,
     ]);
 }
 
@@ -229,14 +232,16 @@ public function submitContact(Request $request)
             'comment' => 'required|string',
         ]);
 
-        $comment = new BlogComment();
-        $comment->blog_id = $request->blog_id;
-        $comment->user_id = Auth::check() ? Auth::id() : null; 
-        $comment->comment = trim($request->comment);
-        $comment->save();
+        BlogComment::create([
+        'blog_id' => $request->blog_id,
+        'user_id' => Auth::id(),
+        'comment' => trim($request->comment),
+    ]);
 
-        Session::flash('success', 'Your comment has been submitted successfully.');
-        return redirect()->back();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Your comment has been submitted successfully.',
+        ]);
     }
 
 }
