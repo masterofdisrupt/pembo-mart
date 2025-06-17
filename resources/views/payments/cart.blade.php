@@ -151,12 +151,11 @@
 
     window.onload = function () {
         @if(session('success'))
-            toastr.success(@json(session('success')));
         @endif
 
         @if($errors->any())
             @foreach ($errors->all() as $error)
-                toastr.error(@json($error));
+               
             @endforeach
         @endif
     };
