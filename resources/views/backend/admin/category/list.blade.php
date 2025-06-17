@@ -89,6 +89,7 @@
                                         <th>Meta Keywords</th>
                                         <th>Created By</th>
                                         <th>Home</th>
+                                        <th>Menu</th>
                                         <th>Status</th>
                                         <th>Created At</th>
                                         <th>Action</th>
@@ -120,6 +121,13 @@
                                             <td>{{ $value->created_by_name }}</td>
                                            <td>
                                                 @if ($value->is_home == 1)
+                                                    <span class="badge bg-success">Yes</span>
+                                                @else
+                                                    <span class="badge bg-secondary">No</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($value->is_menu == 1)
                                                     <span class="badge bg-success">Yes</span>
                                                 @else
                                                     <span class="badge bg-secondary">No</span>
