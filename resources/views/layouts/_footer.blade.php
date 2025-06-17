@@ -65,7 +65,6 @@
 	            				<ul class="widget-list">
 	            					<li><a href=""{{ route('cart') }}>View Cart</a></li>
 	            					<li><a href="{{ route('checkout') }}">Checkout</a></li>
-	            					<li><a href="#">Track My Order</a></li>
 	            					<li><a href="#">Help</a></li>
 	            				</ul>
 	            			</div>
