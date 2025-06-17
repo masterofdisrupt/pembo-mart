@@ -301,8 +301,12 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/pages', [PagesController::class, 'index'])->name('admin.pages');
     Route::get('admin/pages/edit/{id}', [PagesController::class, 'edit'])->name('pages.edit');
     Route::put('admin/pages/edit/{id}', [PagesController::class, 'update'])->name('pages.update');
+
     Route::get('admin/system-setting', [PagesController::class, 'system_setting'])->name('system.setting');
     Route::post('admin/system-setting', [PagesController::class, 'update_system_setting'])->name('upadate.system.setting');
+
+    Route::get('admin/home-setting', [PagesController::class, 'home_setting'])->name('home.setting');
+    Route::post('admin/home-setting', [PagesController::class, 'update_home_setting'])->name('update.home.setting');
     // Pages end 
 
     // Partner Logo
@@ -315,6 +319,8 @@ Route::group(['middleware' => 'admin'], function () {
 
     Route::get('admin/contact-us', [PagesController::class, 'contactUs'])->name('admin.contact.us');
     Route::delete('admin/contact-us/delete/{id}', [PagesController::class, 'contactUsDelete'])->name('contact.us.delete');
+
+    Route::get('admin/notification/list', [PagesController::class, 'notification'])->name('admin.notification');
 
 
     // Personal profile edit
@@ -353,6 +359,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('user/edit-profile', [UserController::class, 'profile'])->name('user.edit.profile');
     Route::post('user/edit-profile', [UserController::class, 'profileUpdate'])->name('user.update.profile');
+
+    Route::get('user/notifications', [UserController::class, 'notification'])->name('user.notification');
 
     Route::get('user/change-password', [UserController::class, 'changePassword'])->name('user.change.password');
     Route::post('user/change-password', [UserController::class, 'updatePassword'])->name('user.update.password');
@@ -423,9 +431,6 @@ Route::post('apply-discount', [PaymentController::class, 'applyDiscount'])
 
 
 
-
-
-
 // Dynamic catch-all routes
 Route::get('/product/{slug}', [FrontendProductController::class, 'productDetails'])
     ->name('product.details');
@@ -438,11 +443,3 @@ Route::get('{category?}/{subCategory?}', [FrontendProductController::class, 'get
     ->name('get.category');
 
 
-
-
-
-
-
-// Auth::routes();
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
