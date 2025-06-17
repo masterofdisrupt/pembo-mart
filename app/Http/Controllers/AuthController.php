@@ -7,6 +7,7 @@ use App\Mail\ForgotPasswordMail;
 use App\Mail\ForgotAuthPasswordMail;
 use App\Http\Requests\ResetPassword;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Backend\V1\NotificationModel;
 use App\Mail\RegisterMail;
 use App\Models\User;
 use Session;
@@ -248,6 +249,12 @@ class AuthController
 
         if ($user) {
             Mail::to($user->email)->send(new RegisterMail($user));
+
+            $user_id =  1; // Assuming 1 is the admin user ID or the user who should receive the notification
+            $url = route('admin.customers');
+            $message = "New user has been successfully registered #" . $request->name;
+
+            NotificationModel::sendNotification($user_id, $url, $message);
 
             return response()->json([
                 'status' => 'success',
