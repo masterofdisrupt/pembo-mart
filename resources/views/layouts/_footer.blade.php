@@ -4,7 +4,7 @@
 	            	<div class="row">
 	            		<div class="col-sm-6 col-lg-3">
 	            			<div class="widget widget-about">
-	            				<img src="{{ $getSystemSettingApp->getLogo() }}" class="footer-logo" alt="Footer Logo" width="105" height="25">
+	            				<img src="{{ $getSystemSettingApp->getLogoFooter() }}" class="footer-logo" alt="Footer Logo" width="120" height="40">
 	            				<p>{{ $getSystemSettingApp->footer_desc }} </p>
 
 	            				<div class="social-icons">
@@ -51,7 +51,7 @@
 	            					<li><a href="{{ route('payment.methods') }}">Payment Methods</a></li>
 	            					<li><a href="{{ route('money.back.guarantee') }}">Money-back guarantee!</a></li>
 	            					<li><a href="{{ route('returns') }}">Returns</a></li>
-	            					<li><a href="{{ route('shipping') }}">Shipping</a></li>
+	            					<li><a href="{{ route('shipping') }}">Delivery</a></li>
 	            					<li><a href="{{ route('terms.and.conditions') }}">Terms and conditions</a></li>
 	            					<li><a href="{{ route('privacy.policy') }}">Privacy Policy</a></li>
 	            				</ul>
