@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('meta_title', $meta_title)
+@section('meta_description', $meta_description)
+@section('meta_keywords', $meta_keywords)
+
 @section('content')
 
 <main class="main">
@@ -142,7 +146,7 @@
 
 
 		                						<tr class="summary-shipping">
-													<td>Shipping:</td>
+													<td>Delivery:</td>
 													<td>&nbsp;</td>
 												</tr>
 
@@ -165,6 +169,11 @@
 	                						</tr>
 											@endforeach
 
+											<tr>
+												<td>Tax (VAT 7.5%)</td>
+												<td>₦<span id="tax-amount">0.00</span></td>
+											</tr>
+
 		                						<tr class="summary-total">
 		                							<td>
 														
@@ -175,19 +184,24 @@
 		                					</tbody>
 		                				</table>
 
+										<input type="hidden" id="base-subtotal" value="{{ Cart::getSubTotal() }}">
 										<input type="hidden" name="shipping_charge" id="get-payable-total" value="{{ Cart::getSubTotal() }}">
 
 		                				<div class="accordion-summary" id="accordion-payment">
 
+											@if(!empty($paymentSetting->is_wallet))
 											<div class="custom-control custom-radio">
 												<input type="radio" id="payment-1" value="wallet" name="payment_method" class="custom-control-input" checked>
 												<label class="custom-control-label" for="payment-1">Wallet</label>
 											</div>
+											@endif
 
+											@if(!empty($paymentSetting->is_cash))
 											<div class="custom-control custom-radio" style="margin-top: 0.5px;">
 												<input type="radio" id="payment-2" value="cash" name="payment_method" class="custom-control-input" checked>
 												<label class="custom-control-label" for="payment-2">Cash on delivery</label>
 											</div>
+											@endif
 										        										                
 										</div>
 
@@ -213,6 +227,24 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+
+		function updateTotals() {
+			const TAX_RATE = 0.075;
+
+			const subtotal = parseFloat($('#base-subtotal').val()) || 0;
+			const discount = parseFloat($('#discount-amount').text().replace(/,/g, '')) || 0;
+			const shipping = parseFloat($('input[name="shipping"]:checked').data('price')) || 0;
+
+			const taxableAmount = subtotal - discount;
+			const tax = taxableAmount * TAX_RATE;
+			const total = taxableAmount + shipping + tax;
+
+			$('#shipping-amount').text(shipping.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+			$('#tax-amount').text(tax.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+			$('#payable-total').text(total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+			$('#get-payable-total').val(total.toFixed(2));
+		}
+
 		$('.checkout-create-account').on('change', function() {
 			if ($(this).is(':checked')) {
 				$('#checkout-password').show();
@@ -283,10 +315,7 @@
 	});
 
 	$('.shipping-charge').on('change', function() {
-    const shippingCharge = parseFloat($(this).data('price')) || 0;
-    const discount = parseFloat($('#discount-amount').text().replace(/,/g, '')) || 0;
-    const subtotal = {{ Cart::getSubTotal() }};
-    const total = subtotal - discount + shippingCharge;
+	updateTotals();
 
     $('#payable-total').text(total.toFixed(2));
     $('#get-payable-total').val(total.toFixed(2));
@@ -327,8 +356,7 @@ $('input[name="payment_method"]').on('change', function () {
                         toastr.success('Discount code applied successfully!');
 
                         $('#discount-amount').text(response.discount);
-                        $('#payable-total').text(response.payable_total.toFixed(2));
-						$('#get-payable-total').val(response.payable_total);
+                        updateTotals();
                         $('#discount-code-status').html(response.status_badge);
                     } else {
                         toastr.error('Invalid discount code.');
