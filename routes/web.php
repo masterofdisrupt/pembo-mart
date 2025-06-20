@@ -305,6 +305,9 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/system-setting', [PagesController::class, 'system_setting'])->name('system.setting');
     Route::post('admin/system-setting', [PagesController::class, 'update_system_setting'])->name('upadate.system.setting');
 
+    Route::get('admin/payment-setting', [PagesController::class, 'payment_system'])->name('payment.setting');
+    Route::post('admin/payment-setting', [PagesController::class, 'update_payment_setting'])->name('update.payment.setting');
+
     Route::get('admin/home-setting', [PagesController::class, 'home_setting'])->name('home.setting');
     Route::post('admin/home-setting', [PagesController::class, 'update_home_setting'])->name('update.home.setting');
     // Pages end 
