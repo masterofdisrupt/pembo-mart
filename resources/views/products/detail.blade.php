@@ -1,4 +1,7 @@
 @extends('layouts.app')
+
+@section('meta_title', $meta_title)
+@section('meta_description', $meta_description)
 @section('style')
     <link rel="stylesheet" href="{{ url('assets/css/plugins/nouislider/nouislider.css') }}">
     <style type="text/css">
@@ -180,7 +183,7 @@
                                 <a class="nav-link" id="product-info-link" data-toggle="tab" href="#product-info-tab" role="tab" aria-controls="product-info-tab" aria-selected="false">Additional information</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Shipping & Returns</a>
+                                <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Delivery & Returns</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab" role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews ({{ $product->getTotalReview() }})</a>
@@ -193,7 +196,7 @@
                             $tabs = [
                                 ['id' => 'product-desc-tab', 'label' => 'Description', 'content' => $product->description],
                                 ['id' => 'product-info-tab', 'label' => 'Additional Info', 'content' => $product->additional_info],
-                                ['id' => 'product-shipping-tab', 'label' => 'Shipping & Returns', 'content' => $product->ship_and_returns],
+                                ['id' => 'product-shipping-tab', 'label' => 'Delivery & Returns', 'content' => $product->ship_and_returns],
                             ];
                         @endphp
 
