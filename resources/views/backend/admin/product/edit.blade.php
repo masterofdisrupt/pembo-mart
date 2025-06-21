@@ -43,8 +43,8 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label>Brand <span class="text-danger">*</span></label>
-                                <select class="form-control" name="brand_id" required>
+                                <label>Brand <span class="text-danger"></span></label>
+                                <select class="form-control" name="brand_id">
                                     <option value="">Select Brand</option>
                                     @foreach ($getBrand as $brand)
                                         <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id) == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
@@ -57,14 +57,14 @@
                         {{-- ROW 2: SKU, Subcategory, Colours --}}
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label>SKU <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="sku" value="{{ old('sku', $product->sku) }}" required>
+                                <label>SKU <span class="text-danger"></span></label>
+                                <input type="text" class="form-control" name="sku" value="{{ old('sku', $product->sku) }}">
                                 @error('sku')<span class="text-danger">{{ $message }}</span>@enderror
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label>Sub Category <span class="text-danger">*</span></label>
-                                <select id="sub_category_id" class="form-control" name="sub_category_id" required>
+                                <label>Sub Category <span class="text-danger"></span></label>
+                                <select id="sub_category_id" class="form-control" name="sub_category_id">
                                     <option value="">Select Sub Category</option>
                                     @foreach ($subcategories as $subcategory)
                                         <option value="{{ $subcategory->id }}" {{ old('sub_category_id', $product->sub_category_id) == $subcategory->id ? 'selected' : '' }}>{{ $subcategory->name }}</option>
@@ -75,7 +75,7 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label>Colour <span class="text-danger">*</span></label>
+                                <label>Colour <span class="text-danger"></span></label>
                                 <div class="row">
                                   @if (!empty($getColour) && is_iterable($getColour))
                                     @foreach ($getColour as $colour)
@@ -156,15 +156,18 @@
                                             </tr>
                                         </thead>
                                         <tbody id="size-rows">
-                                            @php $i = 0; @endphp
-                                            @if (!empty($product->getSizes))
-                                                @foreach ($product->getSizes as $size)                    
+                                            @php $i = $product->productSizes->count() ?? 0; @endphp
+                                            @if (!empty($product->productSizes))
+                                                @foreach ($product->productSizes as $size)                    
                                                     <tr id="delete-row{{ $i }}" class="align-middle">
+                                                        <input type="hidden" name="size[{{ $i }}][id]" value="{{ $size->id }}">
                                                         <td>
                                                             <input type="text" 
                                                                 class="form-control" 
                                                                 value="{{ $size->name }}" 
                                                                 name="size[{{ $i }}][name]" 
+                                                                value="{{ $size->name }}" 
+                                                                data-id="{{ $size->id }}"
                                                                 placeholder="Enter Size Name"
                                                                 required
                                                                 pattern="[A-Za-z0-9\s\-]+"
@@ -192,14 +195,12 @@
                                                     @php $i++; @endphp
                                                 @endforeach
                                             @endif
-                                            {{-- Add a hidden row for new sizes --}}
-
-                                            <!-- Empty row template for new sizes -->
+                                            
                                             <tr class="align-middle" id="new-size-row">
                                                 <td>
                                                     <input type="text" 
                                                         class="form-control" 
-                                                        name="size[{{ $i }}][name]" 
+                                                        name="size[new][name]" 
                                                         placeholder="Enter Size Name"
                                                         pattern="[A-Za-z0-9\s\-]+"
                                                         title="Only letters, numbers, spaces and hyphens allowed">
@@ -207,7 +208,7 @@
                                                 <td>
                                                     <input type="number" 
                                                         class="form-control" 
-                                                        name="size[{{ $i }}][price]" 
+                                                        name="size[new][price]" 
                                                         placeholder="0.00" 
                                                         step="0.01"
                                                         min="0">
@@ -288,7 +289,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label>Additional Information <span class="text-danger">*</span></label>
+                            <label>Additional Information <span class="text-danger"></span></label>
                             <textarea class="form-control editor" name="additional_info" rows="4">{{ old('additional_info', $product->additional_info) }}</textarea>
                             @error('additional_info')<span class="text-danger">{{ $message }}</span>@enderror
                         </div>
@@ -379,38 +380,45 @@
             }
         });
 
-let i = {{ $i + 1 }}; 
+let i = {{ $i + 1 }};
 const maxRows = 10;
 
-$('body').on('click', '.add-row', function() {
+$('body').on('click', '.add-row', function () {
     const lastRow = $('#new-size-row');
     const nameInput = lastRow.find('input[name*="[name]"]');
     const priceInput = lastRow.find('input[name*="[price]"]');
-    
+
     if (!nameInput.val() || !priceInput.val()) {
         toastr.error('Please fill in both size name and price');
         return;
     }
-    
+
     if (!nameInput[0].checkValidity()) {
         toastr.error('Invalid size name format');
         return;
     }
-    
-    const currentRows = $('#size-rows tr').length - 1;
+
+    const currentRows = $('#size-rows tr').length - 1; // exclude the new-size-row
     if (currentRows >= maxRows) {
         toastr.error(`Maximum ${maxRows} sizes allowed`);
         return;
     }
-    
+
+    const existingId = nameInput.data('id') || ''; 
+    const hiddenIdInput = existingId 
+        ? `<input type="hidden" name="size[${i}][id]" value="${existingId}">` 
+        : '';
+
     const newRow = `<tr id="delete-row${i}" class="align-middle">
         <td>
+            ${hiddenIdInput}
             <input type="text" 
                    class="form-control" 
                    name="size[${i}][name]" 
                    value="${nameInput.val()}"
                    required
-                   pattern="[A-Za-z0-9\\s\\-]+">
+                   pattern="[A-Za-z0-9\\s\\-]+"
+                   title="Only letters, numbers, spaces and hyphens allowed">
         </td>
         <td>
             <input type="number" 
@@ -430,17 +438,29 @@ $('body').on('click', '.add-row', function() {
             </button>
         </td>
     </tr>`;
-    
+
     $(newRow).insertBefore('#new-size-row');
-    
+
     nameInput.val('');
     priceInput.val('');
-    
+
     i++;
 });
 
-$('body').on('click', '.delete-row', function() {
+// Remove dynamic row
+$('body').on('click', '.delete-row', function () {
     $(this).closest('tr').remove();
+});
+
+// Prevent empty new-size-row from being submitted
+$('form').on('submit', function () {
+    const newRow = $('#new-size-row');
+    const name = newRow.find('input[name*="[name]"]').val();
+    const price = newRow.find('input[name*="[price]"]').val();
+
+    if (!name && !price) {
+        newRow.remove();
+    }
 });
 
 $('#category_id').on('change', function () {
