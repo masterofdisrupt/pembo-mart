@@ -13,6 +13,7 @@ use App\Models\Backend\V1\OrdersModel;
 use App\Models\Backend\V1\OrdersDetailsModel;
 use App\Models\Backend\V1\ColourModel;
 use App\Models\User;
+use App\Models\PaymentSetting;
 use Illuminate\Support\Facades\Auth;
 use App\Services\OrderPlacementService;
 use App\Services\OrderPaymentService;
@@ -55,9 +56,6 @@ class PaymentController extends Controller
     }
 }
 
-        
-
-
    public function checkout(Request $request)
 {
     $cartItems = Cart::getContent()->map(function ($cartItem) {
@@ -80,16 +78,21 @@ class PaymentController extends Controller
 
 
     $metaData = [
-        'meta_title' => 'Checkout',
-        'meta_description' => '',
-        'meta_keywords' => '',
+        'meta_title' => 'Checkout | Healthy, Affordable Student Meals – Soeatable',
+        'meta_description' => 'Complete your order for healthy and budget-friendly meals delivered straight to your campus. Fast, easy, and nutritious – only on Soeatable.',
+        'meta_keywords' => 'student meal checkout, healthy food delivery, affordable student meals, campus food, soeatable order'
+
     ];
     $shippingCharges = ShippingChargesModel::getActiveRecords();
+    $paymentSetting = PaymentSetting::getSingleRecord();
 
     return view('payments.checkout', [
         'meta_title' => $metaData['meta_title'],
+        'meta_description' => $metaData['meta_description'],
+        'meta_keywords' => $metaData['meta_keywords'],
         'shippingCharges' => $shippingCharges,
         'cartItems' => $cartItems,
+        'paymentSetting' => $paymentSetting
     ]);
 }
 
@@ -97,13 +100,16 @@ class PaymentController extends Controller
     public function cart(Request $request)
     {
         $metaData = [
-            'meta_title' => 'Cart',
-            'meta_description' => '',
-            'meta_keywords' => '',
+            'meta_title' => 'Your Cart | Soeatable – Affordable Healthy Meals for Students',
+            'meta_description' => 'Review your selected healthy meals before checkout. Soeatable delivers fresh, affordable dishes made for students, right to your campus.',
+            'meta_keywords' => 'student meal cart, healthy food for students, affordable meals, soeatable cart, campus food delivery'
+
         ];
 
         return view('payments.cart', [
-            'meta_title' => $metaData['meta_title']
+            'meta_title' => $metaData['meta_title'],
+            'meta_description' => $metaData['meta_description'],
+            'meta_keywords' => $metaData['meta_keywords']
         ]);
     }
 
