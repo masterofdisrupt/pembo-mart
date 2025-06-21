@@ -33,6 +33,7 @@ class OrdersModel extends Model
     'discount_code',
     'discount_amount',
     'shipping_amount',
+    'tax_amount',
     'total_amount',
     ];
 
