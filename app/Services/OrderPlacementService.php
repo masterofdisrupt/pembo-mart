@@ -85,6 +85,11 @@ class OrderPlacementService
     $shipping_amount = $shipping->price ?? 0;
     $total += $shipping_amount;
 
+    $taxRate = 0.075; 
+    $taxAmount = ($total > 0) ? $total * $taxRate : 0;
+    $total += $taxAmount;
+
+
     $order = new OrdersModel();
     $order->user_id = $user_id;
     $order->fill([
@@ -106,6 +111,7 @@ class OrderPlacementService
         'discount_code'   => $discount_code,
         'discount_amount' => $discount_amount,
         'shipping_amount' => $shipping_amount,
+        'tax_amount'      => $taxAmount,
         'total_amount'    => $total,
     ]);
     $order->save();
