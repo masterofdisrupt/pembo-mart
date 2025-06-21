@@ -17,9 +17,10 @@ class ProductController extends Controller
     public function myWishlist()
     {
          $metaData = [
-            'meta_title' => 'My Wishlist',
-            'meta_description' => '',
-            'meta_keywords' => '',
+            'meta_title' => 'Your Wishlist | Save Favorite Meals – Soeatable',
+            'meta_description' => 'View and manage your favorite healthy meals. Save dishes you love and order anytime with Soeatable’s student-focused food delivery.',
+            'meta_keywords' => 'wishlist, favorite meals, student food delivery, healthy meals, soeatable wishlist, campus meals'
+
         ];
 
         $getProduct = ProductModel::getWishlistProducts(Auth::id());
@@ -156,16 +157,17 @@ public function productDetails($slug)
     $getProductReviews = ProductReviews::getProductReviews($product->id);
 
     $metaData = [
-        'meta_title' => $product->title,
+        'meta_title' => $product->title  . ' | Healthy & Affordable Meal – Soeatable',
         'meta_description' => $product->short_description,
-        
+        'meta_keywords' => $product->title . ', student meal, healthy food delivery, affordable meals, soeatable, campus dining'
     ];
 
 
     return view('products.detail', [
     'product' => $product,
-    'meta_title' => $product->title,
-    'meta_description' => $product->short_description,
+    'meta_title' => $metaData['meta_title'],
+    'meta_description' => $metaData['meta_description'],
+    'meta_keywords' => $metaData['meta_keywords'],
     'getRelatedProduct' => $getRelatedProduct,
     'getProductReviews' => $getProductReviews,
 ]);
