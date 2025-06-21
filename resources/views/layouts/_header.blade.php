@@ -72,7 +72,7 @@
                         </button>
 
                         <a href="{{ route('home') }}" class="logo">
-                            <img src="{{ $getSystemSettingApp->getLogo() }}" alt="Pembo-Mart Logo" width="105" height="25">
+                            <img src="{{ $getSystemSettingApp->getLogoHeader() }}" width="120" height="40">
                         </a>
 
                         <nav class="main-nav">
@@ -81,7 +81,7 @@
                                     <a href="{{ route('home') }}">Home</a> 
                                 </li>
                                 <li>
-                                    <a href="javascript:;" class="sf-with-ul">Shop</a>
+                                    <a href="javascript:;" class="sf-with-ul">Meals</a>
 
                                     <div class="megamenu megamenu-md">
                                         <div class="row no-gutters">
