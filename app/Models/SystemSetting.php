@@ -16,11 +16,20 @@ class SystemSetting extends Model
         return self::find(1);
     }
 
-    public function getLogo()
+    public function getLogoHeader()
 {
-    if(!empty($this->logo) && file_exists(public_path('backend/upload/setting/' . $this->logo))) {
+    if(!empty($this->logo_header) && file_exists(public_path('backend/upload/setting/' . $this->logo_header))) {
         
-        return url('public/backend/upload/setting/' . $this->logo);
+        return url('public/backend/upload/setting/' . $this->logo_header);
+    }
+    return null;
+}
+
+    public function getLogoFooter()
+{
+    if(!empty($this->logo_footer) && file_exists(public_path('backend/upload/setting/' . $this->logo_footer))) {
+        
+        return url('public/backend/upload/setting/' . $this->logo_footer);
     }
     return null;
 }
