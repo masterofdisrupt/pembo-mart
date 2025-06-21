@@ -9,6 +9,11 @@
 
     In case you have any issues recovering your password, please contact us.
 
+    @php
+        $getSetting = \App\Models\SystemSetting::getSingleRecord();
+        $websiteName = $getSetting->website;
+    @endphp
+
     Thanks,
-    {{ config('app.name') }}
+   {{ $websiteName }}
 @endcomponent
