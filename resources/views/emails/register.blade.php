@@ -1,7 +1,12 @@
 @component('mail::message')
 Hi, {{ $user->name }}.
 
-Welcome to Pembo-Mart! We are excited to have you on board.
+@php
+    $getSetting = \App\Models\SystemSetting::getSingleRecord();
+    $websiteName = $getSetting->website ?? 'Soeatable';
+@endphp
+
+Welcome to {{ $getSetting->$websiteName }}! We are excited to have you on board.
 
 To complete your registration, please verify your email address by clicking the link below:
 
