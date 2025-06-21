@@ -63,10 +63,14 @@
                 {{ $user['message'] ?? 'No message provided' }}
             </div>
         </div>
+        @php
+            $getSetting = \App\Models\SystemSetting::getSingleRecord();
+            $websiteName = $getSetting->website;
+        @endphp
 
         <div class="footer">
-            This email was sent via the Pembo Mart contact form.  
-            &copy; {{ date('Y') }} Pembo Mart. All rights reserved.
+            This email was sent via the {{ $websiteName }} contact form.  
+            &copy; {{ date('Y') }} {{ $websiteName }}. All rights reserved.
         </div>
     </div>
 </body>
