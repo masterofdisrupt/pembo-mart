@@ -38,6 +38,21 @@ class ProductModel extends Model
     'is_trendy'
 ];
 
+    public static function generateUniqueSku($title)
+    {
+        $base = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $title), 0, 6));
+        $attempts = 0;
+
+        do {
+            $sku = $base . '-' . rand(100, 999);
+            $exists = self::where('sku', $sku)->exists();
+            $attempts++;
+        } while ($exists && $attempts < 10);
+
+        return $sku;
+    }
+
+
     static public function getRecords()
     {
         return self::select('product.*', 'users.name as created_by_name')
