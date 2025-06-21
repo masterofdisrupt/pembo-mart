@@ -41,14 +41,14 @@
 
                         <div class="mb-4">
                             <label for="image_name" class="col-sm-3 col-form-label">
-                                Slider Image <span class="text-danger">*</span>
+                                Slider Image <span class="text-danger"></span>
                             </label>
                             
                                 <div class="input-group">
                                     <input type="file" 
                                            name="image_name" 
                                            class="form-control"
-                                           required
+                                           
                                     >
                                 </div>
                                @if (!empty($getRecord->getSliderImage()))
