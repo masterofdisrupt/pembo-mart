@@ -93,7 +93,12 @@ class AuthController
             $user->save();
 
         
-                Mail::to($user->email)->send(new ForgotPasswordMail($user));
+                try {
+                    Mail::to($user->email)->send(new ForgotPasswordMail($user));
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', "Failed to send reset link. Please try again later.");
+                }
+                    
                 return redirect()->back()->with('success', "If the email exists, you will receive a reset link shortly.");
             }
 
@@ -196,7 +201,16 @@ class AuthController
                 ]);
             } else {
                 if (empty($user->email_verification_sent_at) || $user->email_verification_sent_at->diffInMinutes(now()) >= 5) {
-                    Mail::to($user->email)->send(new RegisterMail($user));
+                    
+                    try {
+                        Mail::to($user->email)->send(new RegisterMail($user));
+                    } catch (\Exception $e) {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Failed to send verification email. Please try again later.',
+                        ])->setStatusCode(500);
+                    }
+
                     $user->email_verification_sent_at = now();
                     $user->save();
                 }
@@ -248,7 +262,14 @@ class AuthController
         ]);
 
         if ($user) {
-            Mail::to($user->email)->send(new RegisterMail($user));
+           try {
+                Mail::to($user->email)->send(new RegisterMail($user));
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to send verification email. Please try again later.',
+                ], 500);
+           } 
 
             $user_id =  1; // Assuming 1 is the admin user ID or the user who should receive the notification
             $url = route('admin.customers');
@@ -322,7 +343,12 @@ public function activateEmail($id)
             $user->password_reset_expires = now()->addMinutes(60);
             $user->save();
 
-                Mail::to($user->email)->send(new ForgotAuthPasswordMail($user));
+                try {
+                    Mail::to($user->email)->send(new ForgotAuthPasswordMail($user));
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', "Failed to send reset link. Please try again later.");
+                } 
+
                 return redirect()->back()->with('success', "If the email exists, you will receive a reset link shortly.");
             }
 
