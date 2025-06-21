@@ -1,9 +1,15 @@
 @component('mail::message')
+
+@php
+    $getSetting = \App\Models\SystemSetting::getSingleRecord();
+    $websiteName = $getSetting->website;
+@endphp
+
 # Order Invoice
 
 Hi {{ $order->first_name ?? 'Customer' }},
 
-Thank you for your order with **Pembo-Mart**. Below are your order details:
+Thank you for your order with **{{ $websiteName }}**. Below are your order details:
 
 ---
 
@@ -27,21 +33,32 @@ Thank you for your order with **Pembo-Mart**. Below are your order details:
         Size Amount: ₦{{ number_format($item->size_amount, 2) }}
     @endif
     <br>
-  @php 
-    $lineTotal = $item->total_price * $item->quantity; 
-  @endphp
-  Price: ₦{{ number_format($lineTotal, 2) }}
+
+    Total Amount: ₦{{ number_format($item->total_price, 2) }}
 @endforeach
 
 ---
 
 **Discount Code:** {{ $order->discount_code ?? 'N/A' }}
 
-@if ($order->discount_amount > 0)
-**Discount Amount:** -₦{{ number_format($order->discount_amount, 2) }}  
+@php
+    $taxRate = 0.075;
+    $total = $order->total_amount;
+    $delivery = $order->shipping_fee;
+    $discount = $order->discount_amount ?? 0;
+    $preTaxTotal = ($total - $delivery + $discount) / (1 + $taxRate);
+    $tax = $preTaxTotal * $taxRate;
+    $subtotal = $preTaxTotal;
+@endphp
+
+**Subtotal (before tax):** ₦{{ number_format($subtotal, 2) }}  
+**VAT (7.5%):** ₦{{ number_format($tax, 2) }}  
+@if ($discount > 0)
+**Discount:** -₦{{ number_format($discount, 2) }}  
 @endif
-**Delivery Fee:** ₦{{ number_format($order->shipping_fee, 2) }}  
-**Total:** **₦{{ number_format($order->total_amount, 2) }}**
+**Delivery Fee:** ₦{{ number_format($delivery, 2) }}  
+**Total:** **₦{{ number_format($total, 2) }}**
+
 
 ---
 
@@ -53,7 +70,7 @@ Thank you for your order with **Pembo-Mart**. Below are your order details:
 If you have any questions or concerns, please contact our support.
 
 Thanks,  
-**Pembo-Mart Team**
+**{{ $websiteName }} Team**
 
 @component('mail::button', ['url' => route('user.orders')])
 View My Orders
