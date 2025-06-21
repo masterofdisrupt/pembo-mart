@@ -39,6 +39,7 @@ class CategoryController extends Controller
         $category->status = trim($request->status);
         $category->meta_title = trim($request->meta_title);
         $category->meta_description = trim($request->meta_description);
+        $category->meta_keywords = trim($request->meta_keywords);
         $category->button_name = trim($request->button_name);
         $category->is_home = $request->has('is_home') ? 1 : 0;
         $category->is_menu = $request->has('is_menu') ? 1 : 0;
