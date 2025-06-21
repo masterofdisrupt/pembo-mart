@@ -13,6 +13,11 @@ If you didn’t request a password reset, you can safely ignore this email — y
 
 Need help or have questions? Feel free to reach out to our support team and we’ll be happy to assist you.
 
+@php
+    $getSetting = \App\Models\SystemSetting::getSingleRecord();
+    $websiteName = $getSetting->website;
+@endphp
+
 Thanks,  
-{{ config('app.name') }}
+{{ $websiteName }}
 @endcomponent
