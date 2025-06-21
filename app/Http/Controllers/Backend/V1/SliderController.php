@@ -56,13 +56,6 @@ class SliderController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'image_name' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'button_name' => 'nullable|string|max:255',
-            'button_link' => 'nullable|url|max:255',
-        ]);
-
         $slider = Slider::getSingleRecord($id);
         $slider->title = trim($request->title);
         $slider->button_name = trim($request->button_name ?? '');
