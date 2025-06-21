@@ -41,9 +41,13 @@ class OrderPaymentService
         $order->is_payment = 1;
         $order->save();
 
-        $this->sendOrderInvoiceEmail($order);
+        try {
+            $this->sendOrderInvoiceEmail($order);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send order invoice email: ' . $e->getMessage());
+        }
 
-        $user_id = 1; // Assuming user_id is 1 for admin or system user
+        $user_id = 1; 
         $url = route('view.orders', ['id' => $order->id]);
         $message = "New order has been successfully placed #" . $order->order_number;
         
@@ -64,7 +68,11 @@ class OrderPaymentService
             $order->is_payment = 1;
             $order->save();
 
-            $this->sendOrderInvoiceEmail($order);
+            try {
+                $this->sendOrderInvoiceEmail($order);
+            } catch (\Exception $e) {
+                \Log::error('Failed to send order invoice email: ' . $e->getMessage());
+            }
 
             $user_id = 1;
             $url = route('view.orders', ['id' => $order->id]);
@@ -89,7 +97,11 @@ class OrderPaymentService
         return;
     }
 
-    Mail::to($order->user->email)->send(new OrderInvoiceMail($order));
+    try {
+        Mail::to($order->user->email)->send(new OrderInvoiceMail($order));
+    } catch (\Exception $e) {
+        \Log::error('Failed to send order invoice email: ' . $e->getMessage());
+    } 
 }
 
 
