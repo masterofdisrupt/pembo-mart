@@ -36,8 +36,12 @@ class OrdersController
         
         NotificationModel::sendNotification($user_id, $url, $message);
 
-        
-        Mail::to($order->user->email)->send(new OrderStatusMail($order));
+        if ($order->user && $order->user->email) {
+                Mail::to($order->user->email)->send(new OrderStatusMail($order));
+            } else {
+                \Log::warning('User not found or missing email for order ID: ' . $order->id);
+            }
+
     
        return response()->json([
             'success' => true,
