@@ -4,6 +4,27 @@
 @section('meta_description', $getPages->meta_description ?? 'Welcome to our online store, explore our latest products and offers')
 @section('meta_keywords', $getPages->meta_keywords ?? 'home, products, offers, online store')
 
+@section('style')
+<style type="text/css">
+.signup-cta {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    color: white; 
+}
+
+.signup-cta::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: -1;
+}
+</style>
+
+@endsection
+
 @section('content')        
 
 <main class="main">
@@ -30,10 +51,9 @@
                                                 <source media="(max-width: 480px)" srcset="{{ $slider->getSliderImage() }}">
                                                 <img src="{{ $slider->getSliderImage() }}" alt="Image Desc">
                                             </picture>
-                                        </figure><!-- End .slide-image -->
+                                        </figure>
 
                                         <div class="intro-content">
-                                            <h3 class="intro-subtitle">Topsale Collection</h3><!-- End .h3 intro-subtitle -->
                                             <h1 class="intro-title">
                                                 {!! $slider->title !!}
                                             </h1>
@@ -50,7 +70,7 @@
                                 @endif
                             @endforeach
                             
-                        </div><!-- End .intro-slider owl-carousel owl-simple -->
+                        </div>
                         
                         <span class="slider-loader"></span>
                     </div>
@@ -192,7 +212,7 @@
     @if (!empty($getCategory->count()))
         
         <div class="container categories pt-6">
-            <h2 class="title-lg text-center mb-4">{{ !empty($getHomeSetting->shop_category_title) ? $getHomeSetting->shop_category_title : 'Shop by Categories' }}</h2><!-- End .title-lg text-center -->
+            <h2 class="title-lg text-center mb-4">{{ !empty($getHomeSetting->shop_category_title) ? $getHomeSetting->shop_category_title : '' }}</h2><!-- End .title-lg text-center -->
 
             <div class="row">
 
@@ -381,7 +401,7 @@
     @endif
 
     @if(!empty($getHomeSetting->signup_title))
-        <div class="cta cta-display bg-image pt-4 pb-4" style="background-image: url('{{ $getHomeSetting->getSignupImage() }}');">
+        <div class="cta cta-display bg-image pt-4 pb-4 signup-cta" style="background-image: url('{{ $getHomeSetting->getSignupImage() }}');">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-lg-9 col-xl-8">
