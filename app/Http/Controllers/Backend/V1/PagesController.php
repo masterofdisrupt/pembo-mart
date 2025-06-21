@@ -8,6 +8,7 @@ use App\Models\Pages;
 use App\Models\SystemSetting;
 use App\Models\HomeSetting;
 use App\Models\ContactUs;
+use App\Models\PaymentSetting;
 use App\Models\Backend\V1\NotificationModel;
 use Str;
 
@@ -63,7 +64,7 @@ class PagesController extends Controller
     {
         $getRecord = SystemSetting::getSingleRecord();
 
-        return view('backend.admin.system.setting', compact('getRecord'));
+        return view('backend.admin.setting.system_setting', compact('getRecord'));
     }
 
     public function update_system_setting(Request $request)
@@ -84,15 +85,26 @@ class PagesController extends Controller
         $save->youtube_link = trim($request->youtube_link);
         $save->linkedin_link = trim($request->linkedin_link);
 
-        if(!empty($request->file('logo')))
+        if(!empty($request->file('logo_header')))
         {
-            $file = $request->file('logo');
+            $file = $request->file('logo_header');
             $ext = $file->getClientOriginalExtension();
             $randomStr = Str::random(10);
             $filename = strtolower($randomStr).'.'.$ext;
             $file->move(public_path('backend/upload/setting/'), $filename);
 
-            $save->logo = trim($filename);
+            $save->logo_header = trim($filename);
+        }
+
+        if(!empty($request->file('logo_footer')))
+        {
+            $file = $request->file('logo_footer');
+            $ext = $file->getClientOriginalExtension();
+            $randomStr = Str::random(10);
+            $filename = strtolower($randomStr).'.'.$ext;
+            $file->move(public_path('backend/upload/setting/'), $filename);
+
+            $save->logo_footer = trim($filename);
         }
 
         if(!empty($request->file('footer_payment_icon')))
@@ -124,7 +136,7 @@ class PagesController extends Controller
 
     public function home_setting(){
         $getRecord = HomeSetting::getSingleRecord();
-        return view('backend.admin.system.home_setting', compact('getRecord'));
+        return view('backend.admin.setting.home_setting', compact('getRecord'));
     }
 
     public function update_home_setting(Request $request)
@@ -190,6 +202,31 @@ class PagesController extends Controller
         $save->save();
 
         return redirect()->back()->with('success', "Home setting successfully updated");
+    }
+
+    public function payment_system()
+    {
+        $getRecord = PaymentSetting::getSingleRecord();
+        return view('backend.admin.setting.payment_setting', compact('getRecord'));
+    }
+
+    public function update_payment_setting(Request $request)
+    {
+        $validated = $request->validate([
+        'is_cash' => 'nullable|in:on',
+        'is_wallet' => 'nullable|in:on',
+    ]);
+
+    $isCash = $request->has('is_cash') ? 1 : 0;
+    $isWallet = $request->has('is_wallet') ? 1 : 0;
+
+    $setting = PaymentSetting::firstOrNew();
+
+    $setting->is_cash = $isCash;
+    $setting->is_wallet = $isWallet;
+    $setting->save();
+
+    return redirect()->route('payment.setting')->with('success', 'Payment setting updated successfully.');
     }
 
     public function contactUs()
