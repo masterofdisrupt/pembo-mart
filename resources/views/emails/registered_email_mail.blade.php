@@ -8,4 +8,11 @@
     @endcomponent
 
     Thank You
+    @php
+        $getSetting = \App\Models\SystemSetting::getSingleRecord();
+        $websiteName = $getSetting->website ?? 'Soeatable';
+    @endphp
+    <br>
+    {{ $getSetting->$websiteName }}
+    
 @endcomponent
