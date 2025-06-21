@@ -8,17 +8,20 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\SystemSetting;
 
 class RegisterMail extends Mailable
 {
     use Queueable, SerializesModels;
     public $user;
+    public $setting;
     /**
      * Create a new message instance.
      */
     public function __construct($user)
     {
         $this->user = $user;
+        $this->setting = SystemSetting::getSingleRecord();
     }
 
     /**
@@ -27,7 +30,7 @@ class RegisterMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pembo Mart Registration',
+            subject: $this->setting->website . ' Validate Registration',
         );
     }
 
