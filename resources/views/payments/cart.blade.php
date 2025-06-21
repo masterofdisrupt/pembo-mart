@@ -1,4 +1,9 @@
 @extends('layouts.app')
+
+@section('meta_title', $meta_title)
+@section('meta_description', $meta_description)
+@section('meta_keywords', $meta_keywords)
+
 @section('style')
 
 @endsection
@@ -53,12 +58,35 @@
                                                 <td class="product-col">
                                                     <div class="product">
                                                         <figure class="product-media">
-                                                            <a href="{{ url($getCartProduct->slug) }}">
+                                                            <a href="{{ route('product.details', $getCartProduct->slug) }}">
                                                                 <img src="{{ $productImage->getProductImages() }}" alt="Product image" loading="lazy">
                                                             </a>
                                                         </figure>
                                                         <h3 class="product-title">
-                                                            <a href="{{ url($getCartProduct->slug) }}">{{ $getCartProduct->title }}</a>
+                                                            <a style="margin-bottom: 10px; display: block;" href="{{ route('product.details', $getCartProduct->slug) }}">{{ $getCartProduct->title }}</a>
+
+                                                            @php
+                                                                $colour_id = $cart->attributes->colour_id ?? null;
+                                                            @endphp
+                                                            @if(!empty($colour_id))
+                                                            @php
+                                                                $getColour = App\Models\Backend\V1\ColourModel::getSingleRecord($colour_id);
+                                                            @endphp
+                                                            <div>
+                                                                <span class="product-colour" style="background-color: {{ $getColour->name }}; width: 20px; height: 20px; display: inline-block; border-radius: 50%;"></span>
+                                                            </div>
+                                                            @endif
+
+                                                            @php
+                                                                $size_id = $cart->attributes->size_id ?? null;
+                                                            @endphp
+                                                            @if(!empty($size_id))
+                                                                @php
+                                                                    $getSize = App\Models\Backend\V1\ProductSizesModel::getSingleRecord($size_id);
+                                                                @endphp
+                                                                <span class="product-size"><b>Size:&nbsp; </b>{{ $getSize->name }} (₦{{ number_format($getSize->price, 2) }}) </span>
+                                                            @endif
+
                                                         </h3>
                                                     </div>
                                                 </td>
@@ -119,7 +147,7 @@
                                         <a href="{{ route('checkout') }}" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
                                     </div>
 
-                                    <a href="{{ route('home') }}" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
+                                    <a href="{{ route('home') }}" class="btn btn-outline-dark-2 btn-block mb-3"><span>BROWSE MEALS</span><i class="icon-refresh"></i></a>
                                 </aside>
                             </div>
                         @else
