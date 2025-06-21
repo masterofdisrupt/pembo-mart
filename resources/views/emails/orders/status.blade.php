@@ -1,5 +1,10 @@
 @component('mail::message')
 
+@php
+    $getSetting = \App\Models\SystemSetting::getSingleRecord();
+    $websiteName = $getSetting->website;
+@endphp
+
 # Order Update Notification
 
 Dear {{ $order->first_name }},
@@ -11,7 +16,7 @@ We will notify you once it is ready for delivery.
         @break
 
     @case(1)
-Thank you for your order with **Pembo Mart**!  
+Thank you for your order with **{{ $websiteName }}**!  
 We are currently processing it and will notify you when it's ready for delivery.
         @break
 
@@ -42,10 +47,10 @@ Your order has been **cancelled**. If you have any questions or concerns, please
 
 If you have any questions about your order, feel free to reach out to our support team.
 
-Thank you for shopping with **Pembo Mart**!
+Thank you for shopping with **{{ $websiteName }}**!
 
 ---
 
-© {{ date('Y') }} Pembo Mart. All rights reserved.
+© {{ date('Y') }} {{ $websiteName }}. All rights reserved.
 
 @endcomponent
