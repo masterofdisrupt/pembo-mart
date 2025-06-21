@@ -94,14 +94,15 @@ class ProductController
  */
     public function update_product(Request $request, int $id)
     {
+        // dd($request->size);
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'sku' => 'required|string|unique:product,sku,' . $id,
+            'sku' => 'nullable|string|unique:product,sku,' . $id,
             'price' => 'required|numeric|min:0',
             'old_price' => 'nullable|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'required|exists:sub_categories,id',
-            'brand_id' => 'required|exists:brands,id',
+            'brand_id' => 'nullable|exists:brands,id',
             'description' => 'required|string',
             'short_description' => 'nullable|string|max:500',
             'additional_info' => 'nullable|string',
@@ -114,10 +115,11 @@ class ProductController
         ]);
 
        $product = ProductModel::getSingleRecord($id);
+       $sku = $request->filled('sku') ? $request->sku : ProductModel::generateUniqueSku($request->title);
         
         $product->fill([
             'title' => trim($validated['title']),
-            'sku' => trim($validated['sku']),
+            'sku' => $sku,
             'category_id' => $validated['category_id'],
             'sub_category_id' => $validated['sub_category_id'],
             'brand_id' => $validated['brand_id'],
@@ -146,23 +148,47 @@ class ProductController
             ProductColoursModel::insert($colourData);
         }
 
-        ProductSizesModel::where('product_id', $id)->delete();
+        \Log::info('Received sizes:', $request->size);
         if (!empty($request->size)) {
+            $existingIds = [];
             $sizeData = [];
             foreach ($request->size as $size) {
                 if (!empty($size['name'])) {
-                    $sizeData[] = [
+                    if (!empty($size['id'])) {
+                        $existing = ProductSizesModel::where('id', $size['id'])->where('product_id', $id)->first();
+                         if ($existing) {
+                $existing->update([
+                    'name' => $size['name'],
+                    'price' => number_format($size['price'] ?? 0, 2, '.', ''),
+                ]);
+                $existingIds[] = $existing->id;
+            }
+        }else {
+            $sizeData[] = [
                         'product_id' => $id,
                         'name' => $size['name'],
                         'price' => !empty($size['price']) ? number_format($size['price'], 2, '.', '') : 0,
                         'created_at' => now(),
                         'updated_at' => now()
                     ];
-                }
+                }        
             }
+        }
             if (!empty($sizeData)) {
                 ProductSizesModel::insert($sizeData);
+                if (!empty($sizeData)) {
+                    ProductSizesModel::insert($sizeData);
+                    \Log::info('Inserted new sizes:', $sizeData);
+                }
+
             }
+            
+           if (!empty($existingIds)) {
+                ProductSizesModel::where('product_id', $id)
+                    ->whereNotIn('id', $existingIds)
+                    ->delete();
+            }
+
         }
 
         if ($request->hasFile('image')) {
@@ -200,7 +226,7 @@ class ProductController
 
         return redirect()->back()->with('success', 'Product updated successfully');
 
-}
+    }
 
 public function delete_product($id, Request $request)
 {
