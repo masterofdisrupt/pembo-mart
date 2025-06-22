@@ -35,6 +35,21 @@ class ColourModel extends Model
         return $return;
     }
 
+    static public function getColourStatus()
+{
+    return self::select('colour.*')
+        ->where('colour.is_delete', 0)
+        ->where('colour.status', 1) 
+        ->orderBy('colour.name', 'asc')
+        ->get();
+}
+
+    static public function getSingleRecord($id)
+    {
+        return self::select('colour.*')->where('colour.id', $id)->first();
+    }
+
+
     /**
      * Get the orders details associated with this colour
      */
@@ -42,6 +57,7 @@ class ColourModel extends Model
     {
         return $this->hasMany(ordersDetailsModel::class, 'colour_id', 'id');
     }
+
 
 }
 

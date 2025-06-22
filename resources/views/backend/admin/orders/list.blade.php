@@ -7,10 +7,10 @@
 
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('orders') }}">Order</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Order List</li>
+                <li class="breadcrumb-item active" aria-current="page">Order List </li>
             </ol>
         </nav>
-        {{-- Search Start --}}
+        
         <div class="row">
             <div class="col-lg-12 stretch-card">
                 <div class="card">
@@ -18,7 +18,7 @@
                         <h6 class="card-title">Search Order</h6>
                         <form action="" method="get">
                             <div class="row">
-                                <div class="col-sm-2">
+                                <div class="col-sm-3">
                                     <div class="mb-3">
                                         <label for="" class="form-label">ID</label>
                                         <input type="text" name="id" class="form-control"
@@ -26,27 +26,83 @@
                                     </div>
                                 </div>
 
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">First Name</label>
+                                        <input type="text" name="first_name" class="form-control"
+                                            value="{{ request()->first_name }}" placeholder="Enter First Name">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Last Name</label>
+                                        <input type="text" name="last_name" class="form-control"
+                                            value="{{ request()->last_name }}" placeholder="Enter Last Name">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Email </label>
+                                        <input type="text" name="email" class="form-control"
+                                            value="{{ request()->email }}" placeholder="Enter Email">
+                                    </div>
+                                </div>
+
                                 <div class="col-sm-4">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Product Title</label>
-                                        <input type="text" name="title" class="form-control"
-                                            value="{{ request()->title }}" placeholder="Enter Product Title">
+                                        <label for="" class="form-label">Country </label>
+                                        <input type="text" name="country" class="form-control"
+                                            value="{{ request()->country }}" placeholder="Enter Country">
                                     </div>
                                 </div>
 
-                                <div class="col-sm-2">
+                                <div class="col-sm-4">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Created At</label>
-                                        <input type="date" name="created_at" class="form-control"
-                                            value="{{ request()->created_at }}" placeholder="Enter Created At">
+                                        <label for="" class="form-label">State </label>
+                                        <input type="text" name="state" class="form-control"
+                                            value="{{ request()->state }}" placeholder="Enter State">
                                     </div>
                                 </div>
 
-                                <div class="col-sm-2">
+                                <div class="col-sm-4">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Updated At</label>
-                                        <input type="date" name="updated_at" class="form-control"
-                                            value="{{ request()->updated_at }}" placeholder="Enter Updated At">
+                                        <label for="" class="form-label">City </label>
+                                        <input type="text" name="city" class="form-control"
+                                            value="{{ request()->city }}" placeholder="Enter City">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Address</label>
+                                        <input type="text" name="address_one" class="form-control"
+                                            value="{{ request()->address_one }}" placeholder="Enter Address">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Phone Number</label>
+                                        <input type="text" name="phone" class="form-control"
+                                            value="{{ request()->phone }}" placeholder="Enter Phone number">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">From Date</label>
+                                        <input type="date" name="from_date" class="form-control"
+                                            value="{{ request()->from_date }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">To Date</label>
+                                        <input type="date" name="to_date" class="form-control"
+                                            value="{{ request()->to_date }}">
                                     </div>
                                 </div>
                             </div>
@@ -57,7 +113,6 @@
                 </div>
             </div>
         </div>
-        {{-- Search End --}}
 
         <br>
         <div class="row">
@@ -79,9 +134,23 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Product Name</th>
-                                        <th>Qtys</th>
-                                        <th>Colour</th>
+                                        <th>Order Number</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Company Name</th>
+                                        <th>Country</th>
+                                        <th>Address</th>
+                                        <th>City</th>
+                                        <th>State</th>
+                                        <th>Post Code</th>
+                                        <th>Phone</th>
+                                        <th>Discount Code</th>
+                                        <th>Discount Amount (₦)</th>
+                                        <th>Total (₦)</th>
+                                        <th>Shipping Amount (₦)</th>
+                                        <th>Payment Method</th>
+                                        <th>Payment Status</th>
                                         <th>Created At</th>
                                         <th>Action</th>
                                     </tr>
@@ -90,18 +159,36 @@
                                     @forelse ($getOrders as $value)
                                         <tr class="table-info text-dark">
                                             <td>{{ $value->id }}</td>
-                                            <td>{{ $value->title }}</td> {{-- Change product_id for title --}}
-                                            <td>{{ $value->qtys }}</td>
+                                            <td>{{ $value->order_number }}</td>
+                                            <td>{{ $value->first_name }}</td>
+                                            <td>{{ $value->last_name }}</td>
+                                            <td>{{ $value->email }}</td>
+                                            <td>{{ $value->company_name }}</td>
+                                            <td>{{ $value->country }}</td>
+                                            <td>{{ $value->address_one }}</td>
+                                            <td>{{ $value->city }}</td>
+                                            <td>{{ $value->state }}</td>
+                                            <td>{{ $value->postcode }}</td>
+                                            <td>{{ $value->phone }}</td>
+                                            <td>{{ $value->discount_code }}</td>
+                                            <td>{{ number_format($value->discount_amount, 2) }}</td>
+                                            <td>{{ number_format($value->total_amount, 2) }}</td>
+                                            <td>{{ number_format($value->shipping_amount, 2) }}</td>
+                                            <td style="text-transform: capitalize;">{{ $value->payment_method }}</td>
                                             <td>
-                                                @foreach ($value->getColour as $valueC)
-                                                    {{ $valueC->name }}@if (!$loop->last)
-                                                        ,
-                                                    @endif
-                                                @endforeach
+                                                <select class="form-control change-status" id="{{ $value->id }}" style="width: 100px;">
+                                                    <option {{ ($value->status == 0) ? 'selected' : '' }} value="0">Pending</option>
+                                                    <option {{ ($value->status == 1) ? 'selected' : '' }} value="1">Processing</option>
+                                                    <option {{ ($value->status == 2) ? 'selected' : '' }} value="2">Delivered</option>
+                                                    <option {{ ($value->status == 3) ? 'selected' : '' }} value="3">Completed</option>
+                                                    <option {{ ($value->status == 4) ? 'selected' : '' }} value="4">Cancelled</option>
+                                                </select>
                                             </td>
-                                            <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
+                                            <td>{{ date('d-m-Y H:i A', strtotime($value->created_at)) }}</td>
 
                                             <td>
+                                                <a href="{{ route('view.orders', $value->id) }}"
+                                                    class="btn btn-primary btn-sm">View</a>
 
 
                                                 <a class="dropdown-item"
@@ -151,4 +238,34 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('script')
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.change-status').on('change', function() {
+            var orderId = $(this).attr('id');
+            var status = $(this).val();
+            $.ajax({
+                url: "{{ route('update.order.status') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: orderId,
+                    status: status
+                },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('An error occurred while updating the status.');
+                }
+            });
+        });
+    });
+</script>
 @endsection

@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Mail\ForgotPasswordMail;
+use App\Mail\ForgotAuthPasswordMail;
 use App\Http\Requests\ResetPassword;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Backend\V1\NotificationModel;
+use App\Mail\RegisterMail;
+use App\Models\User;
 use Session;
 use Mail;
 use Auth;
@@ -16,9 +20,7 @@ class AuthController
 {
     public function showLogin()
     {
-        // Check if the user is already authenticated
         if (Auth::check()) {
-            // Define user type redirections
             $redirects = [
                 'admin' => 'admin/dashboard',
                 'agent' => 'agent/dashboard',
@@ -27,13 +29,11 @@ class AuthController
 
             $user = Auth::user();
 
-            //     // Redirect based on the user's user_type
             return isset($redirects[$user->role])
                 ? redirect()->intended($redirects[$user->role])
                 : redirect()->back()->with('error', 'You are already logged in. Redirecting based on your role...".');
         }
 
-        // If not authenticated, return the login view
         return view('auth.login');
     }
 
@@ -41,23 +41,19 @@ class AuthController
 
     public function authLogin(Request $request)
     {
-        // Validate input
         $request->validate([
-            'login' => 'required|string', // Email, Username, or Phone
+            'login' => 'required|string',
             'password' => 'required|string|min:6',
         ]);
 
-        // Determine if the user wants to be remembered
         $remember = !empty($request->remember);
 
-        // Define redirection paths based on user roles
         $redirects = [
             'admin' => 'admin/dashboard',
             'agent' => 'agent/dashboard',
             'user' => 'user/dashboard',
         ];
 
-        // Authentication attempts with different credentials
         $loginFields = ['email', 'username', 'phone'];
         foreach ($loginFields as $field) {
             $credentials = [
@@ -66,17 +62,14 @@ class AuthController
             ];
 
             if (Auth::attempt($credentials, $remember)) {
-                // Get the authenticated user
                 $user = Auth::user();
 
-                // Redirect based on the user's role
                 return isset($redirects[$user->role])
                     ? redirect()->intended($redirects[$user->role])
                     : redirect()->back()->with('error', 'User role is not defined for redirection.');
             }
         }
 
-        // Authentication failed
         return redirect()->back()->with('error', 'Invalid credentials. Please try again.');
     }
 
@@ -87,7 +80,6 @@ class AuthController
 
     public function forgotPassword(Request $request)
     {
-        // Validate the input
         $request->validate([
 
             'email' => 'required|email|max:255',
@@ -96,71 +88,71 @@ class AuthController
         $user = User::where('email', strtolower($request->email))->first();
 
         if ($user) {
-            // Generate a secure reset token
             $user->remember_token = Str::random(30);
-            $user->password_reset_expires = now()->addMinutes(60); // Optional: Token expiry time
+            $user->password_reset_expires = now()->addMinutes(60);
             $user->save();
 
-            try {
-                // Send the password reset email
-                Mail::to($user->email)->send(new ForgotPasswordMail($user));
+        
+                try {
+                    Mail::to($user->email)->send(new ForgotPasswordMail($user));
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', "Failed to send reset link. Please try again later.");
+                }
+                    
                 return redirect()->back()->with('success', "If the email exists, you will receive a reset link shortly.");
-            } catch (\Exception $e) {
-                // Handle email send failure
-                return redirect()->back()->with('error', "Failed to send email. Please try again later.");
             }
-        }
 
-        // Return a generic success message for security
         return redirect()->back()->with('success', "If the email exists, you will receive a reset link shortly.");
     }
 
     public function reset($remember_token)
     {
-        // Fetch user associated with the provided token
+
         $user = User::getTokenSingle($remember_token);
 
-        // Check if user exists
         if ($user) {
-            // Pass user data to the reset view
             return view('auth.reset', ['user' => $user]);
         }
 
-        // If user does not exist, abort with 404
         return abort(404);
     }
 
-    //
     public function postReset($token, Request $request)
     {
-        // Validate the input fields
         $request->validate([
             'password' => 'required|string|min:8|max:255|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).+$/|confirmed', // Checks password and password_confirmation match
         ]);
 
-        // Fetch user based on the token
         $user = User::getTokenSingle($token);
         if (!$user) {
-            // Redirect if the token is invalid or user not found
             return redirect()->back()->with('error', "Invalid or expired reset token.");
         }
 
-        // Update the user's password and reset the remember token
         $user->password = Hash::make($request->password);
-        $user->remember_token = Str::random(30); // Generate a new token
+        $user->remember_token = Str::random(30); 
         $user->save();
 
-        // Redirect to the login page with a success message
         return redirect()->route('login')->with('success', "Password successfully reset");
     }
 
-    public function logout()
-    {
-        Auth::logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
+   public function logout(Request $request)
+{
+    $user = Auth::user();
+    $previousUrl = url()->previous();
+
+    $isAdminOrAgent = str_contains($previousUrl, '/admin') || str_contains($previousUrl, '/agent');
+
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    if ($isAdminOrAgent && $user && in_array($user->role, ['admin', 'agent'])) {
         return redirect()->route('login')->with('success', 'You have been logged out successfully.');
     }
+
+    return redirect('/')->with('success', 'You have been logged out successfully.');
+}
+
 
     public function set_new_password($token)
     {
@@ -170,23 +162,234 @@ class AuthController
 
     public function new_password_store($token, ResetPassword $request)
     {
-        // Find the user by token or return 404
         $user = User::where('remember_token', $token)->firstOrFail();
 
-        // Update password
         $user->password = Hash::make($request->password);
-        $user->remember_token = Str::random(50); // Regenerate token
-        $user->status = 'active'; // Ensure account is active
+        $user->remember_token = Str::random(50); 
+        $user->status = 'active'; 
         $user->save();
 
-        // Ensure user is logged out before redirecting to login
         Auth::logout();
         Session::flush();
 
-        // Redirect user to login page with success message
         return redirect(route('show.login'))->with('success', 'New Password Successfully Set. Please login.');
     }
 
+    public function showSignin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
+        $remember = (bool) $request->is_remember;
+
+        if (Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password,
+            'status' => 'active',
+            'is_delete' => 0,
+        ], $remember)) {
+            $user = Auth::user();
+
+            if (!empty($user->email_verified_at)) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Login successful.',
+                    'redirect_url' => $request->input('redirect_url', route('home')),
+
+                ]);
+            } else {
+                if (empty($user->email_verification_sent_at) || $user->email_verification_sent_at->diffInMinutes(now()) >= 5) {
+                    
+                    try {
+                        Mail::to($user->email)->send(new RegisterMail($user));
+                    } catch (\Exception $e) {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Failed to send verification email. Please try again later.',
+                        ])->setStatusCode(500);
+                    }
+
+                    $user->email_verification_sent_at = now();
+                    $user->save();
+                }
+
+                Auth::logout();
+                Session::flush();
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Email not verified. Please check your email for verification.',
+                ])->setStatusCode(403);
+            }
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid credentials. Please try again.',
+            ])->setStatusCode(401);
+        }
+    }
+
+
+    public function showRegister(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'middle_name' => 'nullable|string|max:255',
+        'surname' => 'nullable|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'password' => [
+            'required',
+            'string',
+            'min:8',
+            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
+            'confirmed',
+        ],
+    ], [
+        'password.regex' => 'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character.',
+    ]);
+
+    $checkEmail = User::checkemail($request->email);
+
+    if (!$checkEmail) {
+        $user = User::create([
+            'name' => trim($request->name),
+            'middle_name' => trim($request->middle_name),
+            'surname' => trim($request->surname),
+            'email' => trim($request->email),
+            'password' => Hash::make($request->password),
+        ]);
+
+        if ($user) {
+           try {
+                Mail::to($user->email)->send(new RegisterMail($user));
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to send verification email. Please try again later.',
+                ], 500);
+           } 
+
+            $user_id =  1; // Assuming 1 is the admin user ID or the user who should receive the notification
+            $url = route('admin.customers');
+            $message = "New user has been successfully registered #" . $request->name;
+
+            NotificationModel::sendNotification($user_id, $url, $message);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User registered successfully. Please check your email for verification.',
+            ], 201);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to register user.',
+        ], 500);
+    }
+
+    return response()->json([
+        'status' => 'error',
+        'message' => 'Email already exists.',
+    ], 409);
+}
+
+
+public function activateEmail($id)
+{
+    $id = base64_decode($id);
+    $user = User::getSingle($id);
+
+    if ($user) {
+        $user->email_verified_at = now();
+        $user->save();
+
+        return redirect()->route('home')->with('success', 'Email successfully verified. You can now login.');
+    }
+
+    return redirect()->route('home')->with('error', 'Invalid or expired verification link.');
+}
+
+    public function forgot_password()
+    {
+        $metaData = [
+            'meta_title' => 'Forgot Password',
+            'meta_description' => 'Reset your password',
+            'meta_keywords' => 'password, reset, forgot password',
+        ];
+        return view('auth.forgot_password', [
+            'meta_title' => $metaData['meta_title'],
+        ]);
+    }
+
+    public function forgot_password_post(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        $user = User::where('email', strtolower($request->email))->first();
+
+        if ($user) {
+            $user->remember_token = Str::random(30);
+            $user->password_reset_expires = now()->addMinutes(60);
+            $user->save();
+
+                try {
+                    Mail::to($user->email)->send(new ForgotAuthPasswordMail($user));
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', "Failed to send reset link. Please try again later.");
+                } 
+
+                return redirect()->back()->with('success', "If the email exists, you will receive a reset link shortly.");
+            }
+
+        return redirect()->back()->with('error', "If the email exists, you will receive a reset link shortly.");
+    }
+
+    public function reset_password($remember_token)
+    {
+        $user = User::getTokenSingle($remember_token);
+
+        if ($user) {
+            return view('auth.password_reset', ['user' => $user]);
+        }
+
+        return abort(404);
+    }
+
+    public function reset_password_post($token, Request $request)
+    {
+        $request->validate([
+            'password' => [
+            'required',
+            'string',
+            'min:8',
+            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
+            'confirmed',
+        ],
+    ], [
+        'password.regex' => 'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character.',
+    ]);
+
+        $user = User::getTokenSingle($token);
+        if (!$user) {
+            return redirect()->back()->with('error', "Invalid or expired reset token.");
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->remember_token = Str::random(30); 
+        $user->save();
+
+        return redirect()->route('home')->with('success', "Password successfully reset");
+    }
 
 }

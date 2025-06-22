@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Backend\V1\ProductModel;
 use App\Models\Backend\V1\ColourModel;
 use App\Models\Backend\V1\OrdersModel;
-use App\Models\Backend\V1\OrdersDetailsModel;
+use App\Models\Backend\V1\NotificationModel;
+use App\Models\Backend\V1\OrdersDetailsModel; 
+use App\Mail\OrderStatusMail;
+use Mail;
 
 
 
@@ -15,9 +18,41 @@ use App\Models\Backend\V1\OrdersDetailsModel;
 
 class OrdersController
 {
+    public function update_order_status(Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:0,1,2,3,4',
+            'id' => 'required|exists:orders,id'
+        ]);
+
+
+        $order = OrdersModel::getSingleRecord($request->id);
+        $order->status = $request->status;
+        $order->save();
+
+        $user_id = 1;
+        $url = route('user.orders');
+        $message = "Order status has been updated to " . $order->status . " for order #" . $order->order_number;
+        
+        NotificationModel::sendNotification($user_id, $url, $message);
+
+        if ($order->user && $order->user->email) {
+                Mail::to($order->user->email)->send(new OrderStatusMail($order));
+            } else {
+                \Log::warning('User not found or missing email for order ID: ' . $order->id);
+            }
+
+    
+       return response()->json([
+            'success' => true,
+            'message' => 'Order status updated successfully!',
+        ]);
+
+    }
+
     public function list_orders(Request $request)
     {
-        $getOrders = OrdersModel::getRecord($request); // update getRecord function with $request param
+        $getOrders = OrdersModel::getRecord($request);
         return view('backend.admin.orders.list', compact('getOrders'));
     }
 
@@ -32,43 +67,37 @@ class OrdersController
 
     public function store_orders(Request $request)
 {
-    // Validate request inputs
     $request->validate([
         'product_id' => 'required|exists:product,id', 
         'colour_id' => 'required|array',
         'qtys' => 'required|integer|min:1'
     ]);
 
-    // Use database transactions to ensure data integrity
     DB::beginTransaction();
 
     try {
-        // Create a new order using the `create` method
         $order = OrdersModel::create([
             'product_id' => filter_var($request->product_id, FILTER_SANITIZE_NUMBER_INT),
             'qtys' => filter_var($request->qtys, FILTER_SANITIZE_NUMBER_INT),
         ]);
 
-        // Check if colour_ids are provided and bulk insert for efficiency
         if (!empty($request->colour_id)) {
             $orderDetails = [];
             foreach ($request->colour_id as $colour_id) {
                 $orderDetails[] = [
                     'orders_id' => $order->id,
                     'colour_id' => $colour_id,
-                    'created_at' => now(), // Timestamps for bulk insert
+                    'created_at' => now(),
                     'updated_at' => now(),
                 ];
             }
             OrdersDetailsModel::insert($orderDetails);
         }
 
-        // Commit transaction if everything is successful
         DB::commit();
 
         return redirect()->route('orders')->with('success', "Order Successfully Created!");
     } catch (\Exception $e) {
-        // Rollback transaction on error
         DB::rollBack();
         return redirect()->back()->with('error', "Something went wrong! Please try again.");
     }
@@ -78,9 +107,9 @@ class OrdersController
 
     public function edit_orders($id)
 {
-    $getRecord = OrdersModel::findOrFail($id); // Throws 404 if not found
-    $getProduct = ProductModel::all(); // Fetch all products
-    $getColour = ColourModel::all(); // Fetch all colours
+    $getRecord = OrdersModel::findOrFail($id);
+    $getProduct = ProductModel::all();
+    $getColour = ColourModel::all();
     $getOrderDetail = OrdersDetailsModel::where('orders_id', $id)->get(); // Get order details
 
     return view('backend.admin.orders.edit', compact('getProduct', 'getColour', 'getRecord', 'getOrderDetail'));
@@ -89,7 +118,6 @@ class OrdersController
 
      public function update_orders(Request $request, $id)
 {
-    // Validate request inputs
     $request->validate([
         'product_id' => 'required|exists:product,id',
         'qtys' => 'required|integer|min:1',
@@ -97,16 +125,13 @@ class OrdersController
         'colour_id.*' => 'exists:colour,id'
     ]);
 
-    // Find the order or fail
     $order = OrdersModel::findOrFail($id);
 
-    // Update order
     $order->update([
         'product_id' => $request->product_id,
         'qtys' => $request->qtys,
     ]);
 
-    // Sync order details (deletes old and inserts new)
     OrdersDetailsModel::where('orders_id', $id)->delete();
     
     if (!empty($request->colour_id)) {
@@ -122,23 +147,35 @@ class OrdersController
         OrdersDetailsModel::insert($orderDetails);
     }
 
-    // Redirect after updating
     return redirect()->route('orders')->with('success', "Order Successfully Updated!");
 }
 
     public function delete_orders($id)
 {
-    // Use a transaction to ensure both deletions happen together
     DB::transaction(function () use ($id) {
-        // Find and delete the main order (or fail if not found)
         $deleteRecord = OrdersModel::findOrFail($id);
         $deleteRecord->delete();
-
-        // Delete all associated order details
         OrdersDetailsModel::where('orders_id', $id)->delete();
     });
 
     return redirect()->back()->with('success', "Order Successfully Deleted!");
+}
+
+public function view_orders($id, Request $request)
+{
+    if ($request->filled('notif_id')) {
+    $notification = NotificationModel::find($request->notif_id);
+    
+    if ($notification) {
+        $notification->update(['is_read' => 1]);
+    }
+}
+
+
+    $getRecord = OrdersModel::getSingleRecord($id);
+
+    return view('backend.admin.orders.view', compact('getRecord'));
+
 }
 
 }

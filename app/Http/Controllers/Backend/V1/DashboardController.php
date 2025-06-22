@@ -10,12 +10,10 @@ class DashboardController
 {
     public function dashboard(Request $request)
     {
-        // $data['header_title'] = 'Dashboard';
 
         if (Auth::user()->role === 'admin') {
-            // Fetch monthly data for customers
             $user = User::selectRaw('count(id) as count, DATE_FORMAT(created_at, "%Y-%m") as month')
-                ->where('role', '=', 'user') // Only count customers with role = 'user'
+                ->where('role', '=', 'user') 
                 ->groupBy('month')
                 ->orderBy('month', 'asc')
                 ->get();
@@ -30,7 +28,6 @@ class DashboardController
             return view('backend.user.index', );
         }
 
-        // Optional: Handle unexpected roles with an error or default view
         return redirect()->back()->with('error', 'Invalid role. Please contact support.');
     }
 

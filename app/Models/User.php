@@ -26,6 +26,7 @@ class User extends Authenticatable
         'surname',
         'username',
         'email',
+        'password',
         'phone',
         'address',
         'about',
@@ -41,6 +42,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'token',
+        'password_reset_expires',
     ];
 
     /**
@@ -52,8 +55,14 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'email_verification_sent_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    static public function getSingle($id) 
+    {
+        return User::where('id', '=', $id)->first();    
     }
 
     static public function getEmailSingle($email)
@@ -72,7 +81,6 @@ class User extends Authenticatable
         ->where('is_delete', 0)
         ->orderBy('id', 'desc');
 
-    // Dynamic Search Conditions
     $return->when($request->id, fn($query) => $query->where('users.id', $request->id));
     $return->when($request->name, fn($query) => $query->where('users.name', 'like', "%{$request->name}%"));
     $return->when($request->middle_name, fn($query) => $query->where('users.middle_name', 'like', "%{$request->middle_name}%"));
@@ -84,12 +92,10 @@ class User extends Authenticatable
     $return->when($request->role, fn($query) => $query->where('users.role', 'like', "%{$request->role}%"));
     $return->when($request->status, fn($query) => $query->where('users.status', $request->status));
 
-    // Date Range Filter
     if (!empty($request->start_date) && !empty($request->end_date)) {
         $return->whereBetween('users.created_at', [$request->start_date, $request->end_date]);
     }
 
-    // Pagination
     $perPage = is_numeric($request->per_page) ? (int) $request->per_page : 10;
     return $return->paginate($perPage);
 }
@@ -104,4 +110,49 @@ class User extends Authenticatable
         }
     }
 
+    /**
+     * Check if the user is an admin
+     *
+     * @return bool
+     */
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Get user's avatar URL
+     *
+     * @return string
+     */
+
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->avatar 
+            ? asset('storage/' . $this->avatar)
+            : 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
+    }
+
+    static public function checkemail($email)
+    {
+        return User::where('email', '=', $email)->first();
+    }
+
+    public static function getCustomer()
+    {
+        $return = self::select('users.*')
+            ->where('is_delete', 0)
+            ->where('role', 'user')
+            ->orderBy('id', 'desc');
+        $return->when(Request::get('first_name'), fn($query) => $query->where('users.name', 'like', "%" . Request::get('name') . "%"));
+        $return->when(Request::get('email'), fn($query) => $query->where('users.email', 'like', "%" . Request::get('email') . "%"));
+        $return->when(Request::get('start_date') && Request::get('end_date'), function ($query) {
+            $query->whereBetween('users.created_at', [Request::get('start_date'), Request::get('end_date')]);
+        });
+        $perPage = is_numeric(Request::get('per_page')) ? (int) Request::get('per_page') : 10;
+        return $return->paginate($perPage);
+    }
+
 }
+

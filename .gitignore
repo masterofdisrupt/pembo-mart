@@ -3,9 +3,12 @@
 /public/build
 /public/hot
 /public/storage
-/public/assets
+/public/assets/vendors
+/public/assets/
+/public/js
+/assets
+/public/backend/
 /public/backend/upload
-/public/backend/upload/profile
 /storage/*.key
 /vendor
 .env
@@ -22,3 +25,11 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+/resources/views/products/text.blade.php
+/resources/views/auth/passwords/
+/resources/views/vendor/
+/public/assets/vendors/flag-icon-css/flags/4x3/il.svg
+/public/assets/vendors/flag-icon-css/flags/4x3/ie.svg
+/public/backend/partials/_sidebar.html/
+/app/Http/Controllers/Auth/
+/database/migrations/2014_10_12_100000_create_password_resets_table.php

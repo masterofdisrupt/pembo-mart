@@ -31,6 +31,40 @@
                   </a>
               </li>
 
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'customers')) active @endif">
+                  <a href="{{ route('admin.customers') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Customers</span>
+                  </a>
+              </li>
+
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'contact-us')) active @endif">
+                  <a href="{{ route('admin.contact.us') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Contact Us</span>
+                  </a>
+              </li>
+
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'pages')) active @endif">
+                  <a href="{{ route('admin.pages') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Pages</span>
+                  </a>
+              </li>
+
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'partner')) active @endif">
+                  <a href="{{ route('partner') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Partner</span>
+                  </a>
+              </li>
+
+              <li class="nav-item @if (Str::startsWith(Request::segment(2), 'slider')) active @endif">
+                  <a href="{{ route('admin.slider') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Slider</span>
+                  </a>
+              </li> 
 
               <li class="nav-item">
                   <a href="{{ url('admin/email_otp') }}" class="nav-link">
@@ -63,9 +97,16 @@
 
 
              <li class="nav-item">
-                  <a href="{{ route('blogs') }}" class="nav-link">
+                  <a href="{{ route('blog') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Blogs</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a href="{{ route('blog.category') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Blog Category</span>
                   </a>
               </li>
 
@@ -84,23 +125,52 @@
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/change_password') }}" class="nav-link">
+                  <a href="{{ route('change.password') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
                       <span class="link-title">Change Password</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/discount_code') }}" class="nav-link">
+                  <a href="{{ route('discount.code') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Discount Code</span>
+                      <span class="link-title">Discount Codes</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a href="{{ url('admin/support') }}" class="nav-link">
+                  <a href="{{ route('shipping.charge') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Support</span>
+                      <span class="link-title">Shipping Charges</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a href="{{ route('supports') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Supports</span>
+                  </a>
+              </li>
+
+              <li class="nav-item nav-category">Categories</li>
+              <li class="nav-item" @if (Str::startsWith(Request::segment(2), 'category')) active @endif>
+                  <a href="{{ route('category') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Category</span>
+                  </a>
+              </li>
+              
+              <li class="nav-item">
+                  <a href="{{ route('sub.category') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Sub Category</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a href="{{ route('brands') }}" class="nav-link">
+                      <i class="link-icon" data-feather="box"></i>
+                      <span class="link-title">Brands</span>
                   </a>
               </li>
 
@@ -132,21 +202,21 @@
               <li class="nav-item">
                   <a href="{{ route('countries') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Countries</span>
+                      <span class="link-title">Country</span>
                   </a>
               </li>
 
               <li class="nav-item">
                   <a href="{{ route('states') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">States</span>
+                      <span class="link-title">State</span>
                   </a>
               </li>
 
               <li class="nav-item">
                   <a href="{{ route('cities') }}" class="nav-link">
                       <i class="link-icon" data-feather="box"></i>
-                      <span class="link-title">Cities</span>
+                      <span class="link-title">City</span>
                   </a>
               </li>
 
@@ -202,45 +272,28 @@
                   </a>
               </li>
 
-              <li class="nav-item nav-category">Components</li>
-              <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="collapse" href="#uiComponents" role="button"
-                      aria-expanded="false" aria-controls="uiComponents">
-                      <i class="link-icon" data-feather="feather"></i>
-                      <span class="link-title">UI Kit</span>
-                      <i class="link-arrow" data-feather="chevron-down"></i>
-                  </a>
-                  <div class="collapse" id="uiComponents">
-                      <ul class="nav sub-menu">
-                          <li class="nav-item">
-                              <a href="pages/ui-components/accordion.html" class="nav-link">Accordion</a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="pages/ui-components/alerts.html" class="nav-link">Alerts</a>
-                          </li>
+              <li class="nav-item nav-category">Settings</li>
+                  
+                <li class="nav-item @if (Str::startsWith(Request::segment(2), 'system-setting')) active @endif">
+                    <a href="{{ route('system.setting') }}" class="nav-link">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">System Settings</span>
+                    </a>
+                </li>
 
-                      </ul>
-                  </div>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="collapse" href="#advancedUI" role="button"
-                      aria-expanded="false" aria-controls="advancedUI">
-                      <i class="link-icon" data-feather="anchor"></i>
-                      <span class="link-title">Advanced UI</span>
-                      <i class="link-arrow" data-feather="chevron-down"></i>
-                  </a>
-                  <div class="collapse" id="advancedUI">
-                      <ul class="nav sub-menu">
-                          <li class="nav-item">
-                              <a href="pages/advanced-ui/cropper.html" class="nav-link">Cropper</a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="pages/advanced-ui/owl-carousel.html" class="nav-link">Owl carousel</a>
-                          </li>
+                <li class="nav-item @if (Str::startsWith(Request::segment(2), 'home-setting')) active @endif">
+                    <a href="{{ route('home.setting') }}" class="nav-link">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Home Settings</span>
+                    </a>
+                </li>
 
-                      </ul>
-                  </div>
-              </li>
+                <li class="nav-item @if (Str::startsWith(Request::segment(2), 'payment-setting')) active @endif">
+                    <a href="{{ route('payment.setting') }}" class="nav-link">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Payment Settings</span>
+                    </a>
+                </li>
 
               <li class="nav-item nav-category">Docs</li>
               <li class="nav-item">

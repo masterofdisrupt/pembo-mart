@@ -3,6 +3,7 @@
 use App\Http\Controllers\Backend\V1\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Backend\V1\AdminController;
 use App\Http\Controllers\Backend\V1\AgentController;
 use App\Http\Controllers\Backend\V1\EmailController;
@@ -18,7 +19,20 @@ use App\Http\Controllers\Backend\V1\LocationController;
 use App\Http\Controllers\Backend\V1\SendPDFController;
 use App\Http\Controllers\Backend\V1\TransactionsController;
 use App\Http\Controllers\Backend\V1\FullCalendarController;
-
+use App\Http\Controllers\Backend\V1\DiscountCodeController;
+use App\Http\Controllers\Backend\V1\SupportsController;
+use App\Http\Controllers\Backend\V1\CategoryController;
+use App\Http\Controllers\Backend\V1\SubCategoryController;
+use App\Http\Controllers\Backend\V1\BrandsController;
+use App\Http\Controllers\Backend\V1\ShippingChargesController;
+use App\Http\Controllers\Backend\V1\PagesController;
+use App\Http\Controllers\Backend\V1\SliderController;
+use App\Http\Controllers\Backend\V1\PartnerController;
+use App\Http\Controllers\Backend\V1\BlogCategoryController;
+use App\Http\Controllers\ProductController as FrontendProductController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -53,6 +67,12 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/users/update', [AdminController::class, 'admin_users_update'])->name('admin.users.update');
     Route::get('admin/users/changeStatus', [AdminController::class, 'admin_users_changeStatus'])->name('admin.users.change.status');
     Route::post('checkemail', [AdminController::class, 'checkEmail'])->name('check.email');
+
+    Route::get('admin/customer/list', [AdminController::class, 'customer_list'])->name('admin.customers');
+
+    // Change Password
+    Route::get('admin/change_password', [AdminController::class, 'change_password'])->name('change.password');
+    Route::put('admin/change_password/update', [AdminController::class, 'update_password'])->name('update.password');
 
 
     Route::get('admin/email/compose', [EmailController::class, 'email_compose']);
@@ -98,6 +118,37 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('admin/notification_send', [NotificationController::class, 'notification_send'])->name('notification.send');
     // Notification End
 
+    // Category Start
+    Route::get('admin/category', [CategoryController::class, 'category_list'])->name('category');
+    Route::get('admin/category/add', [CategoryController::class, 'add_category'])->name('category.add');
+    Route::post('admin/category/add', [CategoryController::class, 'store_category'])->name('category.store');
+    Route::get('admin/category/edit/{id}', [CategoryController::class, 'edit_category'])->name('category.edit');
+    Route::put('admin/category/edit/{id}', [CategoryController::class, 'update_category'])->name('category.update');
+    Route::delete('admin/category/delete/{id}', [CategoryController::class, 'delete_category'])->name('category.delete');
+    // Category End
+
+    // Sub Category Start
+    Route::get('admin/sub_category', [SubCategoryController::class, 'sub_category'])->name('sub.category');
+    Route::get('admin/sub_category/add', [SubCategoryController::class, 'sub_category_add'])->name('sub.category.add');
+    Route::post('admin/sub_category/add', [SubCategoryController::class, 'sub_category_store'])->name('sub.category.store');
+    Route::get('admin/sub_category/edit/{id}', [SubCategoryController::class, 'sub_category_edit'])->name('sub.category.edit');
+    Route::put('admin/sub_category/edit/{id}', [SubCategoryController::class, 'sub_category_update'])->name('sub.category.update');
+    Route::delete('admin/sub_category/delete/{id}', [SubCategoryController::class, 'sub_category_delete'])->name('sub.category.delete');
+
+    Route::post('admin/get_sub_categories', [SubCategoryController::class, 'get_sub_categories'])->name('get.sub.categories');
+
+
+    // Sub Category End
+
+    // Brands Start
+    Route::get('admin/brands', [BrandsController::class, 'index'])->name('brands');
+    Route::get('admin/brands/add', [BrandsController::class, 'create'])->name('brands.add');
+    Route::post('admin/brands/add', [BrandsController::class, 'store'])->name('brands.store');
+    Route::get('admin/brands/edit/{id}', [BrandsController::class, 'edit'])->name('brands.edit');
+    Route::put('admin/brands/edit/{id}', [BrandsController::class, 'update'])->name('brands.update');
+    Route::delete('admin/brands/delete/{id}', [BrandsController::class, 'delete'])->name('brands.delete');
+    // Brands End    
+
     // Product Start
     Route::get('admin/product', [ProductController::class, 'list'])->name('product');
     Route::get('admin/product/add', [ProductController::class, 'add_product'])->name('product.add');
@@ -105,6 +156,10 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/product/edit/{id}', [ProductController::class, 'edit_product'])->name('product.edit');
     Route::put('admin/product/edit/{id}', [ProductController::class, 'update_product'])->name('product.update');
     Route::delete('admin/product/delete/{id}', [ProductController::class, 'delete_product'])->name('product.delete');
+
+    Route::delete('/admin/product/image/{id}', [ProductController::class, 'deleteImage']);
+    Route::post('/admin/product_image_sort', [ProductController::class, 'product_image_sort'])->name('product.image.sort');
+
     // Product End
 
     // SMTP Start
@@ -123,26 +178,70 @@ Route::group(['middleware' => 'admin'], function () {
     // Colour End
 
     // Order Start
+    Route::post('admin/update_order_status', [OrdersController::class, 'update_order_status'])->name('update.order.status');
     Route::get('admin/orders', [OrdersController::class, 'list_orders'])->name('orders');
     Route::get('admin/orders/add', [OrdersController::class, 'add_orders'])->name('add.orders');
     Route::post('admin/orders/add', [OrdersController::class, 'store_orders'])->name('store.orders');
     Route::get('admin/orders/edit/{id}', [OrdersController::class, 'edit_orders'])->name('edit.orders');
     Route::put('admin/orders/edit/{id}', [OrdersController::class, 'update_orders'])->name('update.orders');
+    Route::get('admin/orders/view/{id}', [OrdersController::class, 'view_orders'])->name('view.orders');
     Route::delete('admin/orders/delete/{id}', [OrdersController::class, 'delete_orders'])->name('delete.orders');
     // Order End
 
+    // Discount Code
+    Route::get('admin/discount_code', [DiscountCodeController::class, 'discount_code'])->name('discount.code');
+    Route::get('admin/discount_code/add', [DiscountCodeController::class, 'discount_code_add'])->name('discount.code.add');
+    Route::post('admin/discount_code/add', [DiscountCodeController::class, 'discount_code_store'])->name('discount.code.store');
+    Route::get('admin/discount_code/edit/{id}', [DiscountCodeController::class, 'discount_code_edit'])->name('discount.code.edit');
+    Route::put('admin/discount_code/edit/{id}', [DiscountCodeController::class, 'discount_code_update'])->name('discount.code.update');
+    Route::delete('admin/discount_code/delete/{id}', [DiscountCodeController::class, 'discount_code_delete'])->name('discount.code.delete');
+
+    // Shipping Charge
+    Route::get('admin/shipping_charge', [ShippingChargesController::class, 'shipping_charges'])->name('shipping.charge');
+    Route::get('admin/shipping_charge/add', [ShippingChargesController::class, 'add_shipping_charges'])->name('shipping.charge.add');
+    Route::post('admin/shipping_charge/add', [ShippingChargesController::class, 'store_shipping_charges'])->name('shipping.charge.store');
+    Route::get('admin/shipping_charge/edit/{id}', [ShippingChargesController::class, 'edit_shipping_charges'])->name('shipping.charge.edit');
+    Route::put('admin/shipping_charge/edit/{id}', [ShippingChargesController::class, 'update_shipping_charges'])->name('shipping.charge.update');
+    Route::delete('admin/shipping_charge/delete/{id}', [ShippingChargesController::class, 'delete_shipping_charges'])->name('shipping.charge.delete');
+
+    // Slider
+    Route::get('admin/slider', [SliderController::class, 'index'])->name('admin.slider');
+    Route::get('admin/slider/add', [SliderController::class, 'add'])->name('add.slider');
+    Route::post('admin/slider/add', [SliderController::class, 'store'])->name('slider.store');
+    Route::get('admin/slider/edit/{id}', [SliderController::class, 'edit'])->name('edit.slider');
+    Route::put('admin/slider/edit/{id}', [SliderController::class, 'update'])->name('update.slider');
+    Route::delete('admin/slider/delete/{id}', [SliderController::class, 'delete'])->name('delete.slider');
+
+    // Support Start
+    Route::get('admin/support', [SupportsController::class, 'supports'])->name('supports');
+    Route::get('admin/support/reply/{id}', [SupportsController::class, 'support_reply'])->name('support.reply');
+    Route::post('admin/support/reply/{id}', [SupportsController::class, 'reply_store'])->name('support.reply.store');
+    Route::get('admin/change_support_status', [SupportsController::class, 'change_support_status'])->name('change.support.status');
+    Route::get('admin/support/status_update/{id}', [SupportsController::class, 'status_update'])->name('support.status.update');
+    Route::delete('admin/support/delete_multi_item', [SupportsController::class, 'delete_multi_item'])->name('support.delete.multi.item');
+
+
     // Blog Start
-    Route::get('admin/blogs', [BlogController::class, 'list_blog'])->name('blogs');
-    Route::get('admin/blog/sadd', [BlogController::class, 'add_blog'])->name('add.blogs');
-    Route::post('admin/blogs/add', [BlogController::class, 'store_blog'])->name('store.blogs');
-    Route::get('admin/blogs/edit/{id}', [BlogController::class, 'edit_blog'])->name('edit.blogs');
-    Route::put('admin/blogs/edit/{id}', [BlogController::class, 'update_blog'])->name('update.blogs');
-    Route::get('admin/blogs/view/{id}', [BlogController::class, 'view_blog'])->name('view.blogs');
-    Route::delete('admin/blogs/delete/{id}', [BlogController::class, 'delete_blog'])->name('delete.blogs');
+    Route::get('admin/blogs', [BlogController::class, 'index'])->name('blog');
+    Route::get('admin/blog/sadd', [BlogController::class, 'create'])->name('add.blog');
+    Route::post('admin/blogs/add', [BlogController::class, 'store'])->name('store.blog');
+    Route::get('admin/blogs/edit/{id}', [BlogController::class, 'edit'])->name('edit.blog');
+    Route::put('admin/blogs/edit/{id}', [BlogController::class, 'update'])->name('update.blog');
+    Route::get('admin/blogs/view/{id}', [BlogController::class, 'view'])->name('view.blog');
+    Route::delete('admin/blogs/delete/{id}', [BlogController::class, 'delete'])->name('delete.blog');
     // Blog End
 
     // Blog Delete All
-    Route::get('admin/blogs/truncate', [BlogController::class, 'blog_truncate'])->name('blogs.truncate');
+    Route::get('admin/blogs/truncate', [BlogController::class, 'truncate'])->name('blogs.truncate');
+
+    // Blog Category
+    Route::get('admin/blog_category', [BlogCategoryController::class, 'index'])->name('blog.category');
+    Route::get('admin/blog_category/add', [BlogCategoryController::class, 'create'])->name('blog.category.add');
+    Route::post('admin/blog_category/add', [BlogCategoryController::class, 'store'])->name('blog.category.store');
+    Route::get('admin/blog_category/edit/{id}', [BlogCategoryController::class, 'edit'])->name('blog.category.edit');
+    Route::put('admin/blog_category/edit/{id}', [BlogCategoryController::class, 'update'])->name('blog.category.update');
+    Route::delete('admin/blog_category/delete/{id}', [BlogCategoryController::class, 'destroy'])->name('blog.category.delete');
+    // Blog Category End
 
     // Transactions Start
     Route::get('admin/transactions', [TransactionsController::class, 'transactions_index'])->name('transactions');
@@ -198,6 +297,34 @@ Route::group(['middleware' => 'admin'], function () {
     Route::delete('admin/address/delete/{id}', [LocationController::class, 'admin_address_delete'])->name('admin.address.delete');
     // address menu end
 
+    // Pages start 
+    Route::get('admin/pages', [PagesController::class, 'index'])->name('admin.pages');
+    Route::get('admin/pages/edit/{id}', [PagesController::class, 'edit'])->name('pages.edit');
+    Route::put('admin/pages/edit/{id}', [PagesController::class, 'update'])->name('pages.update');
+
+    Route::get('admin/system-setting', [PagesController::class, 'system_setting'])->name('system.setting');
+    Route::post('admin/system-setting', [PagesController::class, 'update_system_setting'])->name('upadate.system.setting');
+
+    Route::get('admin/payment-setting', [PagesController::class, 'payment_system'])->name('payment.setting');
+    Route::post('admin/payment-setting', [PagesController::class, 'update_payment_setting'])->name('update.payment.setting');
+
+    Route::get('admin/home-setting', [PagesController::class, 'home_setting'])->name('home.setting');
+    Route::post('admin/home-setting', [PagesController::class, 'update_home_setting'])->name('update.home.setting');
+    // Pages end 
+
+    // Partner Logo
+    Route::get('admin/partner', [PartnerController::class, 'index'])->name('partner');
+    Route::get('admin/partner/add', [PartnerController::class, 'add'])->name('add.partner');
+    Route::post('admin/partner/add', [PartnerController::class, 'store'])->name('store.partner');
+    Route::get('admin/partner/edit/{id}', [PartnerController::class, 'edit'])->name('edit.partner');
+    Route::put('admin/partner/edit/{id}', [PartnerController::class, 'update'])->name('update.partner');
+    Route::delete('admin/partner/delete/{id}', [PartnerController::class, 'delete'])->name('delete.partner');
+
+    Route::get('admin/contact-us', [PagesController::class, 'contactUs'])->name('admin.contact.us');
+    Route::delete('admin/contact-us/delete/{id}', [PagesController::class, 'contactUsDelete'])->name('contact.us.delete');
+
+    Route::get('admin/notification/list', [PagesController::class, 'notification'])->name('admin.notification');
+
 
     // Personal profile edit
     Route::get('admin/my_profile', [AdminController::class, 'my_profile'])->name('admin.my.profile');
@@ -221,10 +348,101 @@ Route::group(['middleware' => 'agent'], function () {
 
 });
 
-Route::group(['middleware' => 'user'], function () {
+Route::middleware(['auth'])->group(function () {
+    Route::get('user/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
 
+    Route::get('user/wallet', [UserController::class, 'wallet'])->name('user.wallet');
+    Route::get('wallet.topup', [UserController::class, 'wallet_topup'])->name('user.wallet.topup');
+    Route::post('user/wallet/topup', [UserController::class, 'wallet_topup_post'])->name('user.wallet.topup.post');
+    Route::get('user/wallet/transactions', [UserController::class, 'wallet_transactions'])->name('user.wallet.transactions');
+    Route::get('user.wallet.withdraw', [UserController::class, 'wallet_withdraw'])->name('user.wallet.withdraw');
+
+    Route::get('user/orders', [UserController::class, 'orders'])->name('user.orders');
+    Route::get('user/orders/view/{id}', [UserController::class, 'viewOrder'])->name('user.orders.view');
+
+    Route::get('user/edit-profile', [UserController::class, 'profile'])->name('user.edit.profile');
+    Route::post('user/edit-profile', [UserController::class, 'profileUpdate'])->name('user.update.profile');
+
+    Route::get('user/notifications', [UserController::class, 'notification'])->name('user.notification');
+
+    Route::get('user/change-password', [UserController::class, 'changePassword'])->name('user.change.password');
+    Route::post('user/change-password', [UserController::class, 'updatePassword'])->name('user.update.password');
+
+    Route::post('wishlist/add', [UserController::class, 'addToWishlist'])->name('wishlist.add');
+    Route::post('user/make-review', [UserController::class, 'makeReview'])->name('user.make.review');
+
+    Route::get('my/wishlist', [FrontendProductController::class, 'myWishlist'])->name('my.wishlist');
+
+    Route::post('blogs/submit-comment', [HomeController::class, 'submitComment'])->name('blogs.submit.comment');
 });
 
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::post('recent-arrivals', [HomeController::class, 'recentArrivals'])->name('recent.arrivals');
 
+Route::get('contact', [HomeController::class, 'contact'])->name('contact.us');
+Route::post('contact', [HomeController::class, 'submitContact'])->name('submit.contact');
+
+Route::get('about', [HomeController::class, 'about'])->name('about.us');
+Route::get('blogs', [HomeController::class, 'blogs'])->name('blogs');
+Route::get('blog/category/{slug}', [HomeController::class, 'blogCategory'])->name('blogs.category');
+Route::get('blogs/{slug}', [HomeController::class, 'blogDetail'])->name('blogs.detail');
+Route::get('faq', [HomeController::class, 'faq'])->name('faq');
+
+Route::get('payment-methods', [HomeController::class, 'paymentMethod'])->name('payment.methods');
+Route::get('money-back-guarantee', [HomeController::class, 'moneyBackGuarantee'])->name('money.back.guarantee');
+Route::get('returns', [HomeController::class, 'return'])->name('returns');
+Route::get('shipping', [HomeController::class, 'shipping'])->name('shipping');
+Route::get('terms-and-conditions', [HomeController::class, 'termsCondition'])->name('terms.and.conditions');
+Route::get('privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
+
+Route::post('register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('signin', [AuthController::class, 'showSignin'])->name('signin');
+
+Route::get('forgot-password', [AuthController::class, 'forgot_password'])->name('forgot.password');
+Route::post('forgot-password', [AuthController::class, 'forgot_password_post'])->name('forgot.password.post');
+
+Route::get('reset_password/{token}', [AuthController::class, 'reset_password'])->name('reset.password');
+Route::post('reset_password/{token}', [AuthController::class, 'reset_password_post'])->name('reset.password.post');
+Route::get('activate_email/{id}', [AuthController::class, 'activateEmail'])->where('id', '.*')->name('activate');
+
+Route::get('search', [FrontendProductController::class, 'search'])->name('search');
+Route::post('products_filter', [FrontendProductController::class, 'products_filter'])->name('products.filter');
+Route::post('products/load-more', [FrontendProductController::class, 'loadMore'])
+    ->name('products.load-more');
+
+// Payment
+Route::get('cart', [PaymentController::class, 'cart'])
+    ->name('cart');
+Route::delete('delete_cart_item/{rowId}', [PaymentController::class, 'deleteCartItem'])
+    ->name('delete.cart.item');   
+Route::post('products/add-to-cart', [PaymentController::class, 'addToCart'])
+    ->name('products.add-to-cart');
+Route::post('update.cart', [PaymentController::class, 'updateCart'])
+    ->name('update.cart');
+
+
+Route::get('checkout', [PaymentController::class, 'checkout'])
+    ->name('checkout');
+Route::post('checkout/place_order', [PaymentController::class, 'placeOrder'])
+    ->name('checkout.place.order');
+Route::get('checkout/success/{encoded}', [PaymentController::class, 'orderSuccess'])->name('order.success');
+
+
+Route::post('apply-discount', [PaymentController::class, 'applyDiscount'])
+    ->name('apply.discount');
+
+
+
+
+// Dynamic catch-all routes
+Route::get('/product/{slug}', [FrontendProductController::class, 'productDetails'])
+    ->name('product.details');
+
+Route::get('{category?}/{subCategory?}', [FrontendProductController::class, 'getCategory'])
+    ->where([
+        'category' => '[A-Za-z0-9\-]+',
+        'subCategory' => '[A-Za-z0-9\-]+',
+    ])
+    ->name('get.category');
 
 

@@ -37,7 +37,7 @@
                                                 <img src="{{ asset('public/backend/upload/profile/' . $getRecord->photo) }}"
                                                     alt="profile" class="wd-100 ht-100 rounded-circle">
                                             @else
-                                                <img src="{{ asset('public/backend/upload/profile/user.png') }}"
+                                                <img src="{{ url('public/backend/upload/profile/user.png') }}"
                                                     alt="default profile" class="wd-30 ht-30 rounded-circle">
                                             @endif
                                         </div>
